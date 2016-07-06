@@ -1,2 +1,2 @@
-export { default as AddFriendInput } from './AddFriendInput/AddFriendInput';
-export { default as FriendList } from './FriendList/FriendList';
+export { default as DeviceList } from './DeviceList/DeviceList'
+export { default as Nav } from './Nav/Nav'

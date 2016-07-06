@@ -1,8 +1,8 @@
-import { combineReducers } from 'redux';
-import friendList from './friendList';
+import { combineReducers } from 'redux'
+import deviceList from './deviceList'
 
 const rootReducer = combineReducers({
-  friendList
-});
+  deviceList
+})
 
-export default rootReducer;
+export default rootReducer

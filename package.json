@@ -1,25 +1,14 @@
 {
-  "name": "redux-webpack-es6-boilerplate",
-  "description": "A starter project for modern React apps with Redux",
+  "name": "agile-ui",
+  "description": "A device discovery ui",
   "version": "0.7.1",
-  "author": "Nick S. Plekhanov <nick.plekhanov@gmail.com>",
+  "author": "Nick S. Plekhanov <craig@resin.io>",
   "license": "MIT",
-  "keywords": [
-    "react",
-    "redux",
-    "es6",
-    "hmr",
-    "hot",
-    "babel",
-    "webpack",
-    "boilerplate",
-    "starter"
-  ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/nicksp/redux-webpack-es6-boilerplate.git"
+    "url": "https://github.com/resin-io-playground/agile-ui.git"
   },
-  "bugs": "https://github.com/nicksp/redux-webpack-es6-boilerplate/issues",
+  "bugs": "https://github.com/resin-io-playground/issues",
   "scripts": {
     "clean:build": "node ./bin/clean.js createdir",
     "build:html": "node ./bin/buildHtml.js",

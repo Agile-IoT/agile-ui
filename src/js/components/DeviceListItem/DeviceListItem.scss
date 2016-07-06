@@ -5,7 +5,7 @@
   font-style: normal;
 }
 
-.friendListItem {
+.deviceListItem {
   list-style: none;
   background: url(./images/icon-user.png) no-repeat left 10px top 10px;
   font-family: "open_sansregular", Arial;
@@ -15,15 +15,15 @@
   display: flex;
 }
 
-.friendInfos {
+.deviceInfos {
   flex: 1 0 auto;
 }
 
-.friendInfos span {
+.deviceInfos span {
   font-weight: bold;
 }
 
-.friendActions {
+.deviceActions {
   flex: 0 0 90px;
 }
 

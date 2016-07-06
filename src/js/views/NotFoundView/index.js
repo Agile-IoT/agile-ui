@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router';
+import React, { Component } from 'react'
+import { Link } from 'react-router'
 
 export default class NotFoundView extends Component {
   render () {
@@ -9,6 +9,6 @@ export default class NotFoundView extends Component {
         <hr />
         <Link to='/'>Back To Home View</Link>
       </div>
-    );
+    )
   }
 }

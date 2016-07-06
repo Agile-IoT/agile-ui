@@ -1,13 +1,13 @@
-const path = require('path');
-const webpack = require('webpack');
-const autoprefixer = require('autoprefixer');
+const path = require('path')
+const webpack = require('webpack')
+const autoprefixer = require('autoprefixer')
 
 // App files location
 const PATHS = {
   app: path.resolve(__dirname, '../src/js'),
   styles: path.resolve(__dirname, '../src/styles'),
   build: path.resolve(__dirname, '../build')
-};
+}
 
 const plugins = [
   // Shared code
@@ -19,14 +19,14 @@ const plugins = [
     __DEV__: JSON.stringify(JSON.parse(process.env.DEBUG || 'false'))
   }),
   new webpack.optimize.OccurenceOrderPlugin()
-];
+]
 
 const sassLoaders = [
   'style-loader',
   'css-loader?sourceMap',
   'postcss-loader',
   'sass-loader?outputStyle=expanded'
-];
+]
 
 module.exports = {
   env : process.env.NODE_ENV,
@@ -73,7 +73,7 @@ module.exports = {
   postcss: function () {
     return [autoprefixer({
       browsers: ['last 2 versions']
-    })];
+    })]
   },
   devServer: {
     contentBase: path.resolve(__dirname, '../src'),
@@ -81,4 +81,4 @@ module.exports = {
     historyApiFallback: true
   },
   devtool: 'eval'
-};
+}

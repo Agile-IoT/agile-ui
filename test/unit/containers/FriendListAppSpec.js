@@ -1,12 +1,12 @@
 import { renderComponent, expect } from '../testHelper';
-import FriendListApp from '../../../src/js/containers/FriendListApp/FriendListApp';
+import DeviceList from '../../../src/js/containers/DeviceList/DeviceList';
 
-describe('FriendListApp', () => {
+describe('DeviceList', () => {
 
   let component;
 
   beforeEach(() => {
-    component = renderComponent(FriendListApp);
+    component = renderComponent(DeviceList);
   });
 
   it('shows an input to add a new friend', () => {

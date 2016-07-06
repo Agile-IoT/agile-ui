@@ -1,9 +1,9 @@
-const path = require('path');
-const webpack = require('webpack');
-const autoprefixer = require('autoprefixer');
+const path = require('path')
+const webpack = require('webpack')
+const autoprefixer = require('autoprefixer')
 
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 // App files location
 const PATHS = {
@@ -11,7 +11,7 @@ const PATHS = {
   styles: path.resolve(__dirname, '../src/styles'),
   images: path.resolve(__dirname, '../src/images'),
   build: path.resolve(__dirname, '../build')
-};
+}
 
 const plugins = [
   new CopyWebpackPlugin([
@@ -37,13 +37,13 @@ const plugins = [
   }),
   // This plugin moves all the CSS into a separate stylesheet
   new ExtractTextPlugin('css/app.css', { allChunks: true })
-];
+]
 
 const sassLoaders = [
   'css-loader?sourceMap',
   'postcss-loader',
   'sass-loader?outputStyle=compressed'
-];
+]
 
 module.exports = {
   entry: {
@@ -94,7 +94,7 @@ module.exports = {
   postcss: function () {
     return [autoprefixer({
       browsers: ['last 2 versions']
-    })];
+    })]
   },
   devtool: 'source-map'
-};
+}
