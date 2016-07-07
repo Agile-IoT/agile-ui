@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux'
 import * as devicesActions from '../../actions/DevicesActions'
 import { DeviceList } from '../../components'
 
-class DevicesApp extends Component {
+class RegisteredDevices extends Component {
   static propTypes = {
     deviceList: PropTypes.object.isRequired,
     actions: PropTypes.object.isRequired,
@@ -64,4 +64,4 @@ function mapDispatchToProps (dispatch) {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(DevicesApp)
+)(RegisteredDevices)

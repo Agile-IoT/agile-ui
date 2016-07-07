@@ -10,7 +10,6 @@ export default class Nav extends Component {
     browserHistory.push(tab.props.value)
   }
   render () {
-    console.log(this.props.route)
     return (
       <Tabs value={this.props.route } >
         <Tab label="Devices"

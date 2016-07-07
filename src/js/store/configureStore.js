@@ -1,10 +1,11 @@
 import { createStore, applyMiddleware, compose } from 'redux'
 import rootReducer from '../reducers'
 import { persistState } from 'redux-devtools'
+import promise from 'redux-promise'
 
 export default function configureStore(initialState) {
 
-  let middleware = applyMiddleware()
+  let middleware = applyMiddleware(promise)
   let enhancer
 
   if (process.env.NODE_ENV !== 'production') {

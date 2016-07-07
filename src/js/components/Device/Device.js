@@ -1,4 +1,3 @@
-import './DeviceListItem.scss'
 import React, { Component, PropTypes } from 'react'
 import {Card, CardActions, CardHeader} from 'material-ui/Card'
 import FlatButton from 'material-ui/FlatButton'
@@ -6,11 +5,7 @@ import FlatButton from 'material-ui/FlatButton'
 export default class DeviceListItem extends Component {
 
   static propTypes = {
-    id: PropTypes.number.isRequired,
-    Name: PropTypes.string.isRequired,
-    starred: PropTypes.bool,
-    starDevice: PropTypes.func.isRequired,
-    deleteDevice: PropTypes.func.isRequired
+    Name: PropTypes.string.isRequired
   }
 
   render () {
@@ -22,8 +17,8 @@ export default class DeviceListItem extends Component {
           avatar="http://lorempixel.com/100/100/nature/"
         />
         <CardActions>
-          <FlatButton label="starDevice" onClick={() => this.props.starDevice(this.props.id)}/>
-          <FlatButton label="deleteDevice" onClick={() => this.props.deleteDevice(this.props.id)}/>
+          <FlatButton label="view on grafana" />
+          <FlatButton label="Unregister" />
         </CardActions>
       </Card>
     )

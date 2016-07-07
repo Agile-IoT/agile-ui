@@ -3,6 +3,7 @@ import './DeviceList.scss'
 import React, { Component, PropTypes } from 'react'
 
 import DeviceListItem from '../DeviceListItem/DeviceListItem'
+import RefreshIndicator from 'material-ui/RefreshIndicator'
 
 export default class DeviceList extends Component {
 
@@ -17,7 +18,7 @@ export default class DeviceList extends Component {
         <DeviceListItem
           key={device.id}
           id={device.id}
-          name={device.name}
+          Name={device.Name}
           starred={device.starred}
           {...this.props.actions} />
       )
@@ -26,9 +27,20 @@ export default class DeviceList extends Component {
 
   render () {
     return (
-      <ul className="DeviceList">
-        {this.renderList()}
-      </ul>
+      <div>
+        <RefreshIndicator
+          size={50}
+          left={70}
+          top={0}
+          status={this.props.loading}
+          loadingColor={"#FF9800"}
+        />
+        <h1>{this.props.listName}</h1>
+        <ul className="DeviceList">
+          {this.renderList()}
+        </ul>
+      </div>
+
     )
   }
 }

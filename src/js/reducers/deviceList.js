@@ -1,44 +1,42 @@
-/**
- * Another clever approach of writing reducers:
- *
- * export default function(state = initialState, action) {
- *   const actions = {
- *      [ACTION_TYPE]: () => [action.payload.data, ...state]
- *   };
- *
- *   return (_.isFunction(actions[action.type])) ? actions[action.type]() : state
- * }
- */
-
 import * as types from '../constants/ActionTypes'
 import { assign } from 'lodash'
 
 const initialState = {
-  devices: [0, 1, 2],
-  devicesById: [
-    {
-      id: 0,
-      name: '2Pac'
-    },
-    {
-      id: 1,
-      name: 'Dr.Dre'
-    },
-    {
-      id: 2,
-      name: 'Big Pun'
-    }
-  ]
+  devicesById: [],
+  error: null,
+  loading: 'hide'
 }
 
 export default function (state = initialState, action) {
+  let error
+
   switch (action.type) {
+
+    case types.FETCH_DEVICES:
+    // start fetching posts and set loading = true
+      return {
+        ...state,
+        loading: 'loading'
+      }
+    case types.FETCH_DEVICES_SUCCESS:// return list of posts and make loading = false
+      return {
+        ...state,
+        devicesById: action.payload, loading: 'hide'
+      }
+    case types.FETCH_DEVICES_FAILURE:// return error and make loading = false
+      error = action.payload.data || {
+        message: action.payload.message
+      } //2nd one is network or server down errors
+      return {
+        ...state,
+        devicesById: [], error: error, loading: 'hide'
+      }
+
     case types.ADD_DEVICE: {
       const len = state.devices.length ? state.devices.length : 1
       const newId = (state.devices[len - 1] + 1) || 0
       return {
         ...state,
-        devices: state.devices.concat(newId),
         devicesById: [
           ...state.devicesById,
           {
@@ -52,7 +50,6 @@ export default function (state = initialState, action) {
     case types.DELETE_DEVICE:
       return {
         ...state,
-        devices: state.devices.filter((id) => id !== action.id),
         devicesById: state.devicesById.filter((device) => device.id !== action.id)
       }
 

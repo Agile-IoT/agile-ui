@@ -3,9 +3,9 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
 import * as devicesActions from '../../actions/DevicesActions'
-import { DeviceList } from '../../components'
+import { Device } from '../../components'
 
-class Discover extends Component {
+class RegisteredDevice extends Component {
 
   static propTypes = {
     deviceList: PropTypes.object.isRequired,
@@ -13,12 +13,12 @@ class Discover extends Component {
   };
 
   render () {
-    const { deviceList: { devicesById }, actions } = this.props
+    const { actions } = this.props
 
     return (
       <div className="col-md-6">
-        <h1>Discover</h1>
-        <DeviceList devices={devicesById} actions={actions} />
+        <h1>Registered Device</h1>
+        <Device name='heeey' actions={actions} />
       </div>
     )
   }
@@ -39,4 +39,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Discover)
+)(RegisteredDevice)
