@@ -2,13 +2,14 @@ import './DeviceListItem.scss'
 import React, { Component, PropTypes } from 'react'
 import {Card, CardActions, CardHeader} from 'material-ui/Card'
 import FlatButton from 'material-ui/FlatButton'
+import Avatar from 'material-ui/Avatar';
 
 export default class DeviceListItem extends Component {
 
   static propTypes = {
-    id: PropTypes.number.isRequired,
-    Name: PropTypes.string.isRequired,
-    starred: PropTypes.bool,
+    id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    path: PropTypes.string.isRequired,
     starDevice: PropTypes.func.isRequired,
     deleteDevice: PropTypes.func.isRequired
   }
@@ -17,13 +18,12 @@ export default class DeviceListItem extends Component {
     return (
       <Card>
         <CardHeader
-          title={this.props.Name}
-          subtitle="Subtitle"
-          avatar="http://lorempixel.com/100/100/nature/"
+          title={this.props.name}
+          subtitle={this.props.path}
+          avatar={<Avatar>{this.props.name.charAt(0)}</Avatar>}
         />
         <CardActions>
-          <FlatButton label="starDevice" onClick={() => this.props.starDevice(this.props.id)}/>
-          <FlatButton label="deleteDevice" onClick={() => this.props.deleteDevice(this.props.id)}/>
+          <FlatButton label="Delete Device" secondary={true} onClick={() => this.props.deleteDevice(this.props.id)}/>
         </CardActions>
       </Card>
     )

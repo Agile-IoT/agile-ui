@@ -1,8 +1,8 @@
 {
   "name": "agile-ui",
   "description": "A device discovery ui",
-  "version": "0.7.1",
-  "author": "Nick S. Plekhanov <craig@resin.io>",
+  "version": "0.0.1",
+  "author": "Craig Mulligan <craig@resin.io>",
   "license": "MIT",
   "repository": {
     "type": "git",

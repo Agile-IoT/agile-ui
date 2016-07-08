@@ -1,14 +1,6 @@
 import * as types from '../constants/ActionTypes'
 import { BASE_URL } from '../constants/Endpoints'
-import axios from 'axios';
-
-let data = [
-  { "id": 1, "Name": "GE-BULB", "status": "CONNECTED" , "Configuration": {},  "Data": {}, "LastUpdate": 1467884427, "Protocol": {} },
-  { "id": 2, "Name": "Speaker", "status": "CONNECTED" , "Configuration": {},  "Data": {}, "LastUpdate": 1467884427, "Protocol": {} },
-  { "id": 3, "Name": "Sensor", "status": "DISCONNECTED" , "Configuration": {},  "Data": {}, "LastUpdate": 1467884427, "Protocol": {} }
-]
-
-let err = "this is an error"
+import axios from 'axios'
 
 export function fetchDevices(resource) {
   const request = axios({

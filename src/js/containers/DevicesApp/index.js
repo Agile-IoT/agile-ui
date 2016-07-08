@@ -9,6 +9,8 @@ class RegisteredDevices extends Component {
   static propTypes = {
     deviceList: PropTypes.object.isRequired,
     actions: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
+    route: PropTypes.object.isRequired
   }
 
   constructor(props) {
