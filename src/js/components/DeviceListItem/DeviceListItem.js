@@ -1,8 +1,11 @@
 import './DeviceListItem.scss'
 import React, { Component, PropTypes } from 'react'
-import {Card, CardActions, CardHeader} from 'material-ui/Card'
+import {Card, CardActions } from 'material-ui/Card'
 import FlatButton from 'material-ui/FlatButton'
-import Avatar from 'material-ui/Avatar';
+import Avatar from 'material-ui/Avatar'
+import { Link } from 'react-router'
+
+import DeviceBasicInfo from '../Device/DeviceBasicInfo'
 
 export default class DeviceListItem extends Component {
 
@@ -16,16 +19,18 @@ export default class DeviceListItem extends Component {
 
   render () {
     return (
-      <Card>
-        <CardHeader
-          title={this.props.name}
-          subtitle={this.props.path}
-          avatar={<Avatar>{this.props.name.charAt(0)}</Avatar>}
-        />
-        <CardActions>
-          <FlatButton label="Delete Device" secondary={true} onClick={() => this.props.deleteDevice(this.props.id)}/>
-        </CardActions>
-      </Card>
+      <Link to={`/device/${this.props.id}`}>
+        <Card>
+          <DeviceBasicInfo
+            id={this.props.path}
+            name={this.props.name}
+            path={this.props.path}
+          />
+          <CardActions>
+            <FlatButton label="Delete Device" secondary={true} onClick={() => this.props.deleteDevice(this.props.id)}/>
+          </CardActions>
+        </Card>
+      </Link>
     )
   }
 }
