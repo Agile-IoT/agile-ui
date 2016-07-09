@@ -1,5 +1,4 @@
 import * as types from '../constants/ActionTypes'
-import { assign } from 'lodash'
 
 const initialState = {
   items: [],
@@ -12,19 +11,19 @@ export default function (state = initialState, action) {
 
   switch (action.type) {
 
-    case types.DEVICELIST_FETCH:
+    case types.DEVICELIST_FETCH_REQUESTED:
     // start fetching posts and set loading = true
       return {
         ...state,
         loading: 'loading'
       }
-    case types.DEVICELIST_FETCH_SUCCESS:// return list of posts and make loading = false
+    case types.DEVICELIST_FETCH_SUCCEEDED:// return list of posts and make loading = false
       return {
         ...state,
-        items: action.payload, loading: 'hide'
+        items: action.data, loading: 'hide'
       }
-    case types.DEVICELIST_FETCH_FAILURE:// return error and make loading = false
-      error = action.payload.data || {
+    case types.DEVICELIST_FETCH_FAILED:// return error and make loading = false
+      error = action.data || {
         message: action.payload.message
       } //2nd one is network or server down errors
       return {

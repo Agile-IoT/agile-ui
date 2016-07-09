@@ -15,7 +15,14 @@ import injectTapEventPlugin from 'react-tap-event-plugin'
 injectTapEventPlugin()
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
-const store = configureStore()
+import createSagaMiddleware from 'redux-saga'
+import { deviceListSaga } from './sagas/sagas'
+
+const sagaMiddleware = createSagaMiddleware()
+const store = configureStore({}, sagaMiddleware)
+
+sagaMiddleware.run(deviceListSaga)
+
 const rootElement = document.getElementById('app')
 
 let ComponentEl

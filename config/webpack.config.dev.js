@@ -1,6 +1,7 @@
 const path = require('path')
 const webpack = require('webpack')
 const autoprefixer = require('autoprefixer')
+require("babel-polyfill")
 
 // App files location
 const PATHS = {
@@ -31,7 +32,7 @@ const sassLoaders = [
 module.exports = {
   env : process.env.NODE_ENV,
   entry: {
-    app: path.resolve(PATHS.app, 'main.js'),
+    app: ['babel-polyfill', path.resolve(PATHS.app, 'main.js')],
     vendor: ['react']
   },
   output: {

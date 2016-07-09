@@ -8,8 +8,7 @@ import RefreshIndicator from 'material-ui/RefreshIndicator'
 export default class DeviceList extends Component {
 
   static propTypes = {
-    devices: PropTypes.array.isRequired,
-    actions: PropTypes.object.isRequired
+    devices: PropTypes.array.isRequired
   };
 
   renderList() {

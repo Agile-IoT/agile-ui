@@ -1,16 +1,15 @@
 import { createStore, applyMiddleware, compose } from 'redux'
 import rootReducer from '../reducers'
 import { persistState } from 'redux-devtools'
-import promise from 'redux-promise'
 
-export default function configureStore(initialState) {
+export default function configureStore(initialState, sagaMiddleware) {
 
-  let middleware = applyMiddleware(promise)
   let enhancer
+  let middleware
 
   if (process.env.NODE_ENV !== 'production') {
 
-    let middlewares = [require('redux-immutable-state-invariant')()]
+    let middlewares = [require('redux-immutable-state-invariant')(), sagaMiddleware]
     middleware = applyMiddleware(...middlewares)
 
     let getDebugSessionKey = function () {

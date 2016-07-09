@@ -35,16 +35,13 @@ class DeviceListApp extends Component {
     } else {
       resource = '/protocols/devices'
     }
-
-    this.props.actions.fetchDeviceList(resource).payload.then((response) => {
-      !response.error ? this.props.actions.fetchDeviceListSuccess(response.data) : this.props.actions.fetchDeviceList(response.payload)
-    })
+    this.props.dispatch({type: 'DEVICELIST_FETCH_REQUESTED', method: 'GET', resource: '/devices' })
   }
 
   render () {
     const { deviceList: { items, loading }, actions, route } = this.props
     return (
-      <div className="col-md-6">
+      <div>
         <DeviceList listName={route.title} loading={loading} devices={items} actions={actions} />
       </div>
     )
@@ -59,6 +56,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps (dispatch) {
   return {
+    dispatch: dispatch,
     actions: bindActionCreators(devicesActions, dispatch)
   }
 }

@@ -16,7 +16,7 @@ export function fetchDevice(resource) {
 
 export function fetchDevicesSuccess(posts) {
   return {
-    type: types.FETCH_DEVICES_SUCCESS,
+    type: types.DEVICELIST_FETCH_SUCCEEDED,
     payload: posts
   }
 }
