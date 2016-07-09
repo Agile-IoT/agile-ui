@@ -1,5 +1,5 @@
-import '../styles/bootstrap.min.css'
 import '../styles/styles.scss'
+import 'ress/dist/ress.min.css'
 
 import React from 'react'
 import ReactDOM from 'react-dom'
@@ -24,12 +24,10 @@ if (process.env.NODE_ENV !== 'production') {
   const DevTools = require('./containers/DevTools').default
 
   ComponentEl = (
-    <MuiThemeProvider>
-      <div>
-        <Router history={browserHistory} routes={routes} />
-        <DevTools />
-      </div>
-    </MuiThemeProvider>
+    <div>
+      <Router history={browserHistory} routes={routes} />
+      <DevTools />
+    </div>
   )
 } else {
   ComponentEl = (
@@ -42,7 +40,9 @@ if (process.env.NODE_ENV !== 'production') {
 // Render the React application to the DOM
 ReactDOM.render(
   <Provider store={store}>
+    <MuiThemeProvider>
     {ComponentEl}
+    </MuiThemeProvider>
   </Provider>,
   rootElement
 )
