@@ -12,59 +12,24 @@ export default function (state = initialState, action) {
 
   switch (action.type) {
 
-    case types.FETCH_DEVICES:
+    case types.DEVICELIST_FETCH:
     // start fetching posts and set loading = true
       return {
         ...state,
         loading: 'loading'
       }
-    case types.FETCH_DEVICES_SUCCESS:// return list of posts and make loading = false
+    case types.DEVICELIST_FETCH_SUCCESS:// return list of posts and make loading = false
       return {
         ...state,
         items: action.payload, loading: 'hide'
       }
-    case types.FETCH_DEVICES_FAILURE:// return error and make loading = false
+    case types.DEVICELIST_FETCH_FAILURE:// return error and make loading = false
       error = action.payload.data || {
         message: action.payload.message
       } //2nd one is network or server down errors
       return {
         ...state,
         items: [], error: error, loading: 'hide'
-      }
-
-    case types.ADD_DEVICE: {
-      const len = state.items.length ? state.devices.length : 1
-      const newId = (state.devices[len - 1] + 1) || 0
-      return {
-        ...state,
-        items: [
-          ...state.items,
-          {
-            id: newId,
-            name: action.name
-          }
-        ]
-      }
-    }
-
-    case types.DELETE_DEVICE:
-      return {
-        ...state,
-        items: state.items.filter((device) => device.id !== action.id)
-      }
-
-    case types.STAR_DEVICE:
-      return {
-        ...state,
-        items: state.items.map((device) => {
-          if (device.id !== action.id) {
-            return device
-          }
-
-          return assign({}, device, {
-            starred: !device.starred
-          })
-        })
       }
 
     default:

@@ -12,9 +12,7 @@ export default class DeviceListItem extends Component {
   static propTypes = {
     id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
-    path: PropTypes.string.isRequired,
-    starDevice: PropTypes.func.isRequired,
-    deleteDevice: PropTypes.func.isRequired
+    path: PropTypes.string.isRequired
   }
 
   render () {
@@ -26,9 +24,6 @@ export default class DeviceListItem extends Component {
             name={this.props.name}
             path={this.props.path}
           />
-          <CardActions>
-            <FlatButton label="Delete Device" secondary={true} onClick={() => this.props.deleteDevice(this.props.id)}/>
-          </CardActions>
         </Card>
       </Link>
     )

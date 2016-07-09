@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
 import * as devicesActions from '../../actions/DeviceListActions'
-import * as requestActions from '../../actions/Response'
 import { DeviceList } from '../../components'
 
 class DeviceListApp extends Component {
@@ -60,7 +59,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    actions: bindActionCreators(Object.assign({}, requestActions, devicesActions), dispatch)
+    actions: bindActionCreators(devicesActions, dispatch)
   }
 }
 
