@@ -3,20 +3,19 @@ import {Card, CardActions } from 'material-ui/Card'
 import FlatButton from 'material-ui/FlatButton'
 import DeviceBasicInfo from './DeviceBasicInfo'
 
-export default class DeviceListItem extends Component {
+export default class Device extends Component {
 
   static propTypes = {
-    id: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    path: PropTypes.string.isRequired,
-    deleteDevice: PropTypes.func.isRequired
+    id: PropTypes.string,
+    name: PropTypes.string,
+    path: PropTypes.string
   }
 
   render () {
     return (
       <Card>
         <DeviceBasicInfo
-          id={this.props.path}
+          id={this.props.id}
           name={this.props.name}
           path={this.props.path}
         />

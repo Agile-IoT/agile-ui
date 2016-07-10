@@ -1,14 +1,11 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-
-import * as devicesActions from '../../actions/DeviceListActions'
 import { DeviceList } from '../../components'
 
 class DeviceListApp extends Component {
   static propTypes = {
     deviceList: PropTypes.object.isRequired,
-    actions: PropTypes.object.isRequired,
+    dispatch: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     route: PropTypes.object.isRequired
   }
@@ -35,14 +32,14 @@ class DeviceListApp extends Component {
     } else {
       resource = '/protocols/devices'
     }
-    this.props.dispatch({type: 'DEVICELIST_FETCH_REQUESTED', method: 'GET', resource: '/devices' })
+    props.dispatch({type: 'DEVICELIST_FETCH_REQUESTED', method: 'GET', resource: resource })
   }
 
   render () {
-    const { deviceList: { items, loading }, actions, route } = this.props
+    const { deviceList: { items, loading }, dispatch, route } = this.props
     return (
       <div>
-        <DeviceList listName={route.title} loading={loading} devices={items} actions={actions} />
+        <DeviceList listName={route.title} loading={loading} devices={items} dispatch={dispatch} />
       </div>
     )
   }
@@ -56,8 +53,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    dispatch: dispatch,
-    actions: bindActionCreators(devicesActions, dispatch)
+    dispatch: dispatch
   }
 }
 

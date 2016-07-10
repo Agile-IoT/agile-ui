@@ -12,17 +12,17 @@ export default function (state = initialState, action) {
 
   switch (action.type) {
 
-    case types.DISCOVERY:
+    case types.SETTINGS_DISCOVERY_REQUESTED:
     // start fetching posts and set loading = true
       return {
         ...state,
         items: { discovery: !state.items.discovery }
       }
-    case types.DISCOVERY_SUCCESS:// return list of posts and make loading = false
+    case types.SETTINGS_DISCOVERY_SUCCEEDED:// return list of posts and make loading = false
       return {
         ...state
       }
-    case types.DISCOVERY_FAILURE:// return error and make loading = false
+    case types.SETTINGS_DISCOVERY_FAILED:// return error and make loading = false
       return {
         ...state,
         items: { discovery: !state.items.discovery },

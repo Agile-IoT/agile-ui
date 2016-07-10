@@ -10,7 +10,7 @@ export default class Settings extends Component {
 
   static propTypes = {
     settings: PropTypes.object.isRequired,
-    actions: PropTypes.object.isRequired,
+    dispatch: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
     error: PropTypes.object
   }
@@ -26,6 +26,10 @@ export default class Settings extends Component {
     },
     Toggle: {
       margin: '0 20px 0'
+    },
+    Cog: {
+      margin: '20px 0 0 20px',
+      cursor: 'pointer'
     }
   }
 
@@ -35,23 +39,18 @@ export default class Settings extends Component {
 
   discoveryToggle = () => {
     let method
-
     if (this.props.settings.discovery) {
       method = 'DELETE'
     } else {
       method = 'POST'
     }
+    this.props.dispatch({type: 'SETTINGS_DISCOVERY_REQUESTED', method: method, resource: '/protocols/discovery' })
 
-    this.props.actions.discovery(method, '/protocols/discovery').payload.then((response) => {
-      !response.error ? this.props.actions.discoverySuccess() : this.props.actions.discoveryFailure(response.payload)
-    }).catch((error) => {
-      this.props.actions.discoveryFailure(error)
-    })
   }
   render() {
     return (
       <div>
-        <FontIcon toggled={this.props.open} onTouchTap={this.drawerToggle} className="material-icons">
+        <FontIcon style={this.style.Cog} toggled={this.props.open} onTouchTap={this.drawerToggle} className="material-icons">
           settings
         </FontIcon>
         <Drawer open={this.state.open}>

@@ -5,9 +5,9 @@ import Avatar from 'material-ui/Avatar'
 export default class DeviceBasicInfo extends Component {
 
   static propTypes = {
-    id: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    path: PropTypes.string.isRequired
+    id: PropTypes.string,
+    name: PropTypes.string,
+    path: PropTypes.string
   }
 
   render () {
@@ -15,7 +15,7 @@ export default class DeviceBasicInfo extends Component {
       <CardHeader
         title={this.props.name}
         subtitle={this.props.path}
-        avatar={<Avatar>{this.props.name.charAt(0)}</Avatar>}
+        avatar={<Avatar>{this.props.name ?  this.props.name.charAt(0): '' }</Avatar>}
       />
     )
   }

@@ -12,7 +12,7 @@ export default class App extends Component {
       <div>
         <Nav route={this.props.location.pathname} />
         <SettingsApp />
-        <div className="page-container">
+        <div className="container">
           {this.props.children}
         </div>
       </div>

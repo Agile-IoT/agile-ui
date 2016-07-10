@@ -16,12 +16,12 @@ injectTapEventPlugin()
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
 import createSagaMiddleware from 'redux-saga'
-import { deviceListSaga } from './sagas/sagas'
+import { rootSaga } from './sagas'
 
 const sagaMiddleware = createSagaMiddleware()
 const store = configureStore({}, sagaMiddleware)
 
-sagaMiddleware.run(deviceListSaga)
+sagaMiddleware.run(rootSaga)
 
 const rootElement = document.getElementById('app')
 

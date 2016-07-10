@@ -1,7 +1,7 @@
 import * as types from '../constants/ActionTypes'
 
 const initialState = {
-  device: {},
+  item: {},
   error: null,
   loading: 'hide'
 }
@@ -11,23 +11,27 @@ export default function (state = initialState, action) {
 
   switch (action.type) {
 
-    case types.FETCH_DEVICE:
+    case types.DEVICE_FETCH_REQUESTED:
       return {
         ...state,
         loading: 'loading'
       }
-    case types.FETCH_DEVICE_SUCCESS:
+    case types.DEVICE_FETCH_SUCCEEDED:
+      console.log('reducer', action.data)
       return {
         ...state,
-        devicesById: action.payload, loading: 'hide'
+        item: action.data,
+        loading: 'hide'
       }
-    case types.FETCH_DEVICE_FAILURE:
-      error = action.payload.data || {
-        message: action.payload.message
+    case types.DEVICE_FETCH_FAILED:
+      error = action.data || {
+        message: action.data.message
       }
       return {
         ...state,
-        devicesById: [], error: error, loading: 'hide'
+        item: [],
+        error: error,
+        loading: 'hide'
       }
 
     default:

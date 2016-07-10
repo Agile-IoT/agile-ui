@@ -1,14 +1,11 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-
-import * as settingsActions from '../../actions/SettingsActions'
 import { Settings } from '../../components'
 
 class SettingsApp extends Component {
   static propTypes = {
     settings: PropTypes.object.isRequired,
-    actions: PropTypes.object.isRequired,
+    dispatch: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
     error: PropTypes.object
   }
@@ -18,9 +15,9 @@ class SettingsApp extends Component {
   }
 
   render () {
-    const { open, actions, settings, error } = this.props
+    const { open, dispatch, settings, error } = this.props
     return (
-      <Settings open={open} settings={settings} actions={actions} error={error}  />
+      <Settings open={open} settings={settings} dispatch={dispatch} error={error}  />
     )
   }
 }
@@ -35,7 +32,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    actions: bindActionCreators(settingsActions, dispatch)
+    dispatch:dispatch
   }
 }
 
