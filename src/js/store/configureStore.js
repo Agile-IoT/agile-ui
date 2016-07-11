@@ -5,11 +5,8 @@ import { persistState } from 'redux-devtools'
 export default function configureStore(initialState, sagaMiddleware) {
 
   let enhancer
-  let middlewares = [require('redux-immutable-state-invariant')(), sagaMiddleware]
-
+  let middleware = applyMiddleware(sagaMiddleware)
   if (process.env.NODE_ENV !== 'production') {
-
-    let middleware = applyMiddleware(...middlewares)
 
     let getDebugSessionKey = function () {
       // By default we try to read the key from ?debug_session=<key> in the address bar
@@ -36,7 +33,7 @@ export default function configureStore(initialState, sagaMiddleware) {
       )
     }
   } else {
-    enhancer = compose(applyMiddleware(...middlewares))
+    enhancer = compose(middleware)
   }
 
   const store = createStore(rootReducer, initialState, enhancer)
