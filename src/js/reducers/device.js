@@ -9,7 +9,7 @@ const initialState = {
 export default function (state = initialState, action) {
   switch (action.type) {
 
-    case types.DEVICE_FETCH_REQUESTED:
+    case types.DEVICE_FETCH:
       return {
         ...state,
         loading: 'loading'
@@ -23,7 +23,25 @@ export default function (state = initialState, action) {
     case types.DEVICE_FETCH_FAILED:
       return {
         ...state,
-        item: [],
+        item: null,
+        error: action.data,
+        loading: 'hide'
+      }
+
+    case types.DEVICE_DELETE:
+      return {
+        ...state,
+        loading: 'loading'
+      }
+    case types.DEVICE_DELETE_SUCCEEDED:
+      return {
+        ...state,
+        item: {},
+        loading: 'hide'
+      }
+    case types.DEVICE_DELETE_FAILED:
+      return {
+        ...state,
         error: action.data,
         loading: 'hide'
       }

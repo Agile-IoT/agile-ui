@@ -1,11 +1,13 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { DeviceList } from '../../components'
+import { bindActionCreators } from 'redux'
+import * as deviceListActions from '../../actions/deviceList'
 
 class DeviceListApp extends Component {
   static propTypes = {
     deviceList: PropTypes.object.isRequired,
-    dispatch: PropTypes.func.isRequired,
+    actions: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
     route: PropTypes.object.isRequired
   }
@@ -14,32 +16,11 @@ class DeviceListApp extends Component {
     super(props)
   }
 
-  componentDidMount () {
-    this.updateList(this.props)
-  }
-
-  componentWillUpdate (nextProps) {
-    // detect if route has changed and load new device resource
-    if (nextProps.location.pathname != this.props.location.pathname) {
-      this.updateList(nextProps)
-    }
-  }
-
-  updateList(props) {
-    let resource
-    if (props.location.pathname === '/') {
-      resource = '/devices'
-    } else {
-      resource = '/protocols/devices'
-    }
-    props.dispatch({type: 'DEVICELIST_FETCH_REQUESTED', method: 'GET', resource: resource })
-  }
-
   render () {
-    const { deviceList: { items, loading }, dispatch, route } = this.props
+    const { deviceList: { items, loading }, actions, route } = this.props
     return (
       <div>
-        <DeviceList listName={route.title} loading={loading} devices={items} dispatch={dispatch} />
+        <DeviceList listName={route.title} loading={loading} devices={items} actions={actions} />
       </div>
     )
   }
@@ -51,9 +32,9 @@ function mapStateToProps(state) {
   }
 }
 
-function mapDispatchToProps (dispatch) {
+function mapDispatchToProps(dispatch) {
   return {
-    dispatch: dispatch
+    actions: bindActionCreators(deviceListActions, dispatch)
   }
 }
 

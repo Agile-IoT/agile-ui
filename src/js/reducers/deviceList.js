@@ -11,7 +11,7 @@ export default function (state = initialState, action) {
 
   switch (action.type) {
 
-    case types.DEVICELIST_FETCH_REQUESTED:
+    case types.DEVICELIST_FETCH:
     // start fetching posts and set loading = true
       return {
         ...state,

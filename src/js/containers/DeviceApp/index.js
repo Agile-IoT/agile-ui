@@ -1,30 +1,27 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { Device } from '../../components'
+import { bindActionCreators } from 'redux'
+import * as deviceActions from '../../actions/device'
 
 class DeviceApp extends Component {
 
   static propTypes = {
     device: PropTypes.object.isRequired,
-    dispatch: PropTypes.func.isRequired
+    actions: PropTypes.object.isRequired
   }
 
   componentWillMount () {
-    this.updateDevice(this.props)
-  }
-
-  updateDevice(props) {
-    const id = props.location.pathname.split("/").pop()
-    props.dispatch({type: 'DEVICE_FETCH_REQUESTED', method: 'GET',
-      resource: '/devices', device: id })
+    const id = this.props.location.pathname.split("/").pop()
+    this.props.actions.deviceFetch('GET', '/devices',  id)
   }
 
   render () {
-    const { device: { item, loading, error }, dispatch } = this.props
+    const { device: { item, loading, error }, actions } = this.props
     return (
       <div>
         <Device name={item.name} id={item.id} path={item.path}
-        dispatch={dispatch} loading={loading} error={error} />
+        actions={actions} loading={loading} error={error} />
       </div>
     )
   }
@@ -38,7 +35,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    dispatch: dispatch
+    actions: bindActionCreators(deviceActions, dispatch)
   }
 }
 

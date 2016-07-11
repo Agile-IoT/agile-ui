@@ -10,16 +10,12 @@ export default class Settings extends Component {
 
   static propTypes = {
     settings: PropTypes.object.isRequired,
-    dispatch: PropTypes.func.isRequired,
+    actions: PropTypes.object.isRequired,
     open: PropTypes.bool.isRequired,
     error: PropTypes.object
   }
 
-  constructor(props) {
-    super(props)
-    this.state = {open: false}
-  }
-
+  // TODO decide on styling technique
   style = {
     AppBar: {
       margin: '0 0 20px'
@@ -33,23 +29,14 @@ export default class Settings extends Component {
     }
   }
 
-  drawerToggle = () => {
-    this.props.dispatch({type: 'SETTINGS_DRAWER_TOGGLE', data: this.props.open })
-  }
-
-  discoveryToggle = () => {
-    let method
-    if (this.props.settings.discovery) {
-      method = 'DELETE'
-    } else {
-      method = 'POST'
-    }
-    this.props.dispatch({type: 'SETTINGS_DISCOVERY_REQUESTED', method: method, resource: '/protocols/discovery' })
-  }
   render() {
+    const { actions: { drawerToggle, discoveryToggle } } = this.props
     return (
       <div>
-        <FontIcon style={this.style.Cog} toggled={this.props.open} onTouchTap={this.drawerToggle} className="material-icons">
+        <FontIcon style={this.style.Cog} toggled={this.props.open}
+          onTouchTap={() => drawerToggle(this.props.open)}
+          className="material-icons"
+          >
           settings
         </FontIcon>
         <Drawer open={this.props.open}>
@@ -57,13 +44,16 @@ export default class Settings extends Component {
              title='Settings'
              style={this.style.AppBar}
              showMenuIconButton={false}
-             iconElementRight={<IconButton  onTouchTap={this.drawerToggle}><NavigationClose/></IconButton>}
+             iconElementRight={<IconButton
+             onTouchTap={() => drawerToggle(this.props.open)}>
+              <NavigationClose/>
+             </IconButton>}
           />
           <Toggle
              label="Device Discovery"
              labelPosition="right"
              style={this.style.Toggle}
-             onToggle={this.discoveryToggle}
+             onToggle={() => discoveryToggle(this.props.settings.discovery)}
              toggled={this.props.settings.discovery}
            />
         </Drawer>

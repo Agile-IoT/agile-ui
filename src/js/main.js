@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import configureStore  from './store/configureStore'
 import { Router, browserHistory } from 'react-router'
+import { syncHistoryWithStore } from 'react-router-redux'
 
 import routes from './routes'
 
@@ -22,6 +23,8 @@ const store = configureStore({}, sagaMiddleware)
 
 sagaMiddleware.run(rootSaga)
 
+const history = syncHistoryWithStore(browserHistory, store)
+
 const rootElement = document.getElementById('app')
 
 let ComponentEl
@@ -31,14 +34,14 @@ if (process.env.NODE_ENV !== 'production') {
 
   ComponentEl = (
     <div>
-      <Router history={browserHistory} routes={routes} />
+      <Router history={history} routes={routes} />
       <DevTools />
     </div>
   )
 } else {
   ComponentEl = (
     <div>
-      <Router history={browserHistory} routes={routes} />
+      <Router history={history} routes={routes} />
     </div>
   )
 }

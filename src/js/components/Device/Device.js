@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react'
-import {Card, CardActions } from 'material-ui/Card'
-import FlatButton from 'material-ui/FlatButton'
+import { Card } from 'material-ui/Card'
 import DeviceBasicInfo from './DeviceBasicInfo'
+import DeviceActions from './DeviceActions'
 import Loading from '../Loading/Loading'
 
 export default class Device extends Component {
@@ -10,7 +10,8 @@ export default class Device extends Component {
     id: PropTypes.string,
     name: PropTypes.string,
     path: PropTypes.string,
-    loading: PropTypes.string
+    loading: PropTypes.string,
+    actions: PropTypes.object
   }
 
   render () {
@@ -22,9 +23,7 @@ export default class Device extends Component {
           name={this.props.name}
           path={this.props.path}
         />
-        <CardActions>
-          <FlatButton label="Delete Device" secondary={true} onClick={() => this.props.deleteDevice(this.props.id)}/>
-        </CardActions>
+      <DeviceActions actions={this.props.actions} id={this.props.id}/>
       </Card>
     )
   }

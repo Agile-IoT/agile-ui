@@ -14,10 +14,10 @@ export default function (state = initialState, action) {
     case types.SETTINGS_DRAWER_TOGGLE:
       return {
         ...state,
-        open: !action.data
+        open: !action.state
       }
 
-    case types.SETTINGS_DISCOVERY_REQUESTED:
+    case types.SETTINGS_DISCOVERY:
     // start fetching posts and set loading = true
       return {
         ...state,
