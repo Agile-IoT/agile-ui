@@ -5,12 +5,11 @@ import { persistState } from 'redux-devtools'
 export default function configureStore(initialState, sagaMiddleware) {
 
   let enhancer
-  let middleware
+  let middlewares = [require('redux-immutable-state-invariant')(), sagaMiddleware]
 
   if (process.env.NODE_ENV !== 'production') {
 
-    let middlewares = [require('redux-immutable-state-invariant')(), sagaMiddleware]
-    middleware = applyMiddleware(...middlewares)
+    let middleware = applyMiddleware(...middlewares)
 
     let getDebugSessionKey = function () {
       // By default we try to read the key from ?debug_session=<key> in the address bar
@@ -29,18 +28,17 @@ export default function configureStore(initialState, sagaMiddleware) {
       // Optional. Lets you write ?debug_session=<key> in address bar to persist debug sessions
       persistState(getDebugSessionKey())
     )
+
+    // Enable Webpack hot module replacement for reducers
+    if (module.hot) {
+      module.hot.accept('../reducers', () =>
+        store.replaceReducer(require('../reducers').default)
+      )
+    }
   } else {
-    enhancer = compose(middleware)
+    enhancer = compose(applyMiddleware(...middlewares))
   }
 
   const store = createStore(rootReducer, initialState, enhancer)
-
-  // Enable Webpack hot module replacement for reducers
-  if (module.hot) {
-    module.hot.accept('../reducers', () =>
-      store.replaceReducer(require('../reducers').default)
-    )
-  }
-
   return store
 }

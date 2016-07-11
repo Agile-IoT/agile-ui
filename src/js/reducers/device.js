@@ -7,8 +7,6 @@ const initialState = {
 }
 
 export default function (state = initialState, action) {
-  let error
-
   switch (action.type) {
 
     case types.DEVICE_FETCH_REQUESTED:
@@ -17,20 +15,16 @@ export default function (state = initialState, action) {
         loading: 'loading'
       }
     case types.DEVICE_FETCH_SUCCEEDED:
-      console.log('reducer', action.data)
       return {
         ...state,
         item: action.data,
         loading: 'hide'
       }
     case types.DEVICE_FETCH_FAILED:
-      error = action.data || {
-        message: action.data.message
-      }
       return {
         ...state,
         item: [],
-        error: error,
+        error: action.data,
         loading: 'hide'
       }
 

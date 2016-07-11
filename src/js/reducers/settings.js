@@ -11,6 +11,11 @@ const initialState = {
 export default function (state = initialState, action) {
 
   switch (action.type) {
+    case types.SETTINGS_DRAWER_TOGGLE:
+      return {
+        ...state,
+        open: !action.data
+      }
 
     case types.SETTINGS_DISCOVERY_REQUESTED:
     // start fetching posts and set loading = true

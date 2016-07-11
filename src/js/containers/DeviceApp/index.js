@@ -21,7 +21,6 @@ class DeviceApp extends Component {
 
   render () {
     const { device: { item, loading, error }, dispatch } = this.props
-    console.log('item', item)
     return (
       <div>
         <Device name={item.name} id={item.id} path={item.path}

@@ -6,10 +6,7 @@ export default function requester(method, resource) {
     method: method,
     url: BASE_URL + resource,
     headers: []
-  }).then(data => {
-    console.log(data)
-    return data
-  }).catch(e => {
-    throw e
   })
+  .then(response => ({ response }))
+  .catch(error => ({ error }))
 }

@@ -1,8 +1,6 @@
 import './DeviceListItem.scss'
 import React, { Component, PropTypes } from 'react'
-import {Card, CardActions } from 'material-ui/Card'
-import FlatButton from 'material-ui/FlatButton'
-import Avatar from 'material-ui/Avatar'
+import { Card } from 'material-ui/Card'
 import { Link } from 'react-router'
 
 import DeviceBasicInfo from '../Device/DeviceBasicInfo'

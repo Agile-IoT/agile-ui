@@ -47,7 +47,7 @@ const sassLoaders = [
 
 module.exports = {
   entry: {
-    app: path.resolve(PATHS.app, 'main.js'),
+    app: ['babel-polyfill', path.resolve(PATHS.app, 'main.js')],
     vendor: ['react']
   },
   output: {

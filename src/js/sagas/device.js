@@ -4,12 +4,11 @@ import * as types from '../constants/ActionTypes'
 import requester from '../utils'
 
 function* deviceFetch(action) {
-   try {
-      const payload = yield call(requester, action.method, `${action.resource}/${action.device}`)
-      yield put({ type: types.DEVICE_FETCH_SUCCEEDED , data: payload.data })
-   } catch (e) {
-      yield put({ type: types.DEVICE_FETCH_FAILED , data: e.message })
-   }
+  const { response, error } = yield call(requester, action.method, `${action.resource}/${action.device}`)
+  if (response)
+    yield put({ type: types.DEVICE_FETCH_SUCCEEDED , data: response.data })
+  else
+    yield put({ type: types.DEVICE_FETCH_FAILED , data: error })
 }
 
 export function* deviceSaga() {

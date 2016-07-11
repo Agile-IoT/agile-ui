@@ -1,14 +1,13 @@
 import './DeviceList.scss'
-
 import React, { Component, PropTypes } from 'react'
-
 import DeviceListItem from '../DeviceListItem/DeviceListItem'
-import RefreshIndicator from 'material-ui/RefreshIndicator'
+import Loading from '../Loading/Loading'
 
 export default class DeviceList extends Component {
 
   static propTypes = {
-    devices: PropTypes.array.isRequired
+    devices: PropTypes.array.isRequired,
+    loading: PropTypes.string
   };
 
   renderList() {
@@ -28,13 +27,7 @@ export default class DeviceList extends Component {
   render () {
     return (
       <div>
-        <RefreshIndicator
-          size={50}
-          left={70}
-          top={0}
-          status={this.props.loading}
-          loadingColor={"#FF9800"}
-        />
+        <Loading loading={this.props.loading}/>
         <h1>{this.props.listName}</h1>
         <ul className="DeviceList">
           {this.renderList()}

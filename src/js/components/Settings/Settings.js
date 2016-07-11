@@ -34,7 +34,7 @@ export default class Settings extends Component {
   }
 
   drawerToggle = () => {
-    this.setState({open: !this.state.open})
+    this.props.dispatch({type: 'SETTINGS_DRAWER_TOGGLE', data: this.props.open })
   }
 
   discoveryToggle = () => {
@@ -45,7 +45,6 @@ export default class Settings extends Component {
       method = 'POST'
     }
     this.props.dispatch({type: 'SETTINGS_DISCOVERY_REQUESTED', method: method, resource: '/protocols/discovery' })
-
   }
   render() {
     return (
@@ -53,7 +52,7 @@ export default class Settings extends Component {
         <FontIcon style={this.style.Cog} toggled={this.props.open} onTouchTap={this.drawerToggle} className="material-icons">
           settings
         </FontIcon>
-        <Drawer open={this.state.open}>
+        <Drawer open={this.props.open}>
           <AppBar
              title='Settings'
              style={this.style.AppBar}
