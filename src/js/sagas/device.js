@@ -19,7 +19,11 @@ function* deviceRedirectors() {
   yield takeEvery(types.DEVICE_DELETE_SUCCEEDED, redirector, '/')
 }
 
-export function* deviceSaga() {
+export function* deviceSaga(route) {
   yield fork(deviceListeners)
   yield fork(deviceRedirectors)
+  // get the deviceID from route
+  const id = route.split("/").pop()
+  // fetch the device
+  yield put({ type: types.DEVICE_FETCH, method: 'GET', resource: '/devices', device: id })
 }

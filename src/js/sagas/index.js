@@ -1,4 +1,4 @@
-import { fork, call, take, cancel } from 'redux-saga/effects'
+import { fork, take, cancel } from 'redux-saga/effects'
 import { takeEvery } from 'redux-saga'
 import {deviceListSaga} from './deviceList'
 import {settingsSaga} from './settings'
@@ -18,6 +18,8 @@ function* routeHandler(action) {
     yield take(types.LOCATION_CHANGE)
     yield cancel(saga)
   } else {
-    yield call(deviceSaga)
+    const saga = yield fork(deviceSaga, action.payload.pathname)
+    yield take(types.LOCATION_CHANGE)
+    yield cancel(saga)
   }
 }

@@ -19,7 +19,7 @@ class DeviceListApp extends Component {
   render () {
     const { deviceList: { items, loading }, actions, route } = this.props
     return (
-      <div>
+      <div className="container--app">
         <DeviceList listName={route.title} loading={loading} devices={items} actions={actions} />
       </div>
     )

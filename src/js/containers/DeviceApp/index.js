@@ -11,15 +11,10 @@ class DeviceApp extends Component {
     actions: PropTypes.object.isRequired
   }
 
-  componentWillMount () {
-    const id = this.props.location.pathname.split("/").pop()
-    this.props.actions.deviceFetch('GET', '/devices',  id)
-  }
-
   render () {
     const { device: { item, loading, error }, actions } = this.props
     return (
-      <div>
+      <div className="container--app">
         <Device name={item.name} id={item.id} path={item.path}
         actions={actions} loading={loading} error={error} />
       </div>

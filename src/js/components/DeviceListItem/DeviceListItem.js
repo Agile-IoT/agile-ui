@@ -1,4 +1,3 @@
-import './DeviceListItem.scss'
 import React, { Component, PropTypes } from 'react'
 import { Card } from 'material-ui/Card'
 import { Link } from 'react-router'

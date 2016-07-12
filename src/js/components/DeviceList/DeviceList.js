@@ -1,4 +1,3 @@
-import './DeviceList.scss'
 import React, { Component, PropTypes } from 'react'
 import DeviceListItem from '../DeviceListItem/DeviceListItem'
 import Loading from '../Loading/Loading'

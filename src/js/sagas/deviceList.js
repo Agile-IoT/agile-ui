@@ -14,21 +14,21 @@ function* deviceListPoll(route) {
       }
 
       const { response, error } = yield call(requester, 'GET', resource)
-
       if (response)
         yield put({ type: types.DEVICELIST_FETCH_SUCCEEDED , data: response.data })
       else
         yield put({ type: types.DEVICELIST_FETCH_FAILED , data: error })
       // delay poll
-      yield call(delay, 2000)
+      yield call(delay, 2500)
     }
   } finally {
     if (yield cancelled())
-      yield console.log('deviceList saga cancelled')
+      // any clean up actions here
+      yield 
   }
 }
 
 export function* deviceListSaga(route) {
   yield put({ type: types.DEVICELIST_FETCH })
-  const poller = yield fork(deviceListPoll, route)
+  yield fork(deviceListPoll, route)
 }
