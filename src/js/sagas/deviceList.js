@@ -6,12 +6,12 @@ import { requester } from '../utils'
 function* deviceListPoll(route) {
   try {
     while (true) {
-      let resource
-      if (route === '/') {
-        resource = '/devices'
-      } else {
-        resource = '/protocols/devices'
-      }
+      let resource = '/devices'
+      // if (route === '/') {
+      //   resource = '/devices'
+      // } else {
+      //   resource = '/protocols/devices'
+      // }
 
       const { response, error } = yield call(requester, 'GET', resource)
       if (response)

@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { DeviceList, NoResults } from '../../components'
 import { bindActionCreators } from 'redux'
 import * as deviceListActions from '../../actions/deviceList'
+import deviceRegister from '../../actions/device'
 
 class DeviceListApp extends Component {
   static propTypes = {
@@ -34,9 +35,15 @@ function mapStateToProps(state) {
   }
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch, props) {
+  console.log(props.route)
+  let actions
+  if (props.route.path === '/discover')
+    actions = { ...deviceListActions, deviceRegister: deviceRegister }
+  else
+    actions = deviceListActions
   return {
-    actions: bindActionCreators(deviceListActions, dispatch)
+    actions: bindActionCreators(actions, dispatch)
   }
 }
 

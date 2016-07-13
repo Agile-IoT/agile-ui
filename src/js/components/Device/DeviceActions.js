@@ -10,11 +10,23 @@ export default class DeviceActions extends Component {
   }
 
   render () {
-    return (
-      <CardActions>
+    let buttons
+    console.log(this.actions)
+    if (this.props.actions.registerDevice) {
+      // device is not registered
+      buttons = <FlatButton label='Register'
+        onClick={() => this.props.actions.deviceDelete('DELETE', '/devices', this.props)}
+      />
+    } else {
+      buttons = <div>
         <FlatButton label='Delete'
           onClick={() => this.props.actions.deviceDelete('DELETE', '/devices', this.props.id)}
         />
+      </div>
+    }
+    return (
+      <CardActions>
+        {buttons}
      </CardActions>
     )
   }

@@ -11,3 +11,12 @@ export function deviceDelete(method, resource, device) {
     device: device
   }
 }
+
+export function deviceRegister(method, resource, device) {
+  return {
+    type: types.DEVICE_REGISTER,
+    method: method,
+    resource: resource,
+    device: device
+  }
+}
