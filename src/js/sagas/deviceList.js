@@ -24,7 +24,7 @@ function* deviceListPoll(route) {
   } finally {
     if (yield cancelled())
       // any clean up actions here
-      yield 
+      yield
   }
 }
 

@@ -1,19 +1,22 @@
 import React, { Component, PropTypes } from 'react'
-import {Card} from 'material-ui/Card'
-import FlatButton from 'material-ui/FlatButton'
+import {Card, CardHeader} from 'material-ui/Card'
 
 export default class DeviceActions extends Component {
 
   static propTypes = {
     title: PropTypes.string,
-    value: PropTypes.string
+    unit: PropTypes.string
   }
 
   render () {
     return (
       <Card>
-
-     </Card>
+        <CardHeader
+          title={this.props.name}
+          subtitle={this.props.unit}
+          avatar={<Avatar>{this.props.name ?  this.props.name.charAt(0): '' }</Avatar>}
+        />
+      </Card>
     )
   }
 }

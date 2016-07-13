@@ -8,7 +8,7 @@ export default class NoResults extends Component {
   };
   render () {
     return (
-      <div>
+      <div className="test--center">
         <FontIcon className="material-icons">sentiment_very_dissatisfied</FontIcon>
         <h3>{this.props.text}</h3>
       </div>

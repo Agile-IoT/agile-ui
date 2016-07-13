@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { DeviceList } from '../../components'
+import { DeviceList, NoResults } from '../../components'
 import { bindActionCreators } from 'redux'
 import * as deviceListActions from '../../actions/deviceList'
 
@@ -17,12 +17,14 @@ class DeviceListApp extends Component {
   }
 
   render () {
-    const { deviceList: { items, loading }, actions, route } = this.props
-    return (
-      <div className="container--app">
-        <DeviceList listName={route.title} loading={loading} devices={items} actions={actions} />
-      </div>
-    )
+    const { deviceList: { items, loading, error }, actions, route } = this.props
+    if (error) {
+      return (<NoResults text='Something went wrong'/>)
+    } else if (items.length < 1) {
+      return (<NoResults text='No devices found'/>)
+    } else {
+      return (<DeviceList listName={route.title} loading={loading} devices={items} actions={actions} />)
+    }
   }
 }
 

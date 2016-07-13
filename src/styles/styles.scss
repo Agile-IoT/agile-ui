@@ -16,5 +16,10 @@ body {
 .container--app {
   position: relative;
   margin:auto;
-  width: 50%;
+  width: 80%;
+  max-width: 800px;
+}
+
+.test--center {
+  text-align: center;
 }
