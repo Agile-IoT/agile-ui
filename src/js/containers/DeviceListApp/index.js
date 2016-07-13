@@ -2,13 +2,12 @@ import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { DeviceList, NoResults } from '../../components'
 import { bindActionCreators } from 'redux'
-import * as deviceListActions from '../../actions/deviceList'
-import deviceRegister from '../../actions/device'
+import { deviceDelete, deviceRegister } from '../../actions/device'
 
 class DeviceListApp extends Component {
   static propTypes = {
     deviceList: PropTypes.object.isRequired,
-    actions: PropTypes.object.isRequired,
+    actions: PropTypes.array.isRequired,
     location: PropTypes.object.isRequired,
     route: PropTypes.object.isRequired
   }
@@ -36,14 +35,20 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch, props) {
-  console.log(props.route)
   let actions
-  if (props.route.path === '/discover')
-    actions = { ...deviceListActions, deviceRegister: deviceRegister }
-  else
-    actions = deviceListActions
+  if (props.route.path === '/discover') {
+    actions = [{
+      text: 'Register',
+      func:  bindActionCreators(deviceRegister, dispatch)
+    }]
+  } else {
+    actions = [{
+      text: 'Delete',
+      func:  bindActionCreators(deviceDelete, dispatch)
+    }]
+  }
   return {
-    actions: bindActionCreators(actions, dispatch)
+    actions: actions
   }
 }
 

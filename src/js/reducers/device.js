@@ -15,9 +15,10 @@ export default function (state = initialState, action) {
         loading: 'loading'
       }
     case types.DEVICE_FETCH_SUCCEEDED:
+      console.log(action.data[0])
       return {
         ...state,
-        item: action.data,
+        item: action.data[0],
         loading: 'hide'
       }
     case types.DEVICE_FETCH_FAILED:

@@ -18,7 +18,14 @@ class DeviceApp extends Component {
     } else if (item.length < 1) {
       return (<NoResults text='No device found'/>)
     } else {
-      return (<Device name={item.name} id={item.id} path={item.path} actions={actions} loading={loading} error={error} />)
+      return (<Device name={item.name}
+        id={item.id}
+        path={item.path}
+        actions={actions}
+        loading={loading}
+        error={error}
+        streams={item.streams}
+        />)
     }
   }
 }

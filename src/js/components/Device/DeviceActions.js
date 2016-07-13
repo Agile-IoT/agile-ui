@@ -5,28 +5,24 @@ import FlatButton from 'material-ui/FlatButton'
 export default class DeviceActions extends Component {
 
   static propTypes = {
-    actions: PropTypes.object,
-    id: PropTypes.string
+    actions: PropTypes.array,
+    device: PropTypes.object
+  }
+
+  renderList() {
+    return this.props.actions.map((action) =>
+      (
+        <FlatButton key={action.text} label={action.text}
+          onClick={() => action.func(this.props.device)}
+        />
+      )
+    )
   }
 
   render () {
-    let buttons
-    console.log(this.actions)
-    if (this.props.actions.registerDevice) {
-      // device is not registered
-      buttons = <FlatButton label='Register'
-        onClick={() => this.props.actions.deviceDelete('DELETE', '/devices', this.props)}
-      />
-    } else {
-      buttons = <div>
-        <FlatButton label='Delete'
-          onClick={() => this.props.actions.deviceDelete('DELETE', '/devices', this.props.id)}
-        />
-      </div>
-    }
     return (
       <CardActions>
-        {buttons}
+        {this.renderList()}
      </CardActions>
     )
   }

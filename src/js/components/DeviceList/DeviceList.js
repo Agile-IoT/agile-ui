@@ -17,8 +17,8 @@ export default class DeviceList extends Component {
           id={device.id}
           name={device.name}
           path={device.path}
-          starred={device.starred}
-          {...this.props.actions} />
+          device={device}
+          actions={this.props.actions} />
       )
     )
   }

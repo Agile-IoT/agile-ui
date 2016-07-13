@@ -1,10 +1,12 @@
 import React, { Component, PropTypes } from 'react'
 import {Card, CardHeader} from 'material-ui/Card'
+import Avatar from 'material-ui/Avatar'
+var randomMC = require('random-material-color')
 
-export default class DeviceActions extends Component {
+export default class DeviceStream extends Component {
 
   static propTypes = {
-    title: PropTypes.string,
+    id: PropTypes.string,
     unit: PropTypes.string
   }
 
@@ -12,9 +14,9 @@ export default class DeviceActions extends Component {
     return (
       <Card>
         <CardHeader
-          title={this.props.name}
+          title={this.props.id}
           subtitle={this.props.unit}
-          avatar={<Avatar>{this.props.name ?  this.props.name.charAt(0): '' }</Avatar>}
+          avatar={<Avatar backgroundColor={randomMC.getColor()}>{this.props.value}</Avatar>}
         />
       </Card>
     )

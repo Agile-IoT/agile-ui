@@ -11,24 +11,27 @@ export default class DeviceListItem extends Component {
     id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     path: PropTypes.string.isRequired,
-    actions: PropTypes.object
+    device: PropTypes.object,
+    actions: PropTypes.array
   }
 
   render () {
-    console.log(this.props)
     return (
-      <Link to={`/device/${this.props.id}`}>
+
         <Card>
+          <Link to={`/device/${this.props.id}`}>
           <DeviceBasicInfo
             id={this.props.path}
             name={this.props.name}
             path={this.props.path}
           />
+          </Link>
           <DeviceActions
+            device={this.props.device}
             actions={this.props.actions}
           />
         </Card>
-      </Link>
+
     )
   }
 }
