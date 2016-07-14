@@ -6,7 +6,7 @@ import { call, put } from 'redux-saga/effects'
 export function requester(method, resource, body) {
   return axios({
     method: method,
-    url: BASE_API + resource,
+    url: resource,
     headers: [],
     data: body
   })

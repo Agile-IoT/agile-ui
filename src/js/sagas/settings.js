@@ -4,13 +4,7 @@ import * as types from '../constants/ActionTypes'
 import { requester } from '../utils'
 
 function* discovery(action) {
-  let method
-  if (action.state) {
-    method = 'DELETE'
-  } else {
-    method = 'POST'
-  }
-  const { response, error } = yield call(requester, method, '/protocols/discovery')
+  const { response, error } = yield call(requester, action.method,  action.url)
   if (response)
     yield put({ type: types.SETTINGS_DISCOVERY_SUCCEEDED , data: response.data })
   else

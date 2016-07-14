@@ -4,7 +4,6 @@ import DeviceBasicInfo from './DeviceBasicInfo'
 import Loading from '../Loading/Loading'
 import DeviceStream from './DeviceStream'
 
-
 export default class Device extends Component {
 
   static propTypes = {

@@ -2,7 +2,8 @@ import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { DeviceList, NoResults } from '../../components'
 import { bindActionCreators } from 'redux'
-import { deviceDelete, deviceRegister } from '../../actions/device'
+import { deviceDelete } from '../../actions/device'
+import { deviceRegister } from '../../actions/deviceList'
 
 class DeviceListApp extends Component {
   static propTypes = {

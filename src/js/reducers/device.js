@@ -15,7 +15,6 @@ export default function (state = initialState, action) {
         loading: 'loading'
       }
     case types.DEVICE_FETCH_SUCCEEDED:
-      console.log(action.data[0])
       return {
         ...state,
         item: action.data[0],
