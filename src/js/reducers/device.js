@@ -17,7 +17,7 @@ export default function (state = initialState, action) {
     case types.DEVICE_FETCH_SUCCEEDED:
       return {
         ...state,
-        item: action.data[0],
+        item: action.data,
         loading: 'hide'
       }
     case types.DEVICE_FETCH_FAILED:

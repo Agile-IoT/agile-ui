@@ -1,14 +1,10 @@
 import { takeEvery } from 'redux-saga'
 import { call, put } from 'redux-saga/effects'
 import * as types from '../constants/ActionTypes'
-import { requester } from '../utils'
+import { requestHandler } from '../utils'
 
 function* discovery(action) {
-  const { response, error } = yield call(requester, action.method,  action.url)
-  if (response)
-    yield put({ type: types.SETTINGS_DISCOVERY_SUCCEEDED , data: response.data })
-  else
-    yield put({ type: types.SETTINGS_DISCOVERY_FAILED , data: error })
+  yield call(requestHandler, action)
 }
 
 export function* settingsSaga() {

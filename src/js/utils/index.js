@@ -14,8 +14,9 @@ export function requester(method, resource, body) {
   .catch(error => ({ error }))
 }
 
-export function* deviceCRUD(action) {
-  const { response, error } = yield call(requester, action.method, `${action.resource}`, action.body)
+export function* requestHandler(action) {
+  console.log(action)
+  const { response, error } = yield call(requester, action.method, action.url, action.body)
   if (response)
     yield put({ type: `${action.type}_SUCCEEDED` , data: response.data })
   else
