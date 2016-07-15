@@ -5,6 +5,8 @@ import Toggle from 'material-ui/Toggle'
 import AppBar from 'material-ui/AppBar'
 import IconButton from 'material-ui/IconButton'
 import NavigationClose from 'material-ui/svg-icons/navigation/close'
+import {List, ListItem} from 'material-ui/List'
+import Divider from 'material-ui/Divider'
 
 export default class Settings extends Component {
 
@@ -26,6 +28,19 @@ export default class Settings extends Component {
     Cog: {
       margin: '20px 0 0 20px',
       cursor: 'pointer'
+    }
+  }
+
+  renderList() {
+    if (this.props.settings.discovery.protocols.length > 0) {
+      return this.props.settings.discovery.protocols.map((protocol) =>
+        (
+          <div key={protocol.name}>
+            <ListItem primaryText={protocol.name} secondaryText={protocol.status} />
+            <Divider />
+          </div>
+        )
+      )
     }
   }
 
@@ -53,9 +68,12 @@ export default class Settings extends Component {
              label="Device Discovery"
              labelPosition="right"
              style={this.style.Toggle}
-             onToggle={() => discoveryToggle(this.props.settings.discovery)}
-             toggled={this.props.settings.discovery}
+             onToggle={() => discoveryToggle(this.props.settings.discovery.on)}
+             toggled={this.props.settings.discovery.on}
            />
+         <List>
+         {this.renderList()}
+         </List>
         </Drawer>
       </div>
     )

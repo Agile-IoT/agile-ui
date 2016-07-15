@@ -18,6 +18,7 @@ function* routeHandler(action) {
     yield take(types.LOCATION_CHANGE)
     yield cancel(saga)
   } else {
+    // else spawn device view saga
     const saga = yield fork(deviceSaga, action.payload.pathname)
     yield take(types.LOCATION_CHANGE)
     yield cancel(saga)

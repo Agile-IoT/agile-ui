@@ -2,26 +2,33 @@
 import * as types from '../constants/ActionTypes'
 import { BASE_API, MIDDLEWARE_API } from '../constants/Endpoints'
 
+// request agile API to register device
 export function deviceRegister(device) {
   return {
     type: types.DEVICE_REGISTER,
     method: 'POST',
     url: `${BASE_API}/devices`,
-    body: device
+    body: device,
+    confirm: true,
+    confirmation: 'Device successfully Registered'
   }
 }
 
-export function deviceCreateDB(device) {
+// request middleware to perform nesscary tasks like db creation
+export function deviceProvision(device) {
   return {
-    type: types.DEVICE_CREATEDB,
+    type: types.DEVICE_PROVISION,
     method: 'POST',
     url: `${MIDDLEWARE_API}/db/create`,
-    body: device
+    body: device,
+    confirm: true,
+    confirmation: 'Device database successful created'
   }
 }
 
 export function deviceListFetch(route) {
   let resource
+  resource = '/devices'
   if (route === '/') {
     resource = '/devices'
   } else {

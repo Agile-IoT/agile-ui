@@ -3,7 +3,7 @@ import { call, put, fork, cancelled } from 'redux-saga/effects'
 import * as types from '../constants/ActionTypes'
 import { requestHandler, redirector } from '../utils'
 import { BASE_API } from '../constants/Endpoints'
-import { deviceListFetch, deviceCreateDB } from '../actions/deviceList'
+import { deviceListFetch, deviceProvision } from '../actions/deviceList'
 
 function* deviceListPoll(action) {
   try {
@@ -18,22 +18,19 @@ function* deviceListPoll(action) {
   }
 }
 
-// function* registrationProcessor(action) {
-//   // console.log(action)
-//   // const { response, error } =  yield call(deviceCreateDB)
-//   // if (response)
-//   //   yield put({ type: types.DEVICELIST_FETCH_SUCCEEDED , data: response.data })
-//   yield call(redirector, '/')
-// }
-//
-function* registerationWatcher() {
+function* provisioner(action) {
+  // yield put(deviceProvision(action.prevAction.body))
   // redirects user from /discovery to device list after successful registration
-  // yield takeEvery(types.DEVICE_REGISTER_SUCCEEDED, registrationProcessor)
+  yield call(redirector, '/')
+}
+
+function* registerationWatcher() {
+  yield takeEvery(types.DEVICE_REGISTER_SUCCEEDED, provisioner)
 }
 
 export function* deviceListSaga(route) {
   const action = yield put(deviceListFetch(route))
   yield fork(deviceListPoll, action)
   yield fork(registerationWatcher)
-  yield takeEvery([types.DEVICE_DELETE, types.DEVICE_REGISTER], requestHandler)
+  yield takeEvery([types.DEVICE_DELETE, types.DEVICE_REGISTER, types.DEVICE_PROVISION], requestHandler)
 }

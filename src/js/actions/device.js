@@ -19,6 +19,8 @@ export function deviceDelete(device) {
     type: types.DEVICE_DELETE,
     method: 'DELETE',
     url: `${BASE_API}/devices/${device.id}`,
-    body: null
+    body: null,
+    confirm: true,
+    confirmation: 'Device successfully Deleted'
   }
 }
