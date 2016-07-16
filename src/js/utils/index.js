@@ -1,10 +1,9 @@
 import axios from 'axios'
-import { BASE_API } from '../constants/Endpoints'
 import { browserHistory } from 'react-router'
 import { call, put } from 'redux-saga/effects'
 import * as types from '../constants/ActionTypes'
 
-export function requester(method, resource, body) {
+export function _requester(method, resource, body) {
   return axios({
     method: method,
     url: resource,
@@ -16,13 +15,15 @@ export function requester(method, resource, body) {
 }
 
 export function* requestHandler(action) {
-  const { response, error } = yield call(requester, action.method, action.url, action.body)
+  const { response, error } = yield call(_requester, action.method, action.url, action.body)
   if (response) {
     yield put({ type: `${action.type}_SUCCEEDED` , data: response.data, prevAction: action })
+    // if there is a success message, propagate to state
     if (action.confirm) {
       yield put({ type: types.CONFIRMATIONS_ADD ,  data: response, prevAction: action })
     }
   } else {
+    // if there is a failure, propagate to state
     yield put({ type: `${action.type}_FAILED` , data: error, prevAction: action })
     yield put({ type: types.ERRORS_ADD , data: error, prevAction: action })
   }

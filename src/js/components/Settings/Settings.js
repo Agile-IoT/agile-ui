@@ -5,7 +5,7 @@ import Toggle from 'material-ui/Toggle'
 import AppBar from 'material-ui/AppBar'
 import IconButton from 'material-ui/IconButton'
 import NavigationClose from 'material-ui/svg-icons/navigation/close'
-import {List, ListItem} from 'material-ui/List'
+import { List, ListItem } from 'material-ui/List'
 import Divider from 'material-ui/Divider'
 
 export default class Settings extends Component {
@@ -31,7 +31,7 @@ export default class Settings extends Component {
     }
   }
 
-  renderList() {
+  renderList () {
     if (this.props.settings.discovery.protocols.length > 0) {
       return this.props.settings.discovery.protocols.map((protocol) =>
         (
@@ -45,22 +45,22 @@ export default class Settings extends Component {
   }
 
   render() {
-    const { actions: { drawerToggle, discoveryToggle } } = this.props
+    const { actions: { drawerToggle, discoveryToggle }, settings, open } = this.props
     return (
       <div>
-        <FontIcon style={this.style.Cog} toggled={this.props.open}
-          onTouchTap={() => drawerToggle(this.props.open)}
+        <FontIcon style={this.style.Cog} toggled={open}
+          onTouchTap={() => drawerToggle(open)}
           className="material-icons"
           >
           settings
         </FontIcon>
-        <Drawer open={this.props.open}>
+        <Drawer open={open}>
           <AppBar
              title='Settings'
              style={this.style.AppBar}
              showMenuIconButton={false}
              iconElementRight={<IconButton
-             onTouchTap={() => drawerToggle(this.props.open)}>
+             onTouchTap={() => drawerToggle(open)}>
               <NavigationClose/>
              </IconButton>}
           />
@@ -68,8 +68,8 @@ export default class Settings extends Component {
              label="Device Discovery"
              labelPosition="right"
              style={this.style.Toggle}
-             onToggle={() => discoveryToggle(this.props.settings.discovery.on)}
-             toggled={this.props.settings.discovery.on}
+             onToggle={() => discoveryToggle(settings.discovery.on)}
+             toggled={settings.discovery.on}
            />
          <List>
          {this.renderList()}

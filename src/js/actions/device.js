@@ -24,3 +24,21 @@ export function deviceDelete(device) {
     confirmation: 'Device successfully Deleted'
   }
 }
+
+export function deviceStreamFetch(device, stream) {
+  return {
+    type: types.DEVICE_STREAM_FETCH,
+    method: 'GET',
+    url: `${BASE_API}/device/${device.id}/${stream.id}/lastUpdate`,
+    body: null
+  }
+}
+
+export function deviceGafanaLink(device) {
+  return {
+    type: types.DEVICE_STREAM_FETCH,
+    method: 'GET',
+    url: `${BASE_API}/device/${device.id}`,
+    body: null
+  }
+}

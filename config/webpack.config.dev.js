@@ -7,7 +7,7 @@ require("babel-polyfill")
 const PATHS = {
   app: path.resolve(__dirname, '../src/js'),
   styles: path.resolve(__dirname, '../src/styles'),
-  build: path.resolve(__dirname, '../build')
+  build: path.resolve(__dirname, '../public')
 }
 
 const plugins = [

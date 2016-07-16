@@ -2,10 +2,9 @@ import { delay, takeEvery } from 'redux-saga'
 import { call, put, fork, cancelled } from 'redux-saga/effects'
 import * as types from '../constants/ActionTypes'
 import { requestHandler, redirector } from '../utils'
-import { BASE_API } from '../constants/Endpoints'
 import { deviceListFetch, deviceProvision } from '../actions/deviceList'
 
-function* deviceListPoll(action) {
+function* _deviceListPoll(action) {
   try {
     while (true) {
       yield call(requestHandler, action)
@@ -18,19 +17,20 @@ function* deviceListPoll(action) {
   }
 }
 
-function* provisioner(action) {
-  // yield put(deviceProvision(action.prevAction.body))
-  // redirects user from /discovery to device list after successful registration
-  yield call(redirector, '/')
-}
+// Success event for middleware device provisioning
+// uncomment when middleware is ready
 
-function* registerationWatcher() {
-  yield takeEvery(types.DEVICE_REGISTER_SUCCEEDED, provisioner)
-}
+// function* provisioner(action) {
+//   yield put(deviceProvision(action.prevAction.body))
+//   // redirects user from /discovery to device list after successful registration
+//   yield call(redirector, '/')
+// }
+// function* _registerationWatcher() {
+//   yield takeEvery(types.DEVICE_REGISTER_SUCCEEDED, provisioner)
+// }
 
 export function* deviceListSaga(route) {
   const action = yield put(deviceListFetch(route))
-  yield fork(deviceListPoll, action)
-  yield fork(registerationWatcher)
-  yield takeEvery([types.DEVICE_DELETE, types.DEVICE_REGISTER, types.DEVICE_PROVISION], requestHandler)
+  yield fork(_deviceListPoll, action)
+  yield takeEvery([types.DEVICE_REGISTER, types.DEVICE_PROVISION], requestHandler)
 }

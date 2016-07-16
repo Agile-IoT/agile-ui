@@ -12,10 +12,6 @@ class SettingsApp extends Component {
     error: PropTypes.object
   }
 
-  constructor(props) {
-    super(props)
-  }
-
   render () {
     const { open, actions, settings, error } = this.props
     return (

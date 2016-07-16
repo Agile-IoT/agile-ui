@@ -3,48 +3,51 @@ import { Card } from 'material-ui/Card'
 import DeviceBasicInfo from './DeviceBasicInfo'
 import Loading from '../Loading/Loading'
 import DeviceStream from './DeviceStream'
+import DeviceActions from './DeviceActions'
+var randomMC = require('random-material-color')
 
 export default class Device extends Component {
 
   static propTypes = {
-    id: PropTypes.string,
-    name: PropTypes.string,
-    path: PropTypes.string,
     loading: PropTypes.string,
-    streams: PropTypes.array,
-    actions: PropTypes.object
+    actions: PropTypes.array,
+    color: PropTypes.string,
+    device: PropTypes.object
   }
 
-  renderStreams() {
-    if (this.props.streams)
-      return this.props.streams.map((stream, index) =>
+  renderStreams(streams) {
+    // renders each devices stream
+    if (streams)
+      return streams.map((stream, index) =>
         (
           <DeviceStream
             key={index}
             id={stream.id}
             unit={stream.unit}
-            value={45}
+            value={stream.value}
+            color={randomMC.getColor()}
+            time={stream.time}
             />
         )
       )
-    return
   }
-
   render () {
     return (
       <div>
         <Card>
           <Loading loading={this.props.loading} />
           <DeviceBasicInfo
-            id={this.props.id}
-            name={this.props.name}
-            path={this.props.path}
+            id={this.props.device.id}
+            name={this.props.device.name}
+            path={this.props.device.path}
+          />
+          <DeviceActions
+            device={this.props.device}
+            actions={this.props.actions}
           />
         </Card>
-      {this.renderStreams()}
+      {this.renderStreams(this.props.device.streams)}
       </div>
-
-
     )
   }
 }

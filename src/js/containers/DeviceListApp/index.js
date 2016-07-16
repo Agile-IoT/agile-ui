@@ -2,7 +2,6 @@ import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { DeviceList, NoResults } from '../../components'
 import { bindActionCreators } from 'redux'
-import { deviceDelete } from '../../actions/device'
 import { deviceRegister } from '../../actions/deviceList'
 
 class DeviceListApp extends Component {
@@ -12,11 +11,7 @@ class DeviceListApp extends Component {
     location: PropTypes.object.isRequired,
     route: PropTypes.object.isRequired
   }
-
-  constructor(props) {
-    super(props)
-  }
-
+  
   render () {
     const { deviceList: { items, loading, error }, actions, route } = this.props
     if (error) {
@@ -36,16 +31,11 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch, props) {
-  let actions
+  let actions = []
   if (props.route.path === '/discover') {
     actions = [{
       text: 'Register',
       func:  bindActionCreators(deviceRegister, dispatch)
-    }]
-  } else {
-    actions = [{
-      text: 'Delete',
-      func:  bindActionCreators(deviceDelete, dispatch)
     }]
   }
   return {
