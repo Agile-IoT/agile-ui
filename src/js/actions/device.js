@@ -18,7 +18,7 @@ export function deviceDelete(device) {
   return {
     type: types.DEVICE_DELETE,
     method: 'DELETE',
-    url: `${BASE_API}/devices/${device.id}`,
+    url: `${BASE_API}/devices/${device.deviceId}`,
     body: null,
     confirm: true,
     confirmation: 'Device successfully Deleted'
@@ -29,7 +29,7 @@ export function deviceStreamFetch(device, stream) {
   return {
     type: types.DEVICE_STREAM_FETCH,
     method: 'GET',
-    url: `${BASE_API}/device/${device.id}/${stream.id}/lastUpdate`,
+    url: `${BASE_API}/device/${device.deviceId}/${stream.id}/lastUpdate`,
     body: null
   }
 }

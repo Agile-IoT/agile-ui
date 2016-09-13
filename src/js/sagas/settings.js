@@ -6,7 +6,7 @@ import { discoveryFetch } from '../actions/settings'
 
 function* discovery(action) {
   yield call(requestHandler, action)
-  yield call(requestHandler, discoveryFetch())
+  // yield call(requestHandler, discoveryFetch())
 }
 
 export function* settingsSaga() {

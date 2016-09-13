@@ -8,8 +8,7 @@ export function deviceRegister(device) {
     type: types.DEVICE_REGISTER,
     method: 'POST',
     url: `${BASE_API}/devices`,
-    body: device,
-    confirm: true,
+    body: {"deviceId":"", "address": device.id, "name": device.name, "description":"", "protocol": device.protocol, "path": "","streams": []},
     confirmation: 'Device successfully Registered'
   }
 }

@@ -10,20 +10,19 @@ export default class DeviceListItem extends Component {
   static propTypes = {
     id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
-    path: PropTypes.string.isRequired,
+    protocol: PropTypes.string.isRequired,
     device: PropTypes.object,
     actions: PropTypes.array
   }
 
   render () {
     return (
-
         <Card>
           <Link to={`/device/${this.props.id}`}>
           <DeviceBasicInfo
-            id={this.props.path}
+            id={this.props.id}
             name={this.props.name}
-            path={this.props.path}
+            path={this.props.protocol}
           />
           </Link>
           <DeviceActions

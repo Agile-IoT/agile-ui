@@ -7,14 +7,14 @@ export default class DeviceBasicInfo extends Component {
   static propTypes = {
     id: PropTypes.string,
     name: PropTypes.string,
-    path: PropTypes.string
+    protocol: PropTypes.string
   }
 
   render () {
     return (
       <CardHeader
         title={this.props.name}
-        subtitle={this.props.path}
+        subtitle={this.props.protocol}
         avatar={<Avatar>{this.props.name ?  this.props.name.charAt(0): '' }</Avatar>}
       />
     )

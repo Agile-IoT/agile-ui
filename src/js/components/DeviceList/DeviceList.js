@@ -13,10 +13,10 @@ export default class DeviceList extends Component {
     return this.props.devices.map((device) =>
       (
         <DeviceListItem
-          key={device.id}
-          id={device.id}
+          key={device.deviceId || device.id}
+          id={device.deviceId || device.id}
           name={device.name}
-          path={device.path}
+          protocol={device.protocol}
           device={device}
           actions={this.props.actions} />
       )

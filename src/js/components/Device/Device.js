@@ -37,9 +37,9 @@ export default class Device extends Component {
         <Card>
           <Loading loading={this.props.loading} />
           <DeviceBasicInfo
-            id={this.props.device.id}
+            id={this.props.device.deviceId}
             name={this.props.device.name}
-            path={this.props.device.path}
+            protocol={this.props.device.protocol}
           />
           <DeviceActions
             device={this.props.device}

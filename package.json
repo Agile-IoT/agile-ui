@@ -16,6 +16,7 @@
     "start": "webpack-dev-server --config ./config/webpack.config.dev.js --hot --inline --progress",
     "prebuild": "npm run clean:build && npm run build:html",
     "build": "export NODE_ENV=production & NODE_ENV=production & webpack -p --config ./config/webpack.config.prod.js --progress",
+    "serve": "node app.js",
     "lint": "eslint config src/js/** --ext .js",
     "jscs": "jscs src/js/",
     "test": "mocha --compilers js:babel-core/register,css:./test/unit/cssNullCompiler.js --require ./test/unit/testHelper.js --recursive ./test/unit",
@@ -60,7 +61,11 @@
   },
   "dependencies": {
     "autoprefixer": "6.3.6",
+    "babel-preset-react": "^6.5.0",
+    "compression": "^1.6.2",
+    "express": "4.14.0",
     "history": "2.1.0",
+    "http-proxy": "1.14.0",
     "lodash": "4.11.1",
     "random-material-color": "1.0.2",
     "react": "15.0.1",
@@ -69,6 +74,7 @@
     "react-router": "2.3.0",
     "react-router-redux": "4.0.5",
     "redux": "3.5.2",
-    "redux-saga": "0.11.0"
+    "redux-saga": "0.11.0",
+    "serve-static": "^1.11.1"
   }
 }
