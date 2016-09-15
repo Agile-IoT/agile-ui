@@ -53,6 +53,7 @@ export default function (state = initialState, action) {
         ...state
       }
     case types.SETTINGS_DISCOVERY_FETCH_SUCCEEDED:// return list of posts and make loading = false
+      console.log(action.data)
       return {
         ...state,
         items: {

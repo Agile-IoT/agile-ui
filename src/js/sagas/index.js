@@ -7,7 +7,7 @@ import * as types from '../constants/ActionTypes'
 
 export function* rootSaga() {
   // settings saga runs on every page
-  // yield fork(settingsSaga)
+  yield fork(settingsSaga)
   // handle view changes and spawn appropriate sagas
   yield takeEvery(types.LOCATION_CHANGE, routeHandler)
 }
