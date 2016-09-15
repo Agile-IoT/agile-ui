@@ -11,9 +11,8 @@ COPY package.json package.json
 RUN JOBS=MAX npm install --production --unsafe-perm && npm cache clean && rm -rf /tmp/*
 
 # This will copy all files in our root to the working  directory in the container
-COPY . ./
-
-RUN npm run build
+COPY ./public public
+COPY ./app.js app.js
 
 # Enable systemd init system in container
 ENV INITSYSTEM=on
