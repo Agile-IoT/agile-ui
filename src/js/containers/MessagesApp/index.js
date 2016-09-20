@@ -2,34 +2,25 @@ import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import Snackbar from 'material-ui/Snackbar'
 
+// This app takes care displaying messages and errors to the user
 class MessagesApp extends Component {
 
   static propTypes = {
-    errors: PropTypes.array.isRequired,
-    confirmations: PropTypes.array.isRequired
+    messages: PropTypes.array,
   }
 
   render () {
-    // TODO CLEAN UP THIS RENDER METHOD
-    let node = ''
+    let message = ''
     let open = false
-    let type = null
-    if (this.props.errors.length > 0) {
-      type = 'CONFIRMATIONS_ADD'
+    if (this.props.messages.length > 0) {
+      message = this.props.messages[this.props.messages.length - 1]
       open = true
-      node = (<div>Error: errors[0]</div>)
-    }
-    if (this.props.confirmations.length > 0) {
-      type = 'CONFIRMATIONS_REMOVE'
-      open = true
-      node = (<div>{this.props.confirmations[0]}</div>)
     }
     return (
       <Snackbar
         open={open}
-        message={node}
+        message={message}
         autoHideDuration={4000}
-        onRequestClose={() => this.props.dispatch({type: type })}
       />
     )
   }
@@ -37,8 +28,7 @@ class MessagesApp extends Component {
 
 function mapStateToProps(state) {
   return {
-    errors: state.messages.errors,
-    confirmations: state.messages.confirmations
+    messages: state.messages
   }
 }
 

@@ -9,7 +9,6 @@ var randomMC = require('random-material-color')
 export default class Device extends Component {
 
   static propTypes = {
-    loading: PropTypes.string,
     actions: PropTypes.array,
     color: PropTypes.string,
     device: PropTypes.object
@@ -35,7 +34,6 @@ export default class Device extends Component {
     return (
       <div>
         <Card>
-          <Loading loading={this.props.loading} />
           <DeviceBasicInfo
             id={this.props.device.deviceId}
             name={this.props.device.name}

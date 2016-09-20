@@ -6,31 +6,35 @@ import * as settingsActions from '../../actions/settings'
 
 class SettingsApp extends Component {
   static propTypes = {
-    settings: PropTypes.object.isRequired,
+    discovery: PropTypes.bool.isRequired,
     actions: PropTypes.object.isRequired,
-    open: PropTypes.bool.isRequired,
-    error: PropTypes.object
+    protocols: PropTypes.object,
+    open: PropTypes.bool.isRequired
   }
 
   render () {
-    const { open, actions, settings, error } = this.props
+    const { open, actions, discovery, protocols } = this.props
     return (
-      <Settings open={open} settings={settings} actions={actions} error={error}  />
+      <Settings open={open} protocols={protocols} discovery={discovery} actions={actions}  />
     )
   }
 }
 
 function mapStateToProps(state) {
   return {
-    settings: state.settings.items,
-    open: state.settings.open,
-    error: state.settings.error
+    discovery: state.entities.settings.discovery,
+    open: state.entities.settings.open,
+    protocols: state.entities.protocols
   }
 }
 
 function mapDispatchToProps(dispatch) {
+  let actions = {
+    drawerToggle: settingsActions.drawerToggle,
+    discoveryToggle: settingsActions.discoveryToggle.request
+  }
   return {
-    actions: bindActionCreators(settingsActions, dispatch)
+    actions: bindActionCreators(actions, dispatch)
   }
 }
 

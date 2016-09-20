@@ -11,13 +11,12 @@ import Divider from 'material-ui/Divider'
 export default class Settings extends Component {
 
   static propTypes = {
-    settings: PropTypes.object.isRequired,
+    discovery: PropTypes.bool.isRequired,
     actions: PropTypes.object.isRequired,
     open: PropTypes.bool.isRequired,
     error: PropTypes.object
   }
 
-  // TODO decide on styling technique
   style = {
     AppBar: {
       margin: '0 0 20px'
@@ -31,12 +30,12 @@ export default class Settings extends Component {
     }
   }
 
-  renderList () {
-    if (this.props.settings.discovery.protocols.length > 0) {
-      return this.props.settings.discovery.protocols.map((protocol) =>
+  renderList (protocols) {
+    if (Object.keys(protocols).length > 0) {
+      return Object.keys(protocols).map((protocolId) =>
         (
-          <div key={protocol.name}>
-            <ListItem primaryText={protocol.name} secondaryText={protocol.status} />
+          <div key={protocols[protocolId].name}>
+            <ListItem primaryText={protocols[protocolId].name} secondaryText={protocols[protocolId].status} />
             <Divider />
           </div>
         )
@@ -45,7 +44,7 @@ export default class Settings extends Component {
   }
 
   render() {
-    const { actions: { drawerToggle, discoveryToggle }, settings, open } = this.props
+    const { actions: { drawerToggle, discoveryToggle }, discovery, open } = this.props
     return (
       <div>
         <FontIcon style={this.style.Cog} toggled={open}
@@ -68,11 +67,11 @@ export default class Settings extends Component {
              label="Device Discovery"
              labelPosition="right"
              style={this.style.Toggle}
-             onToggle={() => discoveryToggle(settings.discovery.on)}
-             toggled={settings.discovery.on}
+             onToggle={() => discoveryToggle(discovery)}
+             toggled={discovery}
            />
          <List>
-         {this.renderList()}
+         {this.renderList(this.props.protocols)}
          </List>
         </Drawer>
       </div>

@@ -1,15 +1,10 @@
 import React, { Component, PropTypes } from 'react'
+import FontIcon from 'material-ui/FontIcon'
 import RefreshIndicator from 'material-ui/RefreshIndicator'
 
-export default class Device extends Component {
-
-  static propTypes = {
-    loading: PropTypes.string.isRequired
-  };
+export default class Loading extends Component {
 
   style = {
-    // position: 'relative',
-    // margin: 'auto'
     left: '50%',
     transform: 'translate(-50%, 0)',
     top: '0 !important'
@@ -17,16 +12,14 @@ export default class Device extends Component {
 
   render () {
     return (
-      <div className='container--app'>
-        <RefreshIndicator
-          size={80}
-          top={50}
-          left={0}
-          status={this.props.loading}
-          loadingColor={"#FF9800"}
-          style={this.style}
-        />
-      </div>
+      <RefreshIndicator
+        size={80}
+        top={50}
+        left={0}
+        status="loading"
+        loadingColor={"#FF9800"}
+        style={this.style}
+      />
     )
   }
 }

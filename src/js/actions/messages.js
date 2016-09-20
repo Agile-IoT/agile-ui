@@ -1,1 +1,3 @@
-// Messages are reactive actions so probably no reason for any trigger actions
+import { action } from './utils'
+
+export const newMessage = message => action('MESSAGE', {message})

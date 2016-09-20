@@ -1,14 +1,21 @@
 import { delay, takeEvery } from 'redux-saga'
-import { call, put, fork, cancelled } from 'redux-saga/effects'
-import * as types from '../constants/ActionTypes'
-import { requestHandler, redirector } from '../utils'
-import { deviceListFetch, deviceProvision } from '../actions/deviceList'
+import { call, cancelled, put, fork } from 'redux-saga/effects'
+import * as actions from '../actions/deviceList'
+import { redirector, fetchEntity } from './utils'
+import { agileCore } from '../services'
+import { newMessage } from '../actions/messages'
 
-function* _deviceListPoll(action) {
+export const registeredDeviceList = fetchEntity.bind(null, actions.registeredDevices, agileCore.registeredDevicesFetch)
+export const deviceList = fetchEntity.bind(null, actions.devices, agileCore.devicesFetch)
+
+// TODO make deviceRegister live in global scope watching on every view
+export const deviceRegister = DeviceRegisterSaga.bind(null, actions.deviceRegister, agileCore.deviceRegister)
+
+function* _deviceListPoll(fn) {
   try {
     while (true) {
-      yield call(requestHandler, action)
-      yield call(delay, 2500)
+      yield call(fn)
+      yield call(delay, 10000)
     }
   } finally {
     if (yield cancelled())
@@ -17,20 +24,35 @@ function* _deviceListPoll(action) {
   }
 }
 
-// Success event for middleware device provisioning
-// uncomment when middleware is ready
+export function* DeviceRegisterSaga(entity, apiFn, action) {
+  let device = action.device
+  let newDevice = {
+    id: null,
+    address: device.id,
+    protocol: device.protocol,
+    path: device.path,
+    name: device.name,
+    status: device.status
+  }
+  const {response, error} = yield call(apiFn, newDevice)
 
-// function* provisioner(action) {
-//   yield put(deviceProvision(action.prevAction.body))
-//   // redirects user from /discovery to device list after successful registration
-//   yield call(redirector, '/')
-// }
-// function* _registerationWatcher() {
-//   yield takeEvery(types.DEVICE_REGISTER_SUCCEEDED, provisioner)
-// }
+  if(response) {
+    yield put( entity.success(newDevice, response) )
+    yield put(newMessage(`Successfully paired device ${device.id}`))
+    yield call(redirector('/'))
+  } else {
+    yield put( entity.failure(newDevice, error) )
+    yield put(newMessage(error))
+  }
+}
 
-export function* deviceListSaga(route) {
-  const action = yield put(deviceListFetch(route))
-  yield fork(_deviceListPoll, action)
-  yield takeEvery([types.DEVICE_REGISTER, types.DEVICE_PROVISION], requestHandler)
+export function* registeredDeviceListSaga() {
+  yield call(registeredDeviceList)
+  yield fork(_deviceListPoll, registeredDeviceList)
+}
+
+export function* deviceListSaga() {
+  yield call(deviceList)
+  yield takeEvery(['DEVICE_REGISTER_REQUEST'], deviceRegister)
+  yield fork(_deviceListPoll, deviceList)
 }
