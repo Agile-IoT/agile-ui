@@ -1,43 +1,55 @@
-import { createRequestTypes, action, asyncActionFactory } from './utils';
 import { api } from '../services';
-// these function act as trigger functions to run sagas. They should only be called when a user interacts with the page.
-// route handling triggers only occur when
+
+//****** UTILS ******//
+const action = (type, data = {}) => {
+  return {type, ...data}
+}
+
+export const loading = bool => {
+  return {
+    type: 'LOADING',
+    data: bool
+  };
+}
+
+export const message = msg => {
+  return {
+    type: 'MESSAGE',
+    data: msg
+  };
+}
 
 //****** ASYNC *****//
-// Single device actions
-export const device = asyncActionFactory('DEVICE');
-// get all devices
-export const devices = asyncActionFactory('DEVICES');
+
+// fetch all unregistered devices
 export const devicesFetch = () => {
   return (dispatch) => {
-        dispatch(devices.request())
+        dispatch(loading)
         api.devicesFetch()
         .then(res => {
-          dispatch(devices.success(res.data));
+          dispatch(action('DEVICES', res.data));
         })
         .catch(err => {
-          dispatch(devices.error(err));
+          dispatch(message(err.message));
           console.error(err);
         });
     };
 }
 
-export const deviceDelete = asyncActionFactory('DEVICE_DELETE');
-export const deviceConnect = asyncActionFactory('DEVICE_CONNECT');
+export const deviceDelete = action('DEVICE_DELETE');
+export const deviceConnect = action('DEVICE_CONNECT');
 
 // get registered devices devices
-export const registeredDevices = asyncActionFactory('REGISTERED_DEVICES');
+export const registeredDevices = action('REGISTERED_DEVICES');
 
 // trigger a device registration
-export const deviceRegister = asyncActionFactory('DEVICE_REGISTER');
+export const deviceRegister = action('DEVICE_REGISTER');
 
 // trigger a device registration
-export const discoveryToggle = asyncActionFactory('SETTINGS_DISCOVERY_TOGGLE');
-export const protocolsFetch = asyncActionFactory('SETTINGS_PROTOCOLS');
+export const discoveryToggle = action('SETTINGS_DISCOVERY_TOGGLE');
+export const protocolsFetch = action('SETTINGS_PROTOCOLS');
 
 
 //****** SYNC *****//
 // SETTINGS_DRAWER_TOGGLE is not async so doesn't need an actions request, success, fail
 export const drawerToggle = state => action('SETTINGS_DRAWER_TOGGLE', {state})
-// dispatch message to snackBar
-export const newMessage = message => action('MESSAGE', {message});

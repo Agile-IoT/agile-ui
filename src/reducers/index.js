@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux';
-import { devices } from './items';
+import { devices, messages } from './entities';
 
 export default combineReducers({
     devices,
+    messages,
 });
