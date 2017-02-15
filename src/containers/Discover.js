@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { Device } from '../components';
-import { api } from '../services';
 import { FlatButton } from 'material-ui';
 import ActionSearch from 'material-ui/svg-icons/action/search';
+
+import { connect } from 'react-redux';
+import { devicesFetch } from '../actions';
 
 class Discover extends Component {
 
@@ -37,22 +39,29 @@ class Discover extends Component {
   }
 
   componentDidMount() {
-    api.devicesFetch()
-    .then(res => {
-      this.setState({ devices: res.data });
-    })
-    .catch(err => {
-      console.error(err)
-    });
+    this.props.fetchDevices()
   }
 
   render() {
     return (
       <div>
-        {this.renderItems(this.state.devices)}
+        {this.renderItems(this.props.devices)}
       </div>
     );
   }
 }
 
-export default Discover;
+const mapStateToProps = (state) => {
+  console.log(state)
+  return {
+    devices: state.devices
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+      fetchDevices: (url) => dispatch(devicesFetch())
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Discover);
