@@ -1,20 +1,16 @@
 import React, { Component } from 'react';
 import { Device } from '../components';
-import { api } from '../services';
 import { FlatButton } from 'material-ui';
-import ActionSearch from 'material-ui/svg-icons/action/search';
+import { connect } from 'react-redux';
+
+import { devicesFetch, devicesDelete, deviceTypesFetch } from '../actions';
 
 class Devices extends Component {
-
-  constructor() {
-    super()
-    this.state = {}
-  }
 
   renderActions(device) {
     return (
       <div>
-        <FlatButton label='Delete' onClick={() => { console.log('hiii!')}} />
+        <FlatButton label='Delete' onClick={() => {this.props.devicesDelete(device.deviceId)}} />
         <FlatButton label='View Data' onClick={() => { console.log('hiii!')}} />
         <FlatButton label='Connect' onClick={() => { console.log('hiii!')}} />
       </div>
@@ -26,36 +22,45 @@ class Devices extends Component {
       return devices.map((device, i) => {
         return(
           <Device
-            expandable
-            showExpandableButton
-            key={i}
-            title={device.name}
-            subtitle={device.address}
-            status={device.status}
-            actions={this.renderActions(device)}
-            meta={device}
+          expandable
+          showExpandableButton
+          key={i}
+          title={device.name}
+          subtitle={device.deviceId}
+          status={device.status}
+          actions={this.renderActions(device)}
+          meta={device}
           />)
       })
     }
   }
 
   componentDidMount() {
-    api.registeredDevicesFetch()
-    .then(res => {
-      this.setState({ devices: res.data });
-    })
-    .catch(err => {
-      console.error(err)
-    });
+    this.props.devicesFetch()
+    this.props.deviceTypesFetch()
   }
 
   render() {
     return (
       <div>
-        {this.renderItems(this.state.devices)}
+        {this.renderItems(this.props.devices)}
       </div>
     );
   }
 }
 
-export default Devices;
+const mapStateToProps = (state) => {
+  return {
+    devices: state.devices
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    devicesFetch: () => dispatch(devicesFetch()),
+    devicesDelete: (id) => dispatch(devicesDelete(id)),
+    deviceTypesFetch: () => dispatch(deviceTypesFetch())
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Devices);

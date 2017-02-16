@@ -1,22 +1,16 @@
 import React, { Component } from 'react';
 import { Device } from '../components';
 import { FlatButton } from 'material-ui';
-import ActionSearch from 'material-ui/svg-icons/action/search';
-
 import { connect } from 'react-redux';
-import { devicesFetch } from '../actions';
+
+import { devicesDiscover, devicesCreate } from '../actions';
 
 class Discover extends Component {
-
-  constructor() {
-    super()
-    this.state = {}
-  }
 
   renderActions(device) {
     return (
       <div>
-        <FlatButton label='Register' onClick={() => { console.log('hiii!')}} />
+        <FlatButton label='Register' onClick={() => { this.props.devicesCreate(device)}} />
       </div>
     )
   }
@@ -39,7 +33,7 @@ class Discover extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchDevices()
+    this.props.devicesDiscover()
   }
 
   render() {
@@ -52,16 +46,17 @@ class Discover extends Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log(state)
   return {
-    devices: state.devices
+    devices: state.devicesDiscover
   };
 };
 
+
 const mapDispatchToProps = (dispatch) => {
-    return {
-      fetchDevices: (url) => dispatch(devicesFetch())
-    };
+  return {
+    devicesDiscover: () => dispatch(devicesDiscover()),
+    devicesCreate: (device) => dispatch(devicesCreate(device))
+  };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Discover);

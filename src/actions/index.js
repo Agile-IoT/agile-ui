@@ -1,8 +1,11 @@
-import { api } from '../services';
+import api from '../services';
 
+const agile = api('/api')
+
+console.log(agile.deviceManager)
 //****** UTILS ******//
-const action = (type, data = {}) => {
-  return {type, ...data}
+const action = (type, data) => {
+  return {type, data}
 }
 
 export const loading = bool => {
@@ -19,37 +22,134 @@ export const message = msg => {
   };
 }
 
+export const errorHandle = (err, dispatch) => {
+  dispatch(message(err.message));
+  dispatch(loading(false));
+}
 //****** ASYNC *****//
-
 // fetch all unregistered devices
-export const devicesFetch = () => {
+export const devicesDiscover = () => {
   return (dispatch) => {
-        dispatch(loading)
-        api.devicesFetch()
-        .then(res => {
-          dispatch(action('DEVICES', res.data));
-        })
-        .catch(err => {
-          dispatch(message(err.message));
-          console.error(err);
-        });
-    };
+    dispatch(loading(true))
+    agile.protocolManager.devices()
+    .then(devices => {
+      dispatch(action('DEVICES_DISCOVER', devices));
+      dispatch(loading(false));
+    })
+    .catch(err => {
+      errorHandle(err, dispatch)
+    });
+  };
 }
 
-export const deviceDelete = action('DEVICE_DELETE');
-export const deviceConnect = action('DEVICE_CONNECT');
+export const deviceTypesFetch = () => {
+  return (dispatch) => {
+    dispatch(loading(true))
+    agile.deviceManager.typeof()
+    .then(deviceTypes => {
+      dispatch(action('DEVICE_TYPES', ['TI SensorTag']));
+      dispatch(loading(false));
+    })
+    .catch(err => {
+      errorHandle(err, dispatch)
+    });
+  };
+}
 
-// get registered devices devices
-export const registeredDevices = action('REGISTERED_DEVICES');
+// fetch all registered devices
+export const devicesFetch = () => {
+  return (dispatch) => {
+    dispatch(loading(true))
+    agile.deviceManager.get()
+    .then(devices => {
+      dispatch(action('DEVICES', devices));
+      dispatch(loading(false));
+    })
+    .catch(err => {
+      errorHandle(err, dispatch)
+    });
+  };
+}
 
-// trigger a device registration
-export const deviceRegister = action('DEVICE_REGISTER');
+export const devicesDelete = (deviceId) => {
+  console.log({deviceId})
+  return (dispatch) => {
+    dispatch(loading(true))
+    agile.deviceManager.delete(deviceId)
+    .then(() => {
+      dispatch(action('DEVICES_DELETE', deviceId));
+      dispatch(loading(false));
+    })
+    .catch(err => {
+      errorHandle(err, dispatch)
+    });
+  };
+}
 
-// trigger a device registration
-export const discoveryToggle = action('SETTINGS_DISCOVERY_TOGGLE');
-export const protocolsFetch = action('SETTINGS_PROTOCOLS');
+export const devicesCreate = (device) => {
+  return (dispatch) => {
+    dispatch(loading(true))
+    agile.deviceManager.create(device, 'TI SensorTag')
+    .then((newDevice) => {
+      dispatch(action('DEVICES_CREATE', newDevice));
+      dispatch(loading(false));
+    })
+    .catch(err => {
+      errorHandle(err, dispatch)
+    });
+  };
+}
 
+// fetch all available protocols
+export const protocolsFetch = () => {
+  return (dispatch) => {
+    dispatch(loading(true))
+    agile.protocolManager.get()
+    .then(protocols => {
+      dispatch(action('PROTOCOLS', protocols));
+      dispatch(loading(false));
+    })
+    .catch(err => {
+      errorHandle(err, dispatch)
+    });
+  };
+}
 
-//****** SYNC *****//
-// SETTINGS_DRAWER_TOGGLE is not async so doesn't need an actions request, success, fail
-export const drawerToggle = state => action('SETTINGS_DRAWER_TOGGLE', {state})
+export const drawerToggle = bool => action('DRAWER', bool);
+
+export const discoveryStatus = () => {
+  return (dispatch) => {
+    agile.protocolManager.discovery.status()
+    .then(status => {
+      dispatch(action('DISCOVERY', status));
+      dispatch(message(`discover is ${status}`));
+      dispatch(loading(false));
+    }).catch(err => {
+      errorHandle(err, dispatch)
+    });
+  }
+}
+
+export const discoveryToggle = () => {
+  return (dispatch, currentState) => {
+    if (currentState.discovery) {
+      agile.protocolManager.discovery.stop()
+      .then(() => {
+        dispatch(action('DISCOVERY', false));
+        dispatch(message('Discovery off.'));
+        dispatch(loading(false));
+      }).catch(err => {
+        errorHandle(err, dispatch)
+      });
+    } else {
+      agile.protocolManager.discovery.start()
+      .then(() => {
+        dispatch(action('DISCOVERY', true));
+        dispatch(message('Discovery on.'));
+        dispatch(loading(false));
+      }).catch(err => {
+        errorHandle(err, dispatch)
+      });
+    }
+  }
+}

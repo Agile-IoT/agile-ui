@@ -36,7 +36,6 @@ const renderMeta = (meta, id) => {
   if (meta) {
     const keys = Object.keys(meta)
     return keys.map((key, i) => {
-      console.log(id, key, meta[key])
       return (
         <ListItem key={`${id}-${key}`}>{key}: <code>{!isEmpty(meta[key]) ? JSON.stringify(meta[key]) : 'null'}</code></ListItem>
       )
