@@ -34,10 +34,12 @@ const computeColor = (status) => {
 
 const renderMeta = (meta, id) => {
   if (meta) {
-    const keys = Object.keys(meta)
+    const keys = Object.keys(meta).filter(i => i !== 'streams');
     return keys.map((key, i) => {
       return (
-        <ListItem key={`${id}-${key}`}>{key}: <code>{!isEmpty(meta[key]) ? JSON.stringify(meta[key]) : 'null'}</code></ListItem>
+        <ListItem key={`${id}-${key}`}>
+          {key}: <code>{!isEmpty(meta[key]) ? JSON.stringify(meta[key]) : 'null'}</code>
+        </ListItem>
       )
     })
   }
