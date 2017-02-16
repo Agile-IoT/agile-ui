@@ -1,16 +1,45 @@
 import React, { Component } from 'react';
 import { Device } from '../components';
-import { FlatButton } from 'material-ui';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
 import { connect } from 'react-redux';
 
-import { devicesDiscover, devicesCreate } from '../actions';
+import { devicesDiscover, devicesCreate, deviceTypesFetch } from '../actions';
 
 class Discover extends Component {
 
-  renderActions(device) {
+  handleChange = (event, index, value) => {
+    console.log(value.type)
+    this.props.devicesCreate(value.device, value.type)
+  }
+
+  renderDeviceTypes = (device, deviceTypes) => {
+    if (deviceTypes.length > 0) {
+      return deviceTypes.map((type, key) => {
+        return (
+          <MenuItem
+            key={`${device}-key`}
+            value={{device, type}}
+            primaryText={type}
+          />
+        );
+      });
+    }
+  }
+
+  renderActions(device, deviceTypes) {
     return (
       <div>
-        <FlatButton label='Register' onClick={() => { this.props.devicesCreate(device)}} />
+        <SelectField
+          floatingLabelText="Register"
+          value={null}
+          onChange={this.handleChange}
+        >
+        <MenuItem value={null} label="Register" primaryText="Select device type" />
+        {
+          this.renderDeviceTypes(device, deviceTypes)
+        }
+        </SelectField>
       </div>
     )
   }
@@ -26,7 +55,7 @@ class Discover extends Component {
             subtitle={device.id}
             id={device.id}
             status={device.status}
-            actions={this.renderActions(device)}
+            actions={this.renderActions(device, this.props.deviceTypes)}
           />)
       })
     }
@@ -34,6 +63,7 @@ class Discover extends Component {
 
   componentDidMount() {
     this.props.devicesDiscover()
+    this.props.deviceTypesFetch()
   }
 
   render() {
@@ -47,7 +77,8 @@ class Discover extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    devices: state.devicesDiscover
+    devices: state.devicesDiscover,
+    deviceTypes: state.deviceTypes
   };
 };
 
@@ -55,7 +86,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     devicesDiscover: () => dispatch(devicesDiscover()),
-    devicesCreate: (device) => dispatch(devicesCreate(device))
+    devicesCreate: (device, type) => dispatch(devicesCreate(device, type)),
+    deviceTypesFetch: () => dispatch(deviceTypesFetch())
   };
 };
 

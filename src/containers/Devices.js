@@ -3,7 +3,7 @@ import { Device } from '../components';
 import { FlatButton } from 'material-ui';
 import { connect } from 'react-redux';
 
-import { devicesFetch, devicesDelete, deviceTypesFetch } from '../actions';
+import { devicesFetch, devicesDelete } from '../actions';
 
 class Devices extends Component {
 
@@ -37,7 +37,6 @@ class Devices extends Component {
 
   componentDidMount() {
     this.props.devicesFetch()
-    this.props.deviceTypesFetch()
   }
 
   render() {
@@ -58,8 +57,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     devicesFetch: () => dispatch(devicesFetch()),
-    devicesDelete: (id) => dispatch(devicesDelete(id)),
-    deviceTypesFetch: () => dispatch(deviceTypesFetch())
+    devicesDelete: (id) => dispatch(devicesDelete(id))
   };
 };
 

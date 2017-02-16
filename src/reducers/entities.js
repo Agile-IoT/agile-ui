@@ -75,7 +75,7 @@ export function protocols(state = [], action) {
   }
 }
 
-export function deviceTypes(state = [], action) {
+export function deviceTypes(state = ['TI SensorTag'], action) {
   switch (action.type) {
     case 'DEVICE_TYPES':
       return action.data;

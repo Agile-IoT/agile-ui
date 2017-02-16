@@ -72,7 +72,6 @@ export const devicesFetch = () => {
 }
 
 export const devicesDelete = (deviceId) => {
-  console.log({deviceId})
   return (dispatch) => {
     dispatch(loading(true))
     agile.deviceManager.delete(deviceId)
@@ -86,10 +85,10 @@ export const devicesDelete = (deviceId) => {
   };
 }
 
-export const devicesCreate = (device) => {
+export const devicesCreate = (device, type) => {
   return (dispatch) => {
     dispatch(loading(true))
-    agile.deviceManager.create(device, 'TI SensorTag')
+    agile.deviceManager.create(device, type)
     .then((newDevice) => {
       dispatch(action('DEVICES_CREATE', newDevice));
       dispatch(loading(false));
@@ -108,6 +107,7 @@ export const protocolsFetch = () => {
     .then(protocols => {
       dispatch(action('PROTOCOLS', protocols));
       dispatch(loading(false));
+      dispatch(devicesDiscover());
     })
     .catch(err => {
       errorHandle(err, dispatch)
