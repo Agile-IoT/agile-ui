@@ -1,8 +1,6 @@
-import api from '../services';
+import agileSDK from 'agile-sdk';
+const agile = agileSDK('/api');
 
-const agile = api('/api')
-
-console.log(agile.deviceManager)
 //****** UTILS ******//
 const action = (type, data) => {
   return {type, data}
@@ -42,17 +40,62 @@ export const devicesDiscover = () => {
   };
 }
 
+export const deviceSubscribe = (deviceId, componentID) => {
+  return (dispatch, currentState) => {
+    if (currentState.discovery) {
+      agile.device.subscribe(deviceId, componentID)
+      .then((stream) => {
+        stream.onerror = () => {
+          dispatch(message('Socket Connection Error'))
+        };
+
+        stream.onopen = () => {
+          dispatch(message('Socket Connected'))
+        };
+
+        stream.onclose = () => {
+          dispatch(message('Socket Closed'))
+        };
+
+        stream.onmessage = (e) => {
+          if (typeof e.data === 'string') {
+            console.log("Received: '" + e.data + "'");
+            dispatch(action('WS', {
+              deviceId,
+              componentID,
+              payload:e.data
+            }))
+          }
+        };
+        dispatch(loading(false));
+      }).catch(err => {
+        errorHandle(err, dispatch)
+      });
+    } else {
+      agile.protocolManager.discovery.start()
+      .then(() => {
+        dispatch(action('DISCOVERY', true));
+        dispatch(message('Discovery on.'));
+        dispatch(loading(false));
+      }).catch(err => {
+        errorHandle(err, dispatch)
+      });
+    }
+  }
+}
+
 export const deviceTypesFetch = () => {
   return (dispatch) => {
     dispatch(loading(true))
-    agile.deviceManager.typeof()
-    .then(deviceTypes => {
-      dispatch(action('DEVICE_TYPES', ['TI SensorTag']));
-      dispatch(loading(false));
-    })
-    .catch(err => {
-      errorHandle(err, dispatch)
-    });
+    dispatch(action('DEVICE_TYPES', ['TI SensorTag']));
+    dispatch(loading(false));
+    // agile.deviceManager.typeof()
+    // .then(deviceTypes => {
+    //
+    // })
+    // .catch(err => {
+    //   errorHandle(err, dispatch)
+    // });
   };
 }
 
@@ -60,7 +103,7 @@ export const deviceTypesFetch = () => {
 export const devicesFetch = () => {
   return (dispatch) => {
     dispatch(loading(true))
-    agile.deviceManager.get()
+    agile.deviceManager.getAll()
     .then(devices => {
       dispatch(action('DEVICES', devices));
       dispatch(loading(false));

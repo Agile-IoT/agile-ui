@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Device } from '../components';
 import { FlatButton } from 'material-ui';
 import { connect } from 'react-redux';
-
+import agileSDK from 'agile-sdk';
 import { devicesFetch, devicesDelete } from '../actions';
 
 class Devices extends Component {
@@ -37,6 +37,32 @@ class Devices extends Component {
 
   componentDidMount() {
     this.props.devicesFetch()
+
+    const agile = agileSDK('/api');
+    const deviceId = 'bleB0B448BE5084';
+    const componentID = 'Temperature';
+
+    agile.device.subscribe(deviceId, componentID).then(stream => {
+      stream.onerror = () => {
+        console.log('Connection Error');
+      };
+
+      stream.onopen = () => {
+        console.log('Connected');
+      };
+
+      stream.onclose = () => {
+        console.log('Closed');
+      };
+
+      stream.onmessage = (e) => {
+        if (typeof e.data === 'string') {
+            console.log("Received: '" + e.data + "'");
+        }
+      };
+    }).catch(err => {
+      console.log(err);
+    });
   }
 
   render() {

@@ -3,9 +3,14 @@ export function devices(state = [], action) {
     case 'DEVICES':
       return action.data;
     case 'DEVICES_DELETE':
-      console.log('DEVICEID', action.data)
       return state.filter(element => element.deviceId !== action.data);
     case 'DEVICES_CREATE':
+      return [
+        action.data,
+        ...state
+      ]
+    case 'WS':
+      const item = state.filter(element => element.deviceId !== action.data.deviceId);
       return [
         action.data,
         ...state

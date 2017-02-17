@@ -1,4 +1,4 @@
-FROM resin/raspberrypi3-node:jessie-20161010
+FROM resin/raspberrypi3-node:7.4.0-20170216
 
 ENV NODE_ENV production
 
