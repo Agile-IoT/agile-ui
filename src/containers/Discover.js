@@ -48,7 +48,6 @@ class Discover extends Component {
       return devices.map((device, i) => {
         return(
           <DeviceItem
-            expandable={false}
             key={i}
             title={device.name}
             subtitle={device.id}
@@ -79,7 +78,7 @@ class Discover extends Component {
     // Poll for new devices
     setTimeout(() => {
       this.props.devicesDiscover()
-    }, 10000);
+    }, 70000);
   }
 
   render() {

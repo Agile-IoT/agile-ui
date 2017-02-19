@@ -14,7 +14,7 @@ class Device extends Component {
     // Poll for new readings
     setTimeout(() => {
       this.props.streamsFetch(this.props.params.deviceId);
-    }, 3000);
+    }, 7000);
   }
 
   renderActions(device) {
