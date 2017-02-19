@@ -1,22 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
-import {List, ListItem} from 'material-ui/List';
-
+import { List, ListItem } from 'material-ui/List';
 
 import {
   Card,
   CardActions,
   CardHeader,
-  CardTitle,
   CardText,
 } from 'material-ui/Card';
 
 import Avatar from 'material-ui/Avatar';
-
-const DeviceLink = (props) => {
-  return (<Link to={`devices/${props.id}`}>{props.title}</Link>)
-}
 
 import {
   redA400,

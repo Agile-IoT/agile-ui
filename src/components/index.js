@@ -1,5 +1,7 @@
 import Nav from './Nav';
-import Device from './Device';
+import DeviceSummary from './DeviceSummary';
 import SettingsMenu from './SettingsMenu';
+import DeviceItem from './DeviceItem';
+import Stream from './Stream';
 
-export { Nav, Device, SettingsMenu }
+export { Nav, DeviceSummary, SettingsMenu, DeviceItem, Stream }

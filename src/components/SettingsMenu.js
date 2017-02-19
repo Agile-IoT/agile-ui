@@ -1,13 +1,12 @@
-import React, { Component, PropTypes } from 'react'
-import Drawer from 'material-ui/Drawer'
-import FontIcon from 'material-ui/FontIcon'
-import Toggle from 'material-ui/Toggle'
-import AppBar from 'material-ui/AppBar'
-import IconButton from 'material-ui/IconButton'
-import NavigationClose from 'material-ui/svg-icons/navigation/close'
-import ActionSettings from 'material-ui/svg-icons/action/settings'
-import { List, ListItem } from 'material-ui/List'
-import Divider from 'material-ui/Divider'
+import React from 'react';
+import Drawer from 'material-ui/Drawer';
+import Toggle from 'material-ui/Toggle';
+import AppBar from 'material-ui/AppBar';
+import IconButton from 'material-ui/IconButton';
+import NavigationClose from 'material-ui/svg-icons/navigation/close';
+import ActionSettings from 'material-ui/svg-icons/action/settings';
+import { List, ListItem } from 'material-ui/List';
+import Divider from 'material-ui/Divider';
 
 const renderList = (protocols) => {
   if (protocols.length > 1) {

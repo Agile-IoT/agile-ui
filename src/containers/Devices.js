@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { Device } from '../components';
+import { DeviceItem } from '../components';
 import { FlatButton } from 'material-ui';
 import { connect } from 'react-redux';
-import agileSDK from 'agile-sdk';
 import { devicesFetch, devicesDelete } from '../actions';
 
 class Devices extends Component {
@@ -11,8 +10,7 @@ class Devices extends Component {
     return (
       <div>
         <FlatButton label='Delete' onClick={() => {this.props.devicesDelete(device.deviceId)}} />
-        <FlatButton label='View Data' onClick={() => { console.log('hiii!')}} />
-        <FlatButton label='Connect' onClick={() => { console.log('hiii!')}} />
+        <FlatButton href={`/devices/${device.deviceId}`} label='View' />
       </div>
     )
   }
@@ -21,15 +19,15 @@ class Devices extends Component {
     if (devices) {
       return devices.map((device, i) => {
         return(
-          <Device
-          expandable
-          showExpandableButton
-          key={i}
-          title={device.name}
-          subtitle={device.deviceId}
-          status={device.status}
-          actions={this.renderActions(device)}
-          meta={device}
+          <DeviceItem
+            expandable
+            showExpandableButton
+            key={i}
+            title={device.name}
+            subtitle={device.deviceId}
+            status={device.status}
+            actions={this.renderActions(device)}
+            meta={device}
           />)
       })
     }
@@ -37,32 +35,6 @@ class Devices extends Component {
 
   componentDidMount() {
     this.props.devicesFetch()
-
-    const agile = agileSDK('/api');
-    const deviceId = 'bleB0B448BE5084';
-    const componentID = 'Temperature';
-
-    agile.device.subscribe(deviceId, componentID).then(stream => {
-      stream.onerror = () => {
-        console.log('Connection Error');
-      };
-
-      stream.onopen = () => {
-        console.log('Connected');
-      };
-
-      stream.onclose = () => {
-        console.log('Closed');
-      };
-
-      stream.onmessage = (e) => {
-        if (typeof e.data === 'string') {
-            console.log("Received: '" + e.data + "'");
-        }
-      };
-    }).catch(err => {
-      console.log(err);
-    });
   }
 
   render() {
@@ -83,7 +55,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     devicesFetch: () => dispatch(devicesFetch()),
-    devicesDelete: (id) => dispatch(devicesDelete(id))
+    devicesDelete: (deviceId) => dispatch(devicesDelete(deviceId)),
   };
 };
 

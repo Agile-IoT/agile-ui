@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Device } from '../components';
+import { DeviceItem } from '../components';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import { connect } from 'react-redux';
@@ -9,7 +9,6 @@ import { devicesDiscover, devicesCreate, deviceTypesFetch } from '../actions';
 class Discover extends Component {
 
   handleChange = (event, index, value) => {
-    console.log(value.type)
     this.props.devicesCreate(value.device, value.type)
   }
 
@@ -18,7 +17,7 @@ class Discover extends Component {
       return deviceTypes.map((type, key) => {
         return (
           <MenuItem
-            key={`${device}-key`}
+            key={`${device.id}-${key}`}
             value={{device, type}}
             primaryText={type}
           />
@@ -48,7 +47,7 @@ class Discover extends Component {
     if (devices) {
       return devices.map((device, i) => {
         return(
-          <Device
+          <DeviceItem
             expandable={false}
             key={i}
             title={device.name}
@@ -62,8 +61,25 @@ class Discover extends Component {
   }
 
   componentDidMount() {
-    this.props.devicesDiscover()
-    this.props.deviceTypesFetch()
+    this.props.devicesDiscover();
+    this.props.devices.map((device) => {
+      return this.props.deviceTypesFetch(device)
+    });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    // get new deviceTypes if there are new devices
+    const { devices } = nextProps
+    if (devices.length > this.props.devices.length) {
+      devices.map((device) => {
+        return this.props.deviceTypesFetch(device)
+      });
+    }
+
+    // Poll for new devices
+    setTimeout(() => {
+      this.props.devicesDiscover()
+    }, 10000);
   }
 
   render() {
@@ -82,12 +98,11 @@ const mapStateToProps = (state) => {
   };
 };
 
-
 const mapDispatchToProps = (dispatch) => {
   return {
     devicesDiscover: () => dispatch(devicesDiscover()),
     devicesCreate: (device, type) => dispatch(devicesCreate(device, type)),
-    deviceTypesFetch: () => dispatch(deviceTypesFetch())
+    deviceTypesFetch: (device) => dispatch(deviceTypesFetch(device))
   };
 };
 

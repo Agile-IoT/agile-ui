@@ -40,62 +40,46 @@ export const devicesDiscover = () => {
   };
 }
 
-export const deviceSubscribe = (deviceId, componentID) => {
-  return (dispatch, currentState) => {
-    if (currentState.discovery) {
-      agile.device.subscribe(deviceId, componentID)
-      .then((stream) => {
-        stream.onerror = () => {
-          dispatch(message('Socket Connection Error'))
-        };
-
-        stream.onopen = () => {
-          dispatch(message('Socket Connected'))
-        };
-
-        stream.onclose = () => {
-          dispatch(message('Socket Closed'))
-        };
-
-        stream.onmessage = (e) => {
-          if (typeof e.data === 'string') {
-            console.log("Received: '" + e.data + "'");
-            dispatch(action('WS', {
-              deviceId,
-              componentID,
-              payload:e.data
-            }))
-          }
-        };
-        dispatch(loading(false));
-      }).catch(err => {
-        errorHandle(err, dispatch)
-      });
-    } else {
-      agile.protocolManager.discovery.start()
-      .then(() => {
-        dispatch(action('DISCOVERY', true));
-        dispatch(message('Discovery on.'));
-        dispatch(loading(false));
-      }).catch(err => {
-        errorHandle(err, dispatch)
-      });
-    }
-  }
-}
-
-export const deviceTypesFetch = () => {
+export const deviceTypesFetch = (deviceOverview) => {
   return (dispatch) => {
     dispatch(loading(true))
-    dispatch(action('DEVICE_TYPES', ['TI SensorTag']));
-    dispatch(loading(false));
-    // agile.deviceManager.typeof()
-    // .then(deviceTypes => {
-    //
-    // })
-    // .catch(err => {
-    //   errorHandle(err, dispatch)
-    // });
+    agile.deviceManager.typeof(deviceOverview)
+    .then(deviceTypes => {
+      dispatch(action('DEVICE_TYPES', deviceTypes));
+      dispatch(loading(false));
+    })
+    .catch(err => {
+      errorHandle(err, dispatch)
+    });
+  };
+}
+
+// fetch all device
+export const deviceFetch = (deviceId) => {
+  return (dispatch) => {
+    dispatch(loading(true))
+    agile.deviceManager.get(deviceId)
+    .then(devices => {
+      dispatch(action('DEVICE', devices));
+      dispatch(loading(false));
+    })
+    .catch(err => {
+      errorHandle(err, dispatch)
+    });
+  };
+}
+
+export const streamsFetch = (deviceId) => {
+  return (dispatch) => {
+    dispatch(loading(true))
+    agile.device.get(deviceId)
+    .then(streams => {
+      dispatch(action('STREAMS', streams));
+      dispatch(loading(false));
+    })
+    .catch(err => {
+      errorHandle(err, dispatch)
+    });
   };
 }
 
@@ -120,6 +104,7 @@ export const devicesDelete = (deviceId) => {
     agile.deviceManager.delete(deviceId)
     .then(() => {
       dispatch(action('DEVICES_DELETE', deviceId));
+      dispatch(message(`Device ${`deviceId`} deleted.`));
       dispatch(loading(false));
     })
     .catch(err => {

@@ -1,3 +1,6 @@
+import includes from 'lodash/includes';
+import sortBy from 'lodash/sortBy';
+
 export function devices(state = [], action) {
   switch (action.type) {
     case 'DEVICES':
@@ -5,12 +8,6 @@ export function devices(state = [], action) {
     case 'DEVICES_DELETE':
       return state.filter(element => element.deviceId !== action.data);
     case 'DEVICES_CREATE':
-      return [
-        action.data,
-        ...state
-      ]
-    case 'WS':
-      const item = state.filter(element => element.deviceId !== action.data.deviceId);
       return [
         action.data,
         ...state
@@ -80,10 +77,39 @@ export function protocols(state = [], action) {
   }
 }
 
-export function deviceTypes(state = ['TI SensorTag'], action) {
+export function deviceTypes(state = [], action) {
   switch (action.type) {
     case 'DEVICE_TYPES':
-      return action.data;
+      if (action.data.length > 0 && !includes(state, action.data[0])) {
+        return [
+          ...state,
+          ...action.data
+        ];
+      }
+      return state
+    default:
+      return state;
+  }
+}
+
+export function device(state = {}, action) {
+  switch (action.type) {
+    case 'DEVICE':
+      return action.data
+    case 'DEVICES_DELETE':
+      if (state.deviceId === action.data) {
+        return {}
+      }
+      return state;
+    default:
+      return state;
+  }
+}
+
+export function streams(state = [], action) {
+  switch (action.type) {
+    case 'STREAMS':
+      return sortBy(action.data, 'componentID');
     default:
       return state;
   }

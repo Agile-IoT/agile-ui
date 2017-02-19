@@ -30,7 +30,7 @@ render(
         <Route path="/" component={App}>
           <IndexRoute component={Discover} />
           <Route path="devices" component={Devices} />
-          <Route path="devices/:device" component={Device} />
+          <Route path="devices/:deviceId" component={Device} />
         </Route>
       </Router>
     </MuiThemeProvider>
