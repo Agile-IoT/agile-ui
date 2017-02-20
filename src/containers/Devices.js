@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { DeviceItem } from '../components';
 import { FlatButton } from 'material-ui';
 import { connect } from 'react-redux';
+import { Link } from 'react-router';
 import { devicesFetch, devicesDelete } from '../actions';
 
 class Devices extends Component {
@@ -10,7 +11,9 @@ class Devices extends Component {
     return (
       <div>
         <FlatButton label='Delete' onClick={() => {this.props.devicesDelete(device.deviceId)}} />
-        <FlatButton href={`/devices/${device.deviceId}`} label='View' />
+        <Link to={`/devices/${device.deviceId}`}>
+          <FlatButton label='View' />
+        </Link>
       </div>
     )
   }

@@ -87,7 +87,7 @@ export const streamsFetch = (deviceId) => {
 export const devicesFetch = () => {
   return (dispatch) => {
     dispatch(loading(true))
-    agile.deviceManager.getAll()
+    agile.deviceManager.get()
     .then(devices => {
       dispatch(action('DEVICES', devices));
       dispatch(loading(false));
