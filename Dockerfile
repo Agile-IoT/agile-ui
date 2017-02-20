@@ -22,6 +22,6 @@ COPY . .
 
 RUN npm run build
 
-EXPOSE 80
+EXPOSE 1337
 
 CMD caddy -log stdout

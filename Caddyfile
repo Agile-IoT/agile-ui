@@ -1,5 +1,5 @@
 # https://caddyserver.com/docs/caddyfile
-localhost:80 {
+0.0.0.0:1337 {
   root /usr/src/app/build
   gzip
   proxy /api agile-core:8080

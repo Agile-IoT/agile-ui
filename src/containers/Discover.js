@@ -78,7 +78,7 @@ class Discover extends Component {
     // Poll for new devices
     setTimeout(() => {
       this.props.devicesDiscover()
-    }, 70000);
+    }, 7000);
   }
 
   render() {
