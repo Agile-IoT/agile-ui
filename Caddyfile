@@ -3,4 +3,7 @@
   root /usr/src/app/build
   gzip
   proxy /api agile-core:8080
+  proxy /ws agile-core:8080 {
+    websocket
+  }
 }
