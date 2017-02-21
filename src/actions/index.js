@@ -54,13 +54,44 @@ export const deviceTypesFetch = (deviceOverview) => {
   };
 }
 
+export const deviceSubscribe = (deviceId, componentId) => {
+  return (dispatch) => {
+    dispatch(loading(true))
+    agile.device.subscribe(deviceId, componentId)
+    .then(devices => {
+      dispatch(loading(false));
+    })
+    .catch(err => {
+      errorHandle(err, dispatch)
+    });
+  };
+}
+
+export const deviceUnsubscribe = (deviceId, componentId) => {
+  return (dispatch) => {
+    dispatch(loading(true))
+    agile.device.unsubscribe(deviceId, componentId)
+    .then(devices => {
+      dispatch(loading(false));
+    })
+    .catch(err => {
+      errorHandle(err, dispatch)
+    });
+  };
+}
+
 // fetch all device
 export const deviceFetch = (deviceId) => {
   return (dispatch) => {
     dispatch(loading(true))
     agile.deviceManager.get(deviceId)
-    .then(devices => {
-      dispatch(action('DEVICE', devices));
+    .then(device => {
+      dispatch(action('DEVICE', device));
+      if (device.streams) {
+        device.streams.map((s) => {
+          dispatch(deviceSubscribe(deviceId, s.id))
+        })
+      }
       dispatch(loading(false));
     })
     .catch(err => {
@@ -72,9 +103,9 @@ export const deviceFetch = (deviceId) => {
 export const streamsFetch = (deviceId) => {
   return (dispatch) => {
     dispatch(loading(true))
-    agile.device.get(deviceId)
+    agile.device.lastUpdate(deviceId)
     .then(streams => {
-      dispatch(action('STREAMS', streams));
+      dispatch(action('STREAMS', {deviceId, streams}));
       dispatch(loading(false));
     })
     .catch(err => {

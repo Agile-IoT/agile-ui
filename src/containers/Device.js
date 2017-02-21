@@ -2,12 +2,36 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { FlatButton } from 'material-ui';
 import { DeviceSummary, Stream } from '../components';
-import { deviceFetch, devicesDelete, streamsFetch } from '../actions';
+import { deviceFetch, devicesDelete, streamsFetch, deviceSubscribe, deviceUnsubscribe } from '../actions';
 
 class Device extends Component {
   componentDidMount() {
-    this.props.deviceFetch(this.props.params.deviceId)
-    this.props.streamsFetch(this.props.params.deviceId)
+    this.props.deviceFetch(this.props.params.deviceId);
+    this.props.streamsFetch(this.props.params.deviceId);
+  }
+
+  subscribe(device, streams) {
+    if (device) {
+      if (device.streams) {
+        device.streams.map(s => {
+          this.props.deviceSubscribe(device.deviceId, s.id);
+        });
+      }
+    }
+  }
+
+  unsubscribe(device) {
+    if (device) {
+      if (device.streams) {
+        device.streams.map(s => {
+          this.props.deviceSubscribe(device.deviceId, s.id);
+        });
+      }
+    }
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe(this.props.device);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -47,7 +71,7 @@ class Device extends Component {
             actions={this.renderActions(device)}
             meta={device}
           />
-          { this.renderStreams(streams) }
+          { this.renderStreams(streams[device.deviceId]) }
         </div>
       );
     }
@@ -66,7 +90,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
     deviceFetch: (deviceId) => dispatch(deviceFetch(deviceId)),
     devicesDelete: (deviceId) => dispatch(devicesDelete(deviceId)),
-    streamsFetch: (deviceId) => dispatch(streamsFetch(deviceId))
+    streamsFetch: (deviceId) => dispatch(streamsFetch(deviceId)),
+    deviceSubscribe: (deviceId, componentId) => dispatch(deviceSubscribe(deviceId, componentId)),
+    deviceUnsubscribe: (deviceId, componentId) => dispatch(deviceUnsubscribe(deviceId, componentId))
   };
 };
 

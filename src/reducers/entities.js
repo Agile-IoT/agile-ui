@@ -109,7 +109,11 @@ export function device(state = {}, action) {
 export function streams(state = [], action) {
   switch (action.type) {
     case 'STREAMS':
-      return sortBy(action.data, 'componentID');
+      const deviceId = action.data.deviceId
+      return {
+        ...state,
+        [deviceId]: sortBy(action.data.streams, 'componentID')
+      }
     default:
       return state;
   }
