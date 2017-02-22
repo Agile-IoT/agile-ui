@@ -1,7 +1,5 @@
 FROM resin/raspberrypi3-node:7.4.0-20170216
 
-ENV NODE_ENV production
-
 RUN wget \
 	"https://caddyserver.com/download/build?os=linux&arch=arm" \
 	-O /tmp/caddy.tar.gz \
