@@ -32,10 +32,12 @@ before_install:
   - git remote set-url origin "https://$GITHUB_TOKEN@github.com/$TRAVIS_REPO_SLUG.git"
 
 script:
+  - git tag
   - if [[ ${TRAVIS_PULL_REQUEST} != "false" ]]; then
       versionist -d;
+    fi
+  - if [[ ${TRAVIS_PULL_REQUEST} != "false" ]]; then
       docker build -t $DOCKER_IMAGE:$TRAVIS_PULL_REQUEST_BRANCH .;
-      echo $TRAVIS_PULL_REQUEST_BRANCH;
     fi
   - if [[ ${TRAVIS_PULL_REQUEST} == "false" && -z ${TRAVIS_TAG} && ${TRAVIS_BRANCH} == "master" && ${CI_MASTER} == "true" ]]; then
       versionist;
