@@ -37,13 +37,13 @@ script:
       versionist -d;
     fi
   - if [[ ${TRAVIS_PULL_REQUEST} != "false" ]]; then
-      docker build -t $DOCKER_IMAGE:$TRAVIS_PULL_REQUEST_BRANCH .;
+      travis_wait 30 docker build -t $DOCKER_IMAGE:$TRAVIS_PULL_REQUEST_BRANCH .;
     fi
   - if [[ ${TRAVIS_PULL_REQUEST} == "false" && -z ${TRAVIS_TAG} && ${TRAVIS_BRANCH} == "master" && ${CI_MASTER} == "true" ]]; then
       versionist;
     fi
   - if [[ ${TRAVIS_PULL_REQUEST} == "false" && -n ${TRAVIS_TAG} ]]; then
-      docker build -t $DOCKER_IMAGE:$TRAVIS_TAG .;
+      travis_wait 30 docker build -t $DOCKER_IMAGE:$TRAVIS_TAG .;
     fi
   - if [[ ${TRAVIS_PULL_REQUEST} == "false" ]]; then
       mkdir -p $(dirname ${DOCKER_CACHE_FILE});
