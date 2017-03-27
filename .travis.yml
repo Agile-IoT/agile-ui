@@ -1,4 +1,6 @@
-language: generic
+language: node_js
+node_js:
+  - "7"
 
 sudo: required
 
@@ -14,28 +16,42 @@ env:
     - COMPONENT=agile-ui
     - DOCKER_CACHE_FILE=/home/travis/docker-cache/cache.tar.gz
   matrix:
-    - IMAGE=agileiot/$COMPONENT-armv7l
-    - IMAGE=agileiot/$COMPONENT-x86_64
+    - DOCKER_IMAGE=agileiot/$COMPONENT-armv7l
+      CI_MASTER=true
+    - DOCKER_IMAGE=agileiot/$COMPONENT-x86_64
       BASEIMAGE=resin\\/nuc-node:7.2.1
+      CI_MASTER=false
 
 before_install:
   - if [ -f $DOCKER_CACHE_FILE ]; then
       gunzip -c $DOCKER_CACHE_FILE | docker load || true;
     fi
-
-script:
   - docker run --rm --privileged multiarch/qemu-user-static:register
   - if [ "$BASEIMAGE" ] ; then sed -i "s/^FROM .*/FROM $BASEIMAGE/" Dockerfile ; fi
-  - docker build -t $IMAGE:$TRAVIS_BRANCH .
+  - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+  - git remote set-url origin "https://$GITHUB_TOKEN@github.com/$TRAVIS_REPO_SLUG.git"
+
+script:
+  - if [[ ${TRAVIS_PULL_REQUEST} != "false" ]]; then
+      docker build -t $DOCKER_IMAGE:$TRAVIS_PULL_REQUEST_BRANCH .;
+      echo $TRAVIS_PULL_REQUEST_BRANCH;
+      versionist -d;
+    fi
+  - if [[ ${TRAVIS_PULL_REQUEST} == "false" && -z ${TRAVIS_TAG} && ${TRAVIS_BRANCH} == "master" && ${CI_MASTER} == "true" ]]; then
+      versionist;
+    fi
+  - if [[ ${TRAVIS_PULL_REQUEST} == "false" && -n ${TRAVIS_TAG} ]]; then
+      docker build -t $DOCKER_IMAGE:$TRAVIS_TAG .;
+    fi
   - if [[ ${TRAVIS_PULL_REQUEST} == "false" ]]; then
       mkdir -p $(dirname ${DOCKER_CACHE_FILE});
       docker save $(docker history -q $IMAGE:$TRAVIS_BRANCH | grep -v '<missing>') | gzip > ${DOCKER_CACHE_FILE};
     fi
 
 after_success:
-  - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-  - docker push $IMAGE:$TRAVIS_BRANCH;
-  - if [ "$TRAVIS_BRANCH" == "master" ]; then
-      docker tag $IMAGE:$TRAVIS_BRANCH $IMAGE;
-      docker push $IMAGE;
+  - if [[ ${TRAVIS_PULL_REQUEST} != "false" ]]; then
+      docker push $DOCKER_IMAGE:$TRAVIS_PULL_REQUEST_BRANCH;
+    fi
+  - if [[ ${TRAVIS_PULL_REQUEST} == "false" && -n ${TRAVIS_TAG} ]]; then
+      docker push $DOCKER_IMAGE:$TRAVIS_TAG;
     fi
