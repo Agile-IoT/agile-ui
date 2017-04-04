@@ -17,43 +17,45 @@ env:
     - DOCKER_CACHE_FILE=/home/travis/docker-cache/cache.tar.gz
   matrix:
     - DOCKER_IMAGE=agileiot/$COMPONENT-armv7l
-      CI_MASTER=true
     - DOCKER_IMAGE=agileiot/$COMPONENT-x86_64
       BASEIMAGE=resin\\/nuc-node:7.2.1
-      CI_MASTER=false
+
+install:
+  - git fetch --tags
+  - if [ -f "package.json" ]; then
+    	npm i;
+    else
+      npm i git://github.com/resin-io/versionist.git#agile versionist-plugins;
+    fi
 
 before_install:
-  - if [ -f $DOCKER_CACHE_FILE ]; then
-      gunzip -c $DOCKER_CACHE_FILE | docker load || true;
-    fi
+  - git config --global user.name "Agile CI Bot" && git config --global user.email "bot@http://agile-iot.eu/"
   - docker run --rm --privileged multiarch/qemu-user-static:register
   - if [ "$BASEIMAGE" ] ; then sed -i "s/^FROM .*/FROM $BASEIMAGE/" Dockerfile ; fi
-  - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-  - git remote set-url origin "https://$GITHUB_TOKEN@github.com/$TRAVIS_REPO_SLUG.git"
 
 script:
-  - git tag
   - if [[ ${TRAVIS_PULL_REQUEST} != "false" ]]; then
+      export DOCKER_TAG=$TRAVIS_PULL_REQUEST_BRANCH;
+    fi
+  - if [[ ${TRAVIS_PULL_REQUEST} != "false" ]]; then
+      git checkout -b origin/${TRAVIS_PULL_REQUEST_BRANCH};
+      git merge origin/master;
       versionist -d;
     fi
-  - if [[ ${TRAVIS_PULL_REQUEST} != "false" ]]; then
-      travis_wait 30 docker build -t $DOCKER_IMAGE:$TRAVIS_PULL_REQUEST_BRANCH .;
-    fi
-  - if [[ ${TRAVIS_PULL_REQUEST} == "false" && -z ${TRAVIS_TAG} && ${TRAVIS_BRANCH} == "master" && ${CI_MASTER} == "true" ]]; then
-      versionist;
-    fi
   - if [[ ${TRAVIS_PULL_REQUEST} == "false" && -n ${TRAVIS_TAG} ]]; then
-      travis_wait 30 docker build -t $DOCKER_IMAGE:$TRAVIS_TAG .;
+      export DOCKER_TAG=$TRAVIS_TAG;
     fi
-  - if [[ ${TRAVIS_PULL_REQUEST} == "false" ]]; then
-      mkdir -p $(dirname ${DOCKER_CACHE_FILE});
-      docker save $(docker history -q $IMAGE:$TRAVIS_BRANCH | grep -v '<missing>') | gzip > ${DOCKER_CACHE_FILE};
+  - if [[ -n ${DOCKER_TAG} ]]; then
+      docker build -t $DOCKER_IMAGE:$DOCKER_TAG .;
     fi
 
 after_success:
-  - if [[ ${TRAVIS_PULL_REQUEST} != "false" ]]; then
-      docker push $DOCKER_IMAGE:$TRAVIS_PULL_REQUEST_BRANCH;
+  - if [[ -n ${DOCKER_TAG} ]]; then
+      docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+      docker push $DOCKER_IMAGE:$DOCKER_TAG;
     fi
-  - if [[ ${TRAVIS_PULL_REQUEST} == "false" && -n ${TRAVIS_TAG} ]]; then
-      docker push $DOCKER_IMAGE:$TRAVIS_TAG;
+  - if [[ ${TRAVIS_PULL_REQUEST} == "false" && -z ${TRAVIS_TAG} ]]; then
+      git checkout master;
+      git remote set-url origin https://$GH_TOKEN@github.com/agile-iot/agile-example.git;
+      versionist;
     fi
