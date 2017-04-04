@@ -12,7 +12,6 @@
   "license": "MIT",
   "dependencies": {
     "agile-sdk": "0.2.0",
-    "axios": "0.15.3",
     "lodash": "4.17.4",
     "material-ui": "0.17.0",
     "react": "15.4.2",
