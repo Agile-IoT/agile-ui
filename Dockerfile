@@ -7,7 +7,7 @@ RUN wget \
 	&& rm /tmp/caddy.tar.gz
 
 # Defines our working directory in container
-WORKDIR /usr/src/app
+WORKDIR /home
 
 # Copies the package.json first for better cache on later pushes
 COPY package.json package.json
