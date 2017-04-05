@@ -58,6 +58,6 @@ after_success:
     fi
   - if [[ ${TRAVIS_PULL_REQUEST} == "false" && -z ${TRAVIS_TAG} ]]; then
       git checkout master;
-      git remote set-url origin https://$GH_TOKEN@github.com/agile-iot/agile-example.git;
+      git remote set-url origin https://$GH_TOKEN@github.com/agile-iot/$COMPONENT.git;
       versionist;
     fi
