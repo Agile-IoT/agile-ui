@@ -34,6 +34,7 @@ before_install:
   - git config --global user.name "Agile CI Bot" && git config --global user.email "bot@http://agile-iot.eu/"
   - docker run --rm --privileged multiarch/qemu-user-static:register
   - if [ "$BASEIMAGE" ] ; then sed -i "s/^FROM .*/FROM $BASEIMAGE/" Dockerfile ; fi
+  - if [ "$BASEIMAGE" ] ; then sed -i "s/^FROM .*/FROM $BASEIMAGE/" Rockerfile ; fi
 
 script:
   - if [[ ${TRAVIS_PULL_REQUEST} != "false" ]]; then
