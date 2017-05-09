@@ -9,11 +9,7 @@ EXPORT /build/ /build
 
 FROM resin/raspberry-pi3-alpine:3.5-20170404
 RUN apk add --update wget && rm -rf /var/cache/apk/*
-RUN wget \
-	"https://caddyserver.com/download/build?os=linux&arch=arm" \
-	-O /tmp/caddy.tar.gz \
-	&& tar -xzf /tmp/caddy.tar.gz -C /usr/local/bin/ \
-	&& rm /tmp/caddy.tar.gz
+RUN wget -qO- https://getcaddy.com | bash
 IMPORT Caddyfile /home/Caddyfile
 IMPORT /build/ /home/build
 EXPOSE 1337
