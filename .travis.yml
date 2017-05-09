@@ -47,6 +47,8 @@ script:
     fi
   - if [[ ${TRAVIS_PULL_REQUEST} == "false" && -n ${TRAVIS_TAG} ]]; then
       export DOCKER_TAG=$TRAVIS_TAG;
+    else
+      export DOCKER_TAG=$TRAVIS_BRANCH;
     fi
   - if [[ -n ${DOCKER_TAG} ]]; then
       ./rocker build -var Repo=$DOCKER_IMAGE -var Version=$DOCKER_TAG;
