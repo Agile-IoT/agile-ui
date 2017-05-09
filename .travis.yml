@@ -59,6 +59,10 @@ after_success:
       docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
       docker push $DOCKER_IMAGE:$DOCKER_TAG;
     fi
+  - if [ "$DOCKER_TAG" == "master" ]; then
+      docker tag $DOCKER_IMAGE:$DOCKER_TAG $DOCKER_IMAGE;
+      docker push $DOCKER_IMAGE;
+    fi
   - if [[ ${TRAVIS_PULL_REQUEST} == "false" && -z ${TRAVIS_TAG} ]]; then
       git checkout master;
       git remote set-url origin https://$GH_TOKEN@github.com/agile-iot/$COMPONENT.git;
