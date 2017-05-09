@@ -8,7 +8,6 @@ EXPORT Caddyfile
 EXPORT /build/ /build
 
 FROM resin/raspberry-pi3-alpine:3.5-20170404
-RUN apk add --update wget && rm -rf /var/cache/apk/*
 RUN wget -qO- https://getcaddy.com | bash
 IMPORT Caddyfile /home/Caddyfile
 IMPORT /build/ /home/build
