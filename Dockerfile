@@ -1,10 +1,6 @@
-FROM resin/raspberrypi3-node:7.6-20170318
+FROM resin/raspberry-pi3-node:7.8.0-20170426
 
-RUN wget \
-	"https://caddyserver.com/download/build?os=linux&arch=arm" \
-	-O /tmp/caddy.tar.gz \
-	&& tar -xzf /tmp/caddy.tar.gz -C /usr/local/bin/ \
-	&& rm /tmp/caddy.tar.gz
+RUN wget -qO- https://getcaddy.com | bash
 
 # Defines our working directory in container
 WORKDIR /home

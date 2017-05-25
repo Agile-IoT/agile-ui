@@ -18,7 +18,7 @@ env:
   matrix:
     - DOCKER_IMAGE=agileiot/$COMPONENT-armv7l
     - DOCKER_IMAGE=agileiot/$COMPONENT-x86_64
-      BASEIMAGE=resin\\/nuc-node:7.2.1
+      BASEIMAGE=resin\\/intel-nuc-node:7.8.0-20170506
 
 install:
   - git fetch --tags
@@ -47,6 +47,8 @@ script:
     fi
   - if [[ ${TRAVIS_PULL_REQUEST} == "false" && -n ${TRAVIS_TAG} ]]; then
       export DOCKER_TAG=$TRAVIS_TAG;
+    else
+      export DOCKER_TAG=$TRAVIS_BRANCH;
     fi
   - if [[ -n ${DOCKER_TAG} ]]; then
       ./rocker build -var Repo=$DOCKER_IMAGE -var Version=$DOCKER_TAG;
@@ -56,6 +58,10 @@ after_success:
   - if [[ -n ${DOCKER_TAG} ]]; then
       docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
       docker push $DOCKER_IMAGE:$DOCKER_TAG;
+    fi
+  - if [ "$DOCKER_TAG" == "master" ]; then
+      docker tag $DOCKER_IMAGE:$DOCKER_TAG $DOCKER_IMAGE;
+      docker push $DOCKER_IMAGE;
     fi
   - if [[ ${TRAVIS_PULL_REQUEST} == "false" && -z ${TRAVIS_TAG} ]]; then
       git checkout master;
