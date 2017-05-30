@@ -1,4 +1,4 @@
-FROM resin/raspberry-pi3-node:7.8.0-20170426
+FROM resin/intel-nuc-node:7.8.0-20170506
 
 RUN wget -qO- https://getcaddy.com | bash
 
