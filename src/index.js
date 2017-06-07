@@ -14,13 +14,14 @@ import {
 // global styles
 import './styles/index.css';
 
-// redux store
-const store = configureStore();
-
 // material ui
 // Needed for onTouchTap
 // http://stackoverflow.com/a/34015469/988941
 import injectTapEventPlugin from 'react-tap-event-plugin';
+
+// redux store
+const store = configureStore();
+
 injectTapEventPlugin();
 
 render(
