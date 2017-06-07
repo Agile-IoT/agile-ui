@@ -14,7 +14,7 @@ class Device extends Component {
     if (device) {
       if (device.streams) {
         device.streams.map(s => {
-          this.props.deviceSubscribe(device.deviceId, s.id);
+          return this.props.deviceSubscribe(device.deviceId, s.id);
         });
       }
     }
@@ -24,7 +24,7 @@ class Device extends Component {
     if (device) {
       if (device.streams) {
         device.streams.map(s => {
-          this.props.deviceSubscribe(device.deviceId, s.id);
+          return this.props.deviceSubscribe(device.deviceId, s.id);
         });
       }
     }

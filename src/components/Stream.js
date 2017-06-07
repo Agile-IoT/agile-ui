@@ -3,9 +3,7 @@ import moment from 'moment';
 
 import {
   Card,
-  CardActions,
-  CardHeader,
-  CardText,
+  CardHeader
 } from 'material-ui/Card';
 import Avatar from 'material-ui/Avatar';
 

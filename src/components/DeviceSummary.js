@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
 import { List, ListItem } from 'material-ui/List';
 

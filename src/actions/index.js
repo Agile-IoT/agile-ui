@@ -89,7 +89,7 @@ export const deviceFetch = (deviceId) => {
       dispatch(action('DEVICE', device));
       if (device.streams) {
         device.streams.map((s) => {
-          dispatch(deviceSubscribe(deviceId, s.id))
+          return dispatch(deviceSubscribe(deviceId, s.id))
         })
       }
       dispatch(loading(false));

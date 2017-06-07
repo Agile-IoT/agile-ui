@@ -4,7 +4,7 @@
   "description": "Agile IoT device manager UI",
   "repository": "https://github.com/Agile-IoT/agile-ui",
   "devDependencies": {
-    "react-scripts": "0.9.0",
+    "react-scripts": "1.0.7",
     "redux-logger": "2.8.1",
     "versionist": "git://github.com/resin-io/versionist.git#agile",
     "versionist-plugins": "^1.3.1"
