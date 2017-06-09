@@ -118,3 +118,19 @@ export function streams(state = [], action) {
       return state;
   }
 }
+
+export function credentials(state = [], action) {
+  switch (action.type) {
+    case 'CREDENTIALS':
+      return action.data;
+    case 'CREDENTIALS_DELETE':
+      return state.filter(element => element.deviceId !== action.data);
+    case 'CREDENTIALS_CREATE':
+      return [
+        action.data,
+        ...state
+      ]
+    default:
+      return state;
+  }
+}

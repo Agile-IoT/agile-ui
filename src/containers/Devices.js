@@ -12,8 +12,11 @@ class Devices extends Component {
       <div>
         <FlatButton label='Delete' onClick={() => {this.props.devicesDelete(device.deviceId)}} />
         <Link to={`/devices/${device.deviceId}`}>
-          <FlatButton label='View' />
+        <FlatButton label='View' />
         </Link>
+        <Link to={`/devices/${device.deviceId}/security`} >
+          <FlatButton label = 'Security'/>
+        </Link>        
       </div>
     )
   }

@@ -1,6 +1,27 @@
+//It seems that with the latest SDK there is a problem with the device type now... so we include two for now...
 import agileSDK from 'agile-sdk';
-const agile = agileSDK('/api');
 
+var token = 'non-existing';
+
+var agile = agileSDK({
+  api:'http://agilegw.local:8080',
+  idm:'http://agilegw.local:3000'
+
+});
+const DEVICE_TYPE = "device";
+
+//This sets the token for the calls to the sdk and reloads the SDK object
+export const setToken = (new_token) => {
+  token=new_token;
+  console.log("creating new sdk with token starting wih "+token.substring(0,20))
+  agile = agileSDK({
+    api:'http://agilegw.local:8080',
+    idm:'http://agilegw.local:3000',
+    token: token
+  });
+
+  //re-create agile
+}
 //****** UTILS ******//
 const action = (type, data) => {
   return {type, data}
@@ -134,8 +155,11 @@ export const devicesDelete = (deviceId) => {
     dispatch(loading(true))
     agile.deviceManager.delete(deviceId)
     .then(() => {
+      return agile.idm.entity.delete(deviceId, DEVICE_TYPE);
+    })
+    .then(() => {
       dispatch(action('DEVICES_DELETE', deviceId));
-      dispatch(message(`Device ${`deviceId`} deleted.`));
+      dispatch(message(`Device ${deviceId} deleted.`));
       dispatch(loading(false));
     })
     .catch(err => {
@@ -146,14 +170,27 @@ export const devicesDelete = (deviceId) => {
 
 export const devicesCreate = (device, type) => {
   return (dispatch) => {
+    var newDevice;
     dispatch(loading(true))
     agile.deviceManager.create(device, type)
-    .then((newDevice) => {
+    .then((d) => {
+      newDevice = d;
+      return agile.idm.entity.get(d.deviceId, DEVICE_TYPE);
+    })
+    .then((entity) => {
+      return Promise.resolve(entity);
+    })
+    .catch(err => {
+      var entity = {name:newDevice.name, credentials:{}};
+      return agile.idm.entity.create(newDevice.deviceId, DEVICE_TYPE, entity);
+    })
+    .then(entity => {
       dispatch(action('DEVICES_CREATE', newDevice));
       dispatch(loading(false));
     })
     .catch(err => {
-      errorHandle(err, dispatch)
+      console.log("entity seems to be there already...");
+      dispatch(loading(false));
     });
   };
 }
@@ -211,4 +248,38 @@ export const discoveryToggle = () => {
       });
     }
   }
+}
+
+
+export const credentialsFetch = (deviceId) => {
+  return (dispatch) => {
+    dispatch(loading(true))
+    agile.idm.entity.get(deviceId,DEVICE_TYPE)
+    .then(device => {
+      dispatch(action('CREDENTIALS', device));
+      dispatch(loading(false));
+    })
+    .catch(err => {
+      errorHandle(err, dispatch)
+    });
+  };
+}
+
+export const setDeviceAttribute = (deviceId, attribute, value) => {
+  return (dispatch) => {
+    dispatch(loading(true))
+    agile.idm.entity.setAttribute({
+      entity_id:deviceId,
+      entity_type: DEVICE_TYPE,
+      attribute_type: attribute,
+      attribute_value: value
+    })
+    .then(device => {
+      dispatch(action('CREDENTIALS_CREATE', device));
+      dispatch(loading(false));
+    })
+    .catch(err => {
+      errorHandle(err, dispatch)
+    });
+  };
 }

@@ -8,7 +8,9 @@ import {
   App,
   Discover,
   Devices,
-  Device
+  Device,
+  DeviceSecurity,
+  DeviceCredential
 } from './containers';
 
 // global styles
@@ -31,6 +33,9 @@ render(
           <IndexRoute component={Discover} />
           <Route path="devices" component={Devices} />
           <Route path="devices/:deviceId" component={Device} />
+          <Route path="devices/:deviceId/security" component={DeviceSecurity} />
+          <Route path="devices/:deviceId/credential/" component={DeviceCredential} />
+
         </Route>
       </Router>
     </MuiThemeProvider>
