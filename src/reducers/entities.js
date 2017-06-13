@@ -1,4 +1,3 @@
-import includes from 'lodash/includes';
 import sortBy from 'lodash/sortBy';
 
 export function devices(state = [], action) {
@@ -77,14 +76,14 @@ export function protocols(state = [], action) {
   }
 }
 
-export function deviceTypes(state = [], action) {
+export function deviceTypes(state = {}, action) {
   switch (action.type) {
     case 'DEVICE_TYPES':
-      if (action.data.length > 0 && !includes(state, action.data[0])) {
-        return [
+      if (action.data.types.length > 0) {
+        return {
           ...state,
-          ...action.data
-        ];
+          [action.data.id] : action.data.types
+        };
       }
       return state
     default:

@@ -13,7 +13,7 @@ class Discover extends Component {
   }
 
   renderDeviceTypes = (device, deviceTypes) => {
-    if (deviceTypes.length > 0) {
+    if (deviceTypes && deviceTypes.length > 0) {
       return deviceTypes.map((type, key) => {
         return (
           <MenuItem
@@ -36,7 +36,7 @@ class Discover extends Component {
         >
         <MenuItem value={null} label="Register" primaryText="Select device type" />
         {
-          this.renderDeviceTypes(device, deviceTypes)
+          this.renderDeviceTypes(device, deviceTypes[device.id])
         }
         </SelectField>
       </div>
