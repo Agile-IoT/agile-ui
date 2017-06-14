@@ -20,6 +20,13 @@ export const message = msg => {
   };
 }
 
+export const messageRemove = msg => {
+  return {
+    type: 'MESSAGE_REMOVE',
+    data: msg
+  };
+}
+
 export const errorHandle = (err, dispatch) => {
   dispatch(message(err.message));
   dispatch(loading(false));
@@ -184,9 +191,11 @@ export const drawerToggle = bool => action('DRAWER', bool);
 export const discoveryStatus = () => {
   return (dispatch) => {
     agile.protocolManager.discovery.status()
-    .then(status => {
-      dispatch(action('DISCOVERY', status));
-      dispatch(message(`discover is ${status}`));
+    .then(protocols => {
+      dispatch(action('DISCOVERY', protocols[0]));
+      protocols.map((protocols) => {
+        return dispatch(message(`${protocols.name} is ${protocols.status}`));
+      })
       dispatch(loading(false));
     }).catch(err => {
       errorHandle(err, dispatch)
