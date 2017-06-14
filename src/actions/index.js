@@ -45,7 +45,12 @@ export const deviceTypesFetch = (deviceOverview) => {
     dispatch(loading(true))
     agile.deviceManager.typeof(deviceOverview)
     .then(deviceTypes => {
-      dispatch(action('DEVICE_TYPES', deviceTypes));
+      dispatch(
+        action('DEVICE_TYPES', {
+          id: deviceOverview.id,
+          types: deviceTypes
+        })
+      );
       dispatch(loading(false));
     })
     .catch(err => {
