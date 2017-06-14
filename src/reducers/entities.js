@@ -35,6 +35,9 @@ export function messages(state=[], action) {
         action.data,
         ...state
       ]
+    case 'MESSAGE_REMOVE':
+      let newState = state.filter((i) => i !== action.data)
+      return newState
     default:
       return state;
   }
