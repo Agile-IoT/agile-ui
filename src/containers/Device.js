@@ -1,8 +1,23 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { FlatButton } from 'material-ui';
-import { DeviceSummary, Stream } from '../components';
-import { deviceFetch, devicesDelete, streamsFetch, deviceSubscribe, deviceUnsubscribe } from '../actions';
+import { 
+  DeviceSummary,
+  Stream,
+  CloudStorageControls,
+  LocalStorageControls 
+} from '../components';
+
+import { 
+  deviceFetch,
+  devicesDelete,
+  streamsFetch,
+  deviceSubscribe,
+  deviceUnsubscribe,
+  locStorSubscribe,
+  getLocStorSubs,
+  cloudUploadData
+} from '../actions';
 
 class Device extends Component {
   componentDidMount() {
@@ -71,6 +86,16 @@ class Device extends Component {
             actions={this.renderActions(device)}
             meta={device}
           />
+
+          <LocalStorageControls 
+            locStorSubscribe={this.props.locStorSubscribe}
+            getLocStorSubs={this.props.getLocStorSubs}
+          />
+
+          <CloudStorageControls 
+            cloudUploadData={this.props.cloudUploadData}
+          />
+
           { this.renderStreams(streams[device.deviceId]) }
         </div>
       );
@@ -92,7 +117,10 @@ const mapDispatchToProps = (dispatch) => {
     devicesDelete: (deviceId) => dispatch(devicesDelete(deviceId)),
     streamsFetch: (deviceId) => dispatch(streamsFetch(deviceId)),
     deviceSubscribe: (deviceId, componentId) => dispatch(deviceSubscribe(deviceId, componentId)),
-    deviceUnsubscribe: (deviceId, componentId) => dispatch(deviceUnsubscribe(deviceId, componentId))
+    deviceUnsubscribe: (deviceId, componentId) => dispatch(deviceUnsubscribe(deviceId, componentId)),
+    locStorSubscribe: (deviceId, componentId, interval) => dispatch(locStorSubscribe(deviceId, componentId, interval)),
+    getLocStorSubs: (deviceId, componentId) => dispatch(getLocStorSubs(deviceId, componentId)),
+    cloudUploadData: (deviceId, componentId, startDate, endDate, provider) => dispatch(cloudUploadData(deviceId, componentId, startDate, endDate, provider))
   };
 };
 

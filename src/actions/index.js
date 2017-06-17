@@ -212,3 +212,52 @@ export const discoveryToggle = () => {
     }
   }
 }
+
+// TODO EXPIREMENTAL
+export const locStorSubscribe = (deviceID, componentID, interval) => {
+  console.log(deviceID, componentID, interval)
+  return (dispatch, currentState) => {
+    fetch('http://127.0.0.1:1338/api/subscription', {
+      method: 'POST',
+      body: `deviceID=${deviceID}&componentID=${componentID}&interval=${interval}`,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded' 
+      },
+      mode: 'cors'
+    }).then(() => {
+      dispatch(message('DONE'));
+    })
+  }
+}
+
+export const getLocStorSubs = (deviceID, componentID) => {
+  return (dispatch, currentState) => {
+    fetch(`http://127.0.0.1:1338/api/subscription`)
+    .then(result => result.json())
+    .then(jsonRes => {
+      return jsonRes.filter(pol => 
+        pol.deviceID === deviceID && pol.componentID === componentID)
+    })
+  }
+}
+
+export const cloudUploadData = (deviceID, componentID, startDate, endDate, provider) => {
+  endDate.setHours(23)
+  return (dispatch, currentState) => {
+    const query = `{"deviceID": "${deviceID}", "componentID": "${componentID}"}`
+    fetch(`http://127.0.0.1:1338/api/record?where=${query}`).then((res) => {
+      return res.json() 
+    }).then(res => {
+      const fin = res.filter(entry => {
+        let entryDate = new Date(entry.time)
+        const tooEarly = entryDate < startDate
+        const tooLate = entryDate > endDate
+        console.log(tooEarly, tooLate)
+        return !tooEarly && !tooLate
+      })
+      return fin
+    }).then(data => {
+      alert(`${data.length} entries are ready for upload to ${provider}`) 
+    })
+  }
+}
