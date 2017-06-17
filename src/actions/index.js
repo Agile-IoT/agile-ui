@@ -214,7 +214,7 @@ export const discoveryToggle = () => {
 }
 
 // TODO EXPIREMENTAL
-export const locStorSubscribe = (deviceID, componentID, interval) => {
+export const locStorPolicyAdd = (deviceID, componentID, interval) => {
   console.log(deviceID, componentID, interval)
   return (dispatch, currentState) => {
     fetch('http://127.0.0.1:1338/api/subscription', {
@@ -225,18 +225,38 @@ export const locStorSubscribe = (deviceID, componentID, interval) => {
       },
       mode: 'cors'
     }).then(() => {
-      dispatch(message('DONE'));
+      dispatch(locStorPoliciesFetch(deviceID))
     })
   }
 }
 
-export const getLocStorSubs = (deviceID, componentID) => {
+export const locStorPolicyDelete = (deviceID, componentID) => {
   return (dispatch, currentState) => {
+    dispatch(loading(true))
+
+    fetch(`http://127.0.0.1:1338/api/subscription/${deviceID}/${componentID}`, {
+      method: 'DELETE' 
+    }).then(res => {
+      dispatch(message('Subscription deleted.'));
+      dispatch(locStorPoliciesFetch(deviceID))
+    }).catch(err => {
+      errorHandle(err, dispatch)
+    })
+  }
+}
+
+export const locStorPoliciesFetch = (deviceID) => {
+  return (dispatch, currentState) => {
+    dispatch(loading(true))
     fetch(`http://127.0.0.1:1338/api/subscription`)
     .then(result => result.json())
     .then(jsonRes => {
-      return jsonRes.filter(pol => 
-        pol.deviceID === deviceID && pol.componentID === componentID)
+      const relevantPolicies =  jsonRes.filter(pol => pol.deviceID === deviceID)
+
+      dispatch(loading(false))
+      dispatch(action('POLICIES', relevantPolicies));
+    }).catch(err => {
+      errorHandle(err, dispatch)
     })
   }
 }

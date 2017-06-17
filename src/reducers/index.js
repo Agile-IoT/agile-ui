@@ -9,7 +9,8 @@ import {
   protocols,
   deviceTypes,
   device,
-  streams
+  streams,
+  localStoragePolicies
 } from './entities';
 
 export default combineReducers({
@@ -22,5 +23,6 @@ export default combineReducers({
     protocols,
     deviceTypes,
     device,
-    streams
+    streams,
+    localStoragePolicies
 });

@@ -17,6 +17,15 @@ export function devices(state = [], action) {
   }
 }
 
+export function localStoragePolicies(state = [], action) {
+  switch (action.type) {
+    case 'POLICIES':
+      return action.data;
+    default:
+      return state;
+  }
+}
+
 export function devicesDiscover(state = [], action) {
   switch (action.type) {
     case 'DEVICES_DISCOVER':

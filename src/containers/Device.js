@@ -3,10 +3,12 @@ import { connect } from 'react-redux';
 import { FlatButton } from 'material-ui';
 import { 
   DeviceSummary,
-  Stream,
-  CloudStorageControls,
-  LocalStorageControls 
+  Stream
 } from '../components';
+
+// TODO
+import {CloudStorageControls} from '../components/CloudStorageControls.js'
+import {LocalStorageControls} from '../components/LocalStorageControls.js'
 
 import { 
   deviceFetch,
@@ -14,8 +16,9 @@ import {
   streamsFetch,
   deviceSubscribe,
   deviceUnsubscribe,
-  locStorSubscribe,
-  getLocStorSubs,
+  locStorPolicyAdd,
+  locStorPolicyDelete,
+  locStorPoliciesFetch,
   cloudUploadData
 } from '../actions';
 
@@ -23,6 +26,7 @@ class Device extends Component {
   componentDidMount() {
     this.props.deviceFetch(this.props.params.deviceId);
     this.props.streamsFetch(this.props.params.deviceId);
+    this.props.locStorPoliciesFetch(this.props.params.deviceId);
   }
 
   subscribe(device, streams) {
@@ -88,13 +92,24 @@ class Device extends Component {
           />
 
           <LocalStorageControls 
-            locStorSubscribe={this.props.locStorSubscribe}
-            getLocStorSubs={this.props.getLocStorSubs}
+            expandable
+            showExpandableButton
+            deviceId={device.deviceId}
+            streams={device.streams}
+            locStorPolicies={this.props.locStorPolicies}
+            locStorPolicyAdd={this.props.locStorPolicyAdd}
+            locStorPolicyDelete={this.props.locStorPolicyDelete}
+            locStorPoliciesFetch={this.props.locStorPoliciesFetch}
           />
 
-          <CloudStorageControls 
+          <CloudStorageControls
+            expandable
+            showExpandableButton
+            deviceId={device.deviceId}
+            streams={device.streams}
             cloudUploadData={this.props.cloudUploadData}
           />
+
 
           { this.renderStreams(streams[device.deviceId]) }
         </div>
@@ -107,7 +122,8 @@ class Device extends Component {
 const mapStateToProps = (state) => {
   return {
     device: state.device,
-    streams: state.streams
+    streams: state.streams,
+    locStorPolicies: state.localStoragePolicies
   };
 };
 
@@ -118,8 +134,11 @@ const mapDispatchToProps = (dispatch) => {
     streamsFetch: (deviceId) => dispatch(streamsFetch(deviceId)),
     deviceSubscribe: (deviceId, componentId) => dispatch(deviceSubscribe(deviceId, componentId)),
     deviceUnsubscribe: (deviceId, componentId) => dispatch(deviceUnsubscribe(deviceId, componentId)),
-    locStorSubscribe: (deviceId, componentId, interval) => dispatch(locStorSubscribe(deviceId, componentId, interval)),
-    getLocStorSubs: (deviceId, componentId) => dispatch(getLocStorSubs(deviceId, componentId)),
+
+    locStorPolicyAdd: (deviceId, componentId, interval) => dispatch(locStorPolicyAdd(deviceId, componentId, interval)),
+    locStorPolicyDelete: (deviceId, componentId) => dispatch(locStorPolicyDelete(deviceId, componentId)),
+    locStorPoliciesFetch: (deviceId, componentId) => dispatch(locStorPoliciesFetch(deviceId, componentId)),
+
     cloudUploadData: (deviceId, componentId, startDate, endDate, provider) => dispatch(cloudUploadData(deviceId, componentId, startDate, endDate, provider))
   };
 };
