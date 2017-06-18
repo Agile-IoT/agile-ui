@@ -17,8 +17,31 @@ export function devices(state = [], action) {
   }
 }
 
-export function localStoragePolicies(state = [], action) {
+export function cloudUpload(state = {}, action) {
   switch (action.type) {
+    case 'DEVICE_ID':
+      return Object.assign({}, state, {deviceId: action.data})
+    case 'COMPOENT_ID':
+      return Object.assign({}, state, {componentId: action.data})
+    case 'START_DATE':
+      return Object.assign({}, state, {startDate: action.data})
+    case 'END_DATE':
+      return Object.assign({}, state, {endDate: action.data})
+    case 'PROVIDER':
+      return Object.assign({}, state, {provider: action.data})
+    default:
+      return state;
+  }
+}
+
+export function localStorage(state = {}, action) {
+  switch (action.type) {
+    case 'LOC_DEVICE_ID':
+      return Object.assign({}, state, {deviceId: action.data})
+    case 'LOC_COMPOENT_ID':
+      return Object.assign({}, state, {componentId: action.data})
+    case 'INTERVAL':
+      return Object.assign({}, state, {interval: action.data})
     case 'POLICIES':
       return action.data;
     default:

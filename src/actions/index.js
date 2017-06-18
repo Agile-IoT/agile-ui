@@ -26,6 +26,29 @@ export const errorHandle = (err, dispatch) => {
   dispatch(message(err.message));
   dispatch(loading(false));
 }
+
+// Local storage related.
+export const setInterval = (interval) => {
+  return (dispatch) => {
+    dispatch(action('INTERVAL', interval))
+  }
+}
+
+export const setLocDeviceId = (deviceId) => {
+  return (dispatch) => {
+    dispatch(action('LOC_DEVICE_ID', deviceId))
+  }
+}
+
+export const setLocComponentId = (componentId) => {
+  return (dispatch) => {
+    dispatch(action('LOC_COMPONENT_ID', componentId))
+  }
+}
+
+// Cloud upload related
+
+//
 //****** ASYNC *****//
 // fetch all unregistered devices
 export const devicesDiscover = () => {
@@ -219,15 +242,14 @@ export const discoveryToggle = () => {
 export const locStorPolicyAdd = (deviceID, componentID, interval) => {
   console.log(deviceID, componentID, interval)
   return (dispatch, currentState) => {
-    fetch('http://127.0.0.1:1338/api/subscription', {
-      method: 'POST',
-      body: `deviceID=${deviceID}&componentID=${componentID}&interval=${interval}`,
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded' 
-      },
-      mode: 'cors'
-    }).then(() => {
+    dispatch(loading(true))
+    agile.data.subscription.create(deviceID, componentID, interval)
+    .then(() => {
       dispatch(locStorPoliciesFetch(deviceID))
+      dispatch(loading(false));
+    })
+    .catch(err => {
+      errorHandle(err, dispatch)
     })
   }
 }
@@ -235,51 +257,56 @@ export const locStorPolicyAdd = (deviceID, componentID, interval) => {
 export const locStorPolicyDelete = (deviceID, componentID) => {
   return (dispatch, currentState) => {
     dispatch(loading(true))
-
-    fetch(`http://127.0.0.1:1338/api/subscription/${deviceID}/${componentID}`, {
-      method: 'DELETE' 
-    }).then(res => {
+    agile.data.subscription.delete(deviceID, componentID)
+    .then(() => {
+      dispatch(loading(false))
       dispatch(message('Subscription deleted.'));
       dispatch(locStorPoliciesFetch(deviceID))
-    }).catch(err => {
+    })
+    .catch(err => {
       errorHandle(err, dispatch)
     })
   }
 }
 
+// TODO Policies per device ID / Component ID do not work atm.
 export const locStorPoliciesFetch = (deviceID) => {
   return (dispatch, currentState) => {
     dispatch(loading(true))
-    fetch(`http://127.0.0.1:1338/api/subscription`)
-    .then(result => result.json())
-    .then(jsonRes => {
-      const relevantPolicies =  jsonRes.filter(pol => pol.deviceID === deviceID)
-
+    agile.data.subscription.get()
+    .then(policies => {
       dispatch(loading(false))
-      dispatch(action('POLICIES', relevantPolicies));
-    }).catch(err => {
+      dispatch(action('POLICIES', policies));
+    })
+    .catch(err => {
       errorHandle(err, dispatch)
     })
   }
 }
 
 export const cloudUploadData = (deviceID, componentID, startDate, endDate, provider) => {
+  // TODO Workaround, will go away once we provide the user with a way to select precise time.
+  console.log(startDate, endDate)
   endDate.setHours(23)
-  return (dispatch, currentState) => {
-    const query = `{"deviceID": "${deviceID}", "componentID": "${componentID}"}`
-    fetch(`http://127.0.0.1:1338/api/record?where=${query}`).then((res) => {
-      return res.json() 
-    }).then(res => {
-      const fin = res.filter(entry => {
+  return (dispatch) => {
+    dispatch(loading(true))
+    const query = `where={"deviceID": "${deviceID}", "componentID": "${componentID}"}`
+    agile.data.record.get(query)
+    .then(entries => {
+      // TODO this is a workaround, ideally should be able to query the DB directly.
+      const relevant = entries.filter(entry => {
         let entryDate = new Date(entry.time)
         const tooEarly = entryDate < startDate
         const tooLate = entryDate > endDate
-        console.log(tooEarly, tooLate)
         return !tooEarly && !tooLate
       })
-      return fin
+
+      return relevant
     }).then(data => {
+      dispatch(loading(false))
       alert(`${data.length} entries are ready for upload to ${provider}`) 
+    }).catch(err => {
+      errorHandle(err, dispatch) 
     })
   }
 }

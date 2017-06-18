@@ -41,7 +41,6 @@ const renderMeta = (meta, id) => {
 class Device extends React.Component {
   render() {
     return (
-      <div>
       <Card>
         <CardHeader
           title={this.props.title}
@@ -63,7 +62,6 @@ class Device extends React.Component {
           {this.props.actions}
         </CardActions>
       </Card>
-      </div>
     );
   }
 }

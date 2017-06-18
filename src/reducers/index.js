@@ -10,7 +10,8 @@ import {
   deviceTypes,
   device,
   streams,
-  localStoragePolicies
+  localStorage,
+  cloudUpload
 } from './entities';
 
 export default combineReducers({
@@ -24,5 +25,6 @@ export default combineReducers({
     deviceTypes,
     device,
     streams,
-    localStoragePolicies
+    localStorage,
+    cloudUpload
 });

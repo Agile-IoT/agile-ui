@@ -1,7 +1,7 @@
 import React from 'react';
 import { Toolbar, ToolbarGroup } from 'material-ui/Toolbar';
 
-export const GenericListItem = (props) => {
+const GenericListItem = (props) => {
   const styles= {
     bar: {
       backgroundColor: 'white' 
@@ -15,12 +15,14 @@ export const GenericListItem = (props) => {
   }
   return (
     <Toolbar style={styles.bar}>
-      <ToolbarGroup firstChild={true}>
+      <ToolbarGroup key='first' firstChild={true}>
         {props.leftEl}
       </ToolbarGroup>
-    <ToolbarGroup lastChild={true} style={styles.leftEl}>
+    <ToolbarGroup key='last' lastChild={true} style={styles.leftEl}>
         {props.rightEl}
       </ToolbarGroup>
     </Toolbar>
-  );
+  )
 }
+
+export default GenericListItem;

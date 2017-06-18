@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { isEmpty } from 'underscore';
 import { FlatButton } from 'material-ui';
 import { 
   DeviceSummary,
   Stream
 } from '../components';
 
-// TODO
-import {CloudStorageControls} from '../components/CloudStorageControls.js'
-import {LocalStorageControls} from '../components/LocalStorageControls.js'
+import { 
+  LocalStorageSettings,
+  CloudUploadSettings
+} from './'
+
 
 import { 
   deviceFetch,
@@ -16,26 +19,20 @@ import {
   streamsFetch,
   deviceSubscribe,
   deviceUnsubscribe,
-  locStorPolicyAdd,
-  locStorPolicyDelete,
-  locStorPoliciesFetch,
-  cloudUploadData
 } from '../actions';
+
 
 class Device extends Component {
   componentDidMount() {
     this.props.deviceFetch(this.props.params.deviceId);
     this.props.streamsFetch(this.props.params.deviceId);
-    this.props.locStorPoliciesFetch(this.props.params.deviceId);
   }
 
   subscribe(device, streams) {
-    if (device) {
-      if (device.streams) {
-        device.streams.map(s => {
-          return this.props.deviceSubscribe(device.deviceId, s.id);
-        });
-      }
+    if (device && device.streams) {
+      device.streams.map(s => {
+        return this.props.deviceSubscribe(device.deviceId, s.id);
+      });
     }
   }
 
@@ -78,7 +75,7 @@ class Device extends Component {
 
   render() {
     const { device, streams } = this.props;
-    if (device) {
+    if (!isEmpty(device)) {
       return (
         <div>
           <DeviceSummary
@@ -91,25 +88,8 @@ class Device extends Component {
             meta={device}
           />
 
-          <LocalStorageControls 
-            expandable
-            showExpandableButton
-            deviceId={device.deviceId}
-            streams={device.streams}
-            locStorPolicies={this.props.locStorPolicies}
-            locStorPolicyAdd={this.props.locStorPolicyAdd}
-            locStorPolicyDelete={this.props.locStorPolicyDelete}
-            locStorPoliciesFetch={this.props.locStorPoliciesFetch}
-          />
-
-          <CloudStorageControls
-            expandable
-            showExpandableButton
-            deviceId={device.deviceId}
-            streams={device.streams}
-            cloudUploadData={this.props.cloudUploadData}
-          />
-
+          <LocalStorageSettings />
+          <CloudUploadSettings />
 
           { this.renderStreams(streams[device.deviceId]) }
         </div>
@@ -134,12 +114,6 @@ const mapDispatchToProps = (dispatch) => {
     streamsFetch: (deviceId) => dispatch(streamsFetch(deviceId)),
     deviceSubscribe: (deviceId, componentId) => dispatch(deviceSubscribe(deviceId, componentId)),
     deviceUnsubscribe: (deviceId, componentId) => dispatch(deviceUnsubscribe(deviceId, componentId)),
-
-    locStorPolicyAdd: (deviceId, componentId, interval) => dispatch(locStorPolicyAdd(deviceId, componentId, interval)),
-    locStorPolicyDelete: (deviceId, componentId) => dispatch(locStorPolicyDelete(deviceId, componentId)),
-    locStorPoliciesFetch: (deviceId, componentId) => dispatch(locStorPoliciesFetch(deviceId, componentId)),
-
-    cloudUploadData: (deviceId, componentId, startDate, endDate, provider) => dispatch(cloudUploadData(deviceId, componentId, startDate, endDate, provider))
   };
 };
 
