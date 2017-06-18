@@ -1,5 +1,7 @@
-import agileSDK from 'agile-sdk';
-const agile = agileSDK('/api');
+var agile = require('agile-sdk') ({
+  api: 'http://agile.local:8080',
+  data: 'http://127.0.0.1:1338'
+})
 
 //****** UTILS ******//
 const action = (type, data) => {
