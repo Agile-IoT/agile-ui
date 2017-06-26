@@ -47,6 +47,8 @@ class CloudUploadSettings extends Component {
         storageProviders={this.state.storageProviders}
         handleComponentChange={this.handleComponentChange}
         handleProviderChange={this.handleProviderChange}
+        handleStartDateChange={this.handleStartDateChange}
+        handleEndDateChange={this.handleEndDateChange}
         handleButtonClick={this.handleButtonClick}
       />
     );

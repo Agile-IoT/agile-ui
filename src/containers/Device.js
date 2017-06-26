@@ -2,18 +2,18 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { isEmpty } from 'underscore';
 import { FlatButton } from 'material-ui';
-import { 
+import {
   DeviceSummary,
   Stream
 } from '../components';
 
-import { 
+import {
   LocalStorageSettings,
   CloudUploadSettings
 } from './'
 
 
-import { 
+import {
   deviceFetch,
   devicesDelete,
   streamsFetch,
@@ -71,6 +71,10 @@ class Device extends Component {
         return <Stream key={i} {...s} />
       })
     }
+  }
+  // TEMP
+  streamToCSV(stream) {
+    return ``
   }
 
   render() {

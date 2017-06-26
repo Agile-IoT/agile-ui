@@ -138,6 +138,15 @@ export function device(state = {}, action) {
   }
 }
 
+export function records(state = [], action) {
+  switch (action.type) {
+    case 'DEVICE_RECORDS':
+      return action.data
+    default:
+      return state
+  }
+}
+
 export function streams(state = [], action) {
   switch (action.type) {
     case 'STREAMS':

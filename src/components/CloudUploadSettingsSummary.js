@@ -59,7 +59,7 @@ const CloudUploadSettingsSummary = (props) => {
                 autoOk
                 mode="landscape" 
                 shouldDisableDate={shouldDisableDate}
-                defaultDate={props.startDate}
+                value={props.startDate}
                 onChange={props.handleStartDateChange}
               />
             }
@@ -74,7 +74,7 @@ const CloudUploadSettingsSummary = (props) => {
                 autoOk
                 mode="landscape" 
                 shouldDisableDate={shouldDisableDate}
-                defaultDate={props.endDate}
+                value={props.endDate}
                 onChange={props.handleEndDateChange}
               />
             }

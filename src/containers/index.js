@@ -7,5 +7,17 @@ import LoadingBar from './LoadingBar';
 import Settings from './Settings';
 import LocalStorageSettings from './LocalStorageSettings';
 import CloudUploadSettings from './CloudUploadSettings';
+import Visualization from './Visualization';
 
-export { App, Devices, Device, Discover, MessageBar, LoadingBar, Settings, LocalStorageSettings, CloudUploadSettings }
+export {
+  App,
+  Devices,
+  Device,
+  Discover,
+  MessageBar,
+  LoadingBar,
+  Settings,
+  LocalStorageSettings,
+  CloudUploadSettings,
+  Visualization
+ }

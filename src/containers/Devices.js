@@ -10,9 +10,14 @@ class Devices extends Component {
   renderActions(device) {
     return (
       <div>
-        <FlatButton label='Delete' onClick={() => {this.props.devicesDelete(device.deviceId)}} />
+        <FlatButton label='Delete' onClick={() => {
+          this.props.devicesDelete(device.deviceId)}
+        } />
+        <Link to={`/visualize/${device.deviceId}`}>
+          <FlatButton label='View Data' />
+        </Link>
         <Link to={`/devices/${device.deviceId}`}>
-          <FlatButton label='View' />
+          <FlatButton label='Configure' />
         </Link>
       </div>
     )

@@ -240,7 +240,6 @@ export const discoveryToggle = () => {
 
 // TODO EXPIREMENTAL
 export const locStorPolicyAdd = (deviceID, componentID, interval) => {
-  console.log(deviceID, componentID, interval)
   return (dispatch, currentState) => {
     dispatch(loading(true))
     agile.data.subscription.create(deviceID, componentID, interval)
@@ -284,13 +283,24 @@ export const locStorPoliciesFetch = (deviceID) => {
   }
 }
 
+export const retrieveData = (deviceId) => {
+  return(dispatch) => {
+    const query = `where={"deviceID": "${deviceId}"}`
+    dispatch(loading(true))
+    agile.data.record.get(query).then(data => {
+      dispatch(loading(false))
+      dispatch(action('DEVICE_RECORDS', data))
+    })
+  }
+}
+
 export const cloudUploadData = (deviceID, componentID, startDate, endDate, provider) => {
   // TODO Workaround, will go away once we provide the user with a way to select precise time.
-  console.log(startDate, endDate)
-  endDate.setHours(23)
+  const query = `where={"deviceID": "${deviceID}", "componentID": "${componentID}"}`
+  startDate.setHours(0, 0)
+  endDate.setHours(23, 59)
   return (dispatch) => {
     dispatch(loading(true))
-    const query = `where={"deviceID": "${deviceID}", "componentID": "${componentID}"}`
     agile.data.record.get(query)
     .then(entries => {
       // TODO this is a workaround, ideally should be able to query the DB directly.
@@ -304,9 +314,9 @@ export const cloudUploadData = (deviceID, componentID, startDate, endDate, provi
       return relevant
     }).then(data => {
       dispatch(loading(false))
-      alert(`${data.length} entries are ready for upload to ${provider}`) 
+      alert(`${data.length} entries are ready for upload to ${provider}`)
     }).catch(err => {
-      errorHandle(err, dispatch) 
+      errorHandle(err, dispatch)
     })
   }
 }
