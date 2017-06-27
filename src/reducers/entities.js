@@ -1,16 +1,23 @@
 import sortBy from 'lodash/sortBy';
+import omit from 'lodash/omit';
 
-export function devices(state = [], action) {
+export function devices(state = {}, action) {
   switch (action.type) {
+    case 'DEVICE':
+      return {
+        ...state,
+        [action.data.deviceId] : action.data
+      }
     case 'DEVICES':
       return action.data;
     case 'DEVICES_DELETE':
-      return state.filter(element => element.deviceId !== action.data);
+      return omit(state, action.data)
     case 'DEVICES_CREATE':
-      return [
-        action.data,
-        ...state
-      ]
+      return {
+        ...state,
+        [action.data.deviceId] : action.data
+      }
+
     default:
       return state;
   }
@@ -89,20 +96,6 @@ export function deviceTypes(state = {}, action) {
         };
       }
       return state
-    default:
-      return state;
-  }
-}
-
-export function device(state = {}, action) {
-  switch (action.type) {
-    case 'DEVICE':
-      return action.data
-    case 'DEVICES_DELETE':
-      if (state.deviceId === action.data) {
-        return {}
-      }
-      return state;
     default:
       return state;
   }
