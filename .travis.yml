@@ -19,16 +19,18 @@ env:
     - DOCKER_IMAGE=agileiot/$COMPONENT-armv7l
       VERSIONIST=true
     - DOCKER_IMAGE=agileiot/$COMPONENT-x86_64
-      BASEIMAGE=resin\\/nuc-node:7.2.1
+      BASEIMAGE=resin\\/intel-nuc-node:7.8.0-20170506
 
 before_install:
-  - source <(curl -s https://raw.githubusercontent.com/Agile-IoT/agile-ci-scripts/master/before_install.sh)
+  - source <(curl -s https://raw.githubusercontent.com/Agile-IoT/agile-ci-scripts/master/agile-ci-functions.sh)
+  - cache_load
+  - bootstrap
   - echo "Tagging the build with tag - $DOCKER_TAG"
 
 script:
-  - if [[ -n ${DOCKER_TAG} ]]; then
-      docker build -t $DOCKER_IMAGE:$DOCKER_TAG .;
-    fi
+  - docker_build_if_needed
+  - cache_save
 
 after_success:
-  - source <(curl -s https://raw.githubusercontent.com/Agile-IoT/agile-ci-scripts/master/after_success.sh)
+  - docker_push_if_needed
+  - versionist_if_needed
