@@ -1,4 +1,4 @@
-FROM resin/nuc-node:7.2.1
+FROM resin/raspberry-pi3-node:7.8.0-20170426
 
 RUN wget -qO- https://getcaddy.com | bash
 
