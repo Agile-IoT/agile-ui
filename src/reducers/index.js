@@ -8,7 +8,6 @@ import {
   drawer,
   protocols,
   deviceTypes,
-  device,
   streams
 } from './entities';
 
@@ -21,6 +20,5 @@ export default combineReducers({
     drawer,
     protocols,
     deviceTypes,
-    device,
     streams
 });
