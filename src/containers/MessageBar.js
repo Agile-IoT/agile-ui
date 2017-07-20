@@ -21,7 +21,7 @@ const MessageBar = (props) => {
   // return snack bar if message exists
   const hasMessages = messages.length > 0
   const latestMessage = messages[messages.length - 1]
-  console.log({latestMessage})
+  
   if (hasMessages) {
     setTimeout(() => {
       messageRemove(latestMessage)
