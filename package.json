@@ -29,5 +29,5 @@
     "eject": "react-scripts eject",
     "version": "versionist"
   },
-  "proxy": "http://agile.local:8080"
+  "proxy": "http://0.0.0.0:8080"
 }
