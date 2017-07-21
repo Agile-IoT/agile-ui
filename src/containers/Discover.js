@@ -3,7 +3,7 @@ import { DeviceItem } from '../components';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import { connect } from 'react-redux';
-import difference from 'lodash/difference'
+import differenceBy from 'lodash/differenceBy'
 
 import { devicesDiscover, devicesCreate, deviceTypesFetch } from '../actions';
 
@@ -81,7 +81,7 @@ class Discover extends Component {
 
   componentWillReceiveProps(nextProps) {
     const { devices } = nextProps;
-    const newDevices = difference(devices, this.props.devices);
+    const newDevices = differenceBy(devices, this.props.devices, 'id')
     if (newDevices) {
       this.updateDeviceTypes(newDevices);
     }
