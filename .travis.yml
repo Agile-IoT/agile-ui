@@ -28,7 +28,7 @@ before_install:
   - echo "Tagging the build with tag - $DOCKER_TAG"
 
 script:
-  - travis_wait 30 docker_build_if_needed
+  - travis_wait 40 docker_build_if_needed
   - cache_save
 
 after_success:
