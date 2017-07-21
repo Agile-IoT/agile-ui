@@ -10,7 +10,7 @@ COPY package.json package.json
 
 # This install npm dependencies on the resin.io build server,
 # making sure to clean up the artifacts it creates in order to reduce the image size.
-RUN npm install
+RUN npm -d install
 
 COPY . .
 
