@@ -8,29 +8,28 @@
  *Contributors:
  *    Resin.io, FBK, Jolocom - initial API and implementation
  ******************************************************************************/
+import { Tabs, Tab } from 'material-ui/Tabs';
 import React, { Component } from 'react';
-import { Nav } from './';
-import { MessageBar, LoadingBar, Settings } from './'
-import { setToken } from '../actions'
-// main template for containers
+import { browserHistory } from 'react-router';
 
-class App extends Component {
-  render() {
-    if(this.props.location.query && this.props.location.query.token){
-     setToken(this.props.location.query.token);
-    }
+export default class Nav extends Component {
+  handleActive(tab) {
+    browserHistory.push(tab.props.value)
+  }
+  render () {
     return (
-      <div>
-        <LoadingBar />
-        <Nav {...this.props} />
-        <Settings />
-        <MessageBar />
-        <div className='container--app'>
-          {this.props.children}
-        </div>
-      </div>
-    );
+      <Tabs value={this.props.location.pathname}>
+        <Tab label="Discover"
+        value="/"
+        onActive={this.handleActive}
+        >
+        </Tab>
+        <Tab label="Devices"
+          value="/devices"
+          onActive={this.handleActive}
+        >
+        </Tab>
+      </Tabs>
+    )
   }
 }
-
-export default App;
