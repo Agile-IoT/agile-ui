@@ -7,5 +7,6 @@ import LocStorSettingsSummary from './LocStorSettingsSummary';
 import CloudUploadSettingsSummary from './CloudUploadSettingsSummary';
 import LocalStoragePolicies from './LocalStoragePolicies';
 import GenericListItem from './GenericListItem';
+import Graph from './Graph';
 
-export { Nav, DeviceSummary, SettingsMenu, DeviceItem, Stream, LocStorSettingsSummary, CloudUploadSettingsSummary, LocalStoragePolicies, GenericListItem}
+export { Nav, DeviceSummary, SettingsMenu, DeviceItem, Stream, LocStorSettingsSummary, CloudUploadSettingsSummary, LocalStoragePolicies, GenericListItem, Graph}

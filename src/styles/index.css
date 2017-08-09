@@ -62,11 +62,36 @@ body {
   padding: 50px;
 }
 
+.discover, .devices{
+  max-width: 800px;
+  margin: auto;
+}
+
+.graphs {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.graph {
+  flex-grow: 1;
+  padding: 15px;
+  margin: 10px;
+  background-color: white;
+  align-self : auto;
+  width : 30vw;
+  height : 30vw;
+  min-width: 300px;
+  min-height: 180px;
+  max-width : 450px;
+  max-height : 450px;
+}
+
 .container--app {
   position: relative;
   margin:auto;
   width: 80%;
-  max-width: 800px;
 }
 
 .text--center {

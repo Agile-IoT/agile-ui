@@ -7,7 +7,7 @@ import LoadingBar from './LoadingBar';
 import Settings from './Settings';
 import LocalStorageSettings from './LocalStorageSettings';
 import CloudUploadSettings from './CloudUploadSettings';
-import Visualization from './Visualization';
+import Graphs from './Graphs';
 
 export {
   App,
@@ -19,5 +19,5 @@ export {
   Settings,
   LocalStorageSettings,
   CloudUploadSettings,
-  Visualization
+  Graphs
  }

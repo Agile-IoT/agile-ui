@@ -288,6 +288,7 @@ export const retrieveData = (deviceId) => {
     const query = `where={"deviceID": "${deviceId}"}`
     dispatch(loading(true))
     agile.data.record.get(query).then(data => {
+      console.log(data)
       dispatch(loading(false))
       dispatch(action('DEVICE_RECORDS', data))
     })
