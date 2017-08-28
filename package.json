@@ -1,6 +1,6 @@
 {
   "name": "Agile-ui",
-  "version": "0.3.2",
+  "version": "0.3.7",
   "description": "Agile IoT device manager UI",
   "repository": "https://github.com/Agile-IoT/agile-ui",
   "devDependencies": {
@@ -11,7 +11,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "agile-sdk": "0.4.4",
+    "agile-sdk": "^1.0.0",
     "lodash": "4.17.4",
     "material-ui": "0.17.0",
     "react": "15.4.2",
@@ -24,11 +24,11 @@
     "underscore": "^1.8.3"
   },
   "scripts": {
-    "start": "REACT_APP_BROWSER=true react-scripts start",
+    "start": "PORT=2000 REACT_APP_BROWSER=true react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "version": "versionist"
   },
-  "proxy": "http://agile.local:8080"
+  "proxy": "http://0.0.0.0:8080"
 }

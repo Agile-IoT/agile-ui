@@ -5,7 +5,7 @@ import { cloudUploadData } from '../actions';
 
 class CloudUploadSettings extends Component {
   constructor(props) {
-    super(props) 
+    super(props)
     // This is slightly silly, provider related stuff needs to come
     // from props perhaps
 
@@ -33,7 +33,7 @@ class CloudUploadSettings extends Component {
       this.state.selectedProvider
     )
   }
-  
+
   render() {
     return (
       <CloudUploadSettingsSummary
@@ -55,12 +55,6 @@ class CloudUploadSettings extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    device: state.device
-  };
-};
-
 const mapDispatchToProps = (dispatch) => {
   return {
     cloudUploadData: (deviceId, componentId, startDate, endDate, provider) =>
@@ -68,4 +62,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(CloudUploadSettings);
+export default connect(mapDispatchToProps)(CloudUploadSettings);

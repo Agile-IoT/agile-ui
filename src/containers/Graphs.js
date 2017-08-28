@@ -1,54 +1,53 @@
+// TODO STREAMS FETCH AND RETRIEVE DATA
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Graph } from '../components/';
 
-import {
-  streamsFetch,
-  deviceFetch,
-  retrieveData
-} from '../actions';
+import { streamsFetch } from '../actions';
 
 
 class Graphs extends Component {
+  constructor(props){
+      super(props);
+
+      this.state={
+        streams: this.props.streams[this.props.params.deviceId]
+      }
+  }
+
   componentDidMount() {
-    window.graphs = [];
-    this.props.deviceFetch(this.props.params.deviceId);
-    this.props.streamsFetch(this.props.params.deviceId);
-    this.props.retrieveData(this.props.params.deviceId);
+    // TODO Refresh on the page
+    this.props.streamsFetch(this.props.params.deviceId)
   }
 
-  componentWillUnmount() {
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      streams: nextProps.streams[this.props.params.deviceId]
+    })
+
+    setTimeout(() => {
+      this.props.streamsFetch(this.props.params.deviceId);
+    }, 2000);
   }
 
-  dataFromStream(streamId){
-    return this.props.records.filter(r => r.componentID === streamId)
-  }
-
-  renderGraphs(device) {
-    if(device && device.streams){
-      return device.streams.map((st, i) => {
-        return <Graph
-          fieldName={st.id}
-          id={i}
-          data={this.dataFromStream(st.id)}
-          graphs={this.graphs}
-        />
-      })
-    } else {
-      return null
-    }
+  renderGraphs(streams) {
+    return streams.map(st => {
+     return <Graph
+       key={st.componentID}
+       deviceId={this.props.params.deviceId}
+       componentId={st.componentID}
+     />
+   })
   }
 
   render() {
-    // Use streams without device TODO
-    if (this.graphs && this.graphs.length){
-      var sync = window.Dygraph.synchronize(this.graphs);
-    }
-
-    const { device, records } = this.props;
+    const { streams } = this.state;
     return (
       <div className='graphs'>
-        {this.renderGraphs(device)}
+        {streams
+          ? this.renderGraphs(streams)
+          : null}
       </div>
     );
   }
@@ -56,17 +55,13 @@ class Graphs extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    streams: state.streams,
-    records: state.records,
-    device: state.device
+    streams: state.streams
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    streamsFetch: (deviceId) => dispatch(streamsFetch(deviceId)),
-    deviceFetch: (deviceId) => dispatch(deviceFetch(deviceId)),
-    retrieveData: (deviceId) => dispatch(retrieveData(deviceId))
+    streamsFetch: (deviceId) => dispatch(streamsFetch(deviceId))
   };
 };
 

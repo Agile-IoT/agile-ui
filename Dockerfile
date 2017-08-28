@@ -1,4 +1,4 @@
-FROM resin/raspberrypi3-node:7-20170531
+FROM resin/raspberry-pi3-node:7.8.0-20170426
 
 RUN wget -qO- https://getcaddy.com | bash
 
@@ -10,7 +10,7 @@ COPY package.json package.json
 
 # This install npm dependencies on the resin.io build server,
 # making sure to clean up the artifacts it creates in order to reduce the image size.
-RUN npm install
+RUN npm -d install
 
 COPY . .
 

@@ -13,7 +13,7 @@ const styles = {
     color: '#000'
   },
   fullWidthButton: {
-    width: '100%' 
+    width: '100%'
   }
 }
 
@@ -28,24 +28,24 @@ const LocalStoragePolicies = (props) => {
         {/* THIS RENDER IS FOR DEV PURPOSES ONLY */}
         return <GenericListItem
           leftEl={
-            <span> 
+            <span>
               <b>Device</b><code> {pol.deviceID} </code>
               <b>| Component</b><code> {pol.componentID} </code>
               <b>| Interval</b><code> {pol.interval} </code>
             </span>
           }
-        
+
           rightEl={
-            <div onClick={() => handleRemoval(pol.deviceID, pol.componentID)}> 
+            <div onClick={() => handleRemoval(pol.deviceID, pol.componentID)}>
             <span style={{fontWeight: 'bold', cursor: 'pointer'}}>
-              REMOVE 
-            </span> 
+              REMOVE
+            </span>
             </div>
           }
-          /> 
+          />
       })}
     </List>
-  ) 
+  )
 }
 
 export default LocalStoragePolicies

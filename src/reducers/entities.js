@@ -1,17 +1,23 @@
-import includes from 'lodash/includes';
 import sortBy from 'lodash/sortBy';
+import omit from 'lodash/omit';
 
-export function devices(state = [], action) {
+export function devices(state = {}, action) {
   switch (action.type) {
+    case 'DEVICE':
+      return {
+        ...state,
+        [action.data.deviceId] : action.data
+      }
     case 'DEVICES':
       return action.data;
     case 'DEVICES_DELETE':
-      return state.filter(element => element.deviceId !== action.data);
+      return omit(state, action.data)
     case 'DEVICES_CREATE':
-      return [
-        action.data,
-        ...state
-      ]
+      return {
+        ...state,
+        [action.data.deviceId] : action.data
+      }
+
     default:
       return state;
   }
@@ -68,6 +74,9 @@ export function messages(state=[], action) {
         action.data,
         ...state
       ]
+    case 'MESSAGE_REMOVE':
+      let newState = state.filter((i) => i !== action.data)
+      return newState
     default:
       return state;
   }
@@ -109,14 +118,14 @@ export function protocols(state = [], action) {
   }
 }
 
-export function deviceTypes(state = [], action) {
+export function deviceTypes(state = {}, action) {
   switch (action.type) {
     case 'DEVICE_TYPES':
-      if (action.data.length > 0 && !includes(state, action.data[0])) {
-        return [
+      if (action.data.types.length > 0) {
+        return {
           ...state,
-          ...action.data
-        ];
+          [action.data.id] : action.data.types
+        };
       }
       return state
     default:
@@ -124,23 +133,14 @@ export function deviceTypes(state = [], action) {
   }
 }
 
-export function device(state = {}, action) {
-  switch (action.type) {
-    case 'DEVICE':
-      return action.data
-    case 'DEVICES_DELETE':
-      if (state.deviceId === action.data) {
-        return {}
-      }
-      return state;
-    default:
-      return state;
-  }
-}
-
-export function records(state = [], action) {
+export function records(state = {}, action) {
   switch (action.type) {
     case 'DEVICE_RECORDS':
+      const { deviceId } = action.data
+      return {
+        ...state,
+        [deviceId]: action.data.records
+      }
       return action.data
     default:
       return state
@@ -150,7 +150,7 @@ export function records(state = [], action) {
 export function streams(state = [], action) {
   switch (action.type) {
     case 'STREAMS':
-      const deviceId = action.data.deviceId
+      const { deviceId } = action.data
       return {
         ...state,
         [deviceId]: sortBy(action.data.streams, 'componentID')

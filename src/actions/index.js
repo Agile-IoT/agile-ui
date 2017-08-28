@@ -22,6 +22,13 @@ export const message = msg => {
   };
 }
 
+export const messageRemove = msg => {
+  return {
+    type: 'MESSAGE_REMOVE',
+    data: msg
+  };
+}
+
 export const errorHandle = (err, dispatch) => {
   dispatch(message(err.message));
   dispatch(loading(false));
@@ -70,7 +77,12 @@ export const deviceTypesFetch = (deviceOverview) => {
     dispatch(loading(true))
     agile.deviceManager.typeof(deviceOverview)
     .then(deviceTypes => {
-      dispatch(action('DEVICE_TYPES', deviceTypes));
+      dispatch(
+        action('DEVICE_TYPES', {
+          id: deviceOverview.id,
+          types: deviceTypes
+        })
+      );
       dispatch(loading(false));
     })
     .catch(err => {
@@ -139,14 +151,18 @@ export const streamsFetch = (deviceId) => {
   };
 }
 
-// fetch all registered devices
-export const devicesFetch = () => {
+// fetch all registered devices and their streams
+export const devicesAndStreamsFetch = () => {
   return (dispatch) => {
     dispatch(loading(true))
     agile.deviceManager.get()
     .then(devices => {
-      dispatch(action('DEVICES', devices));
+      const deviceMap = {}
+      devices.forEach(d => deviceMap[d.deviceId] = d)
+
+      dispatch(action('DEVICES', deviceMap));
       dispatch(loading(false));
+      devices.forEach(d => dispatch(streamsFetch(d.deviceId)));
     })
     .catch(err => {
       errorHandle(err, dispatch)
@@ -204,9 +220,11 @@ export const drawerToggle = bool => action('DRAWER', bool);
 export const discoveryStatus = () => {
   return (dispatch) => {
     agile.protocolManager.discovery.status()
-    .then(status => {
-      dispatch(action('DISCOVERY', status));
-      dispatch(message(`discover is ${status}`));
+    .then(protocols => {
+      dispatch(action('DISCOVERY', protocols[0]));
+      protocols.map((protocols) => {
+        return dispatch(message(`${protocols.name} is ${protocols.status}`));
+      })
       dispatch(loading(false));
     }).catch(err => {
       errorHandle(err, dispatch)
@@ -242,7 +260,7 @@ export const discoveryToggle = () => {
 export const locStorPolicyAdd = (deviceID, componentID, interval) => {
   return (dispatch, currentState) => {
     dispatch(loading(true))
-    agile.data.subscription.create(deviceID, componentID, interval)
+    agile.data.subscription.create({deviceID, componentID, interval})
     .then(() => {
       dispatch(locStorPoliciesFetch(deviceID))
       dispatch(loading(false));
@@ -256,14 +274,20 @@ export const locStorPolicyAdd = (deviceID, componentID, interval) => {
 export const locStorPolicyDelete = (deviceID, componentID) => {
   return (dispatch, currentState) => {
     dispatch(loading(true))
-    agile.data.subscription.delete(deviceID, componentID)
-    .then(() => {
-      dispatch(loading(false))
-      dispatch(message('Subscription deleted.'));
-      dispatch(locStorPoliciesFetch(deviceID))
-    })
-    .catch(err => {
-      errorHandle(err, dispatch)
+    agile.data.subscription.get().then(subscriptions => {
+      const matching = subscriptions
+        .find(sub => sub.deviceID === deviceID && sub.componentID === componentID)
+
+      if (!matching)
+        errorHandle({msg: 'Could not remove subscription'}, dispatch)
+
+      agile.data.subscription.delete(matching._id).then(() => {
+        dispatch(loading(false))
+        dispatch(message('Subscription deleted.'));
+        dispatch(locStorPoliciesFetch(deviceID))
+      }).catch(err => {
+        errorHandle(err, dispatch)
+      })
     })
   }
 }
@@ -283,14 +307,17 @@ export const locStorPoliciesFetch = (deviceID) => {
   }
 }
 
-export const retrieveData = (deviceId) => {
+export const recordsFetch = (deviceId, componentId) => {
   return(dispatch) => {
-    const query = `where={"deviceID": "${deviceId}"}`
+    const query = `where={
+      "deviceID": "${deviceId}",
+      "componentID": "${componentId}"
+    }`
+
     dispatch(loading(true))
-    agile.data.record.get(query).then(data => {
-      console.log(data)
+    agile.data.record.get(query).then(records => {
       dispatch(loading(false))
-      dispatch(action('DEVICE_RECORDS', data))
+      dispatch(action('DEVICE_RECORDS', {deviceId, records}))
     })
   }
 }

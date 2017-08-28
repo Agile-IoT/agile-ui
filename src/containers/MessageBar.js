@@ -1,22 +1,34 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Snackbar from 'material-ui/Snackbar';
+import { messageRemove } from '../actions';
+const MESSAGE_INTERVAL = 4000
 
 // This app takes care displaying messages and errors to the user
 const renderBar = (message) => {
+  let open = true
   return (
     <Snackbar
-      open
+      open={open}
       message={message}
-      autoHideDuration={4000}
+      autoHideDuration={MESSAGE_INTERVAL}
     />
   )
 }
+
 const MessageBar = (props) => {
-  const { messages } = props
-  // return snack bar is message exists
+  const { messages, messageRemove } = props
+  // return snack bar if message exists
+  const hasMessages = messages.length > 0
+  const latestMessage = messages[messages.length - 1]
+  
+  if (hasMessages) {
+    setTimeout(() => {
+      messageRemove(latestMessage)
+    }, MESSAGE_INTERVAL);
+  }
   return (
-    messages.length > 0 ? renderBar(messages[0]) : <div></div>
+    hasMessages ? renderBar(latestMessage, messageRemove) : <div></div>
   )
 }
 
@@ -26,6 +38,13 @@ const mapStateToProps = (state) => {
   }
 };
 
+const mapDispatchToProps = (dispatch) => {
+  return {
+    messageRemove: (msg) => dispatch(messageRemove(msg)),
+  };
+};
+
 export default connect(
   mapStateToProps,
+  mapDispatchToProps
 )(MessageBar)

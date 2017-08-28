@@ -3,7 +3,7 @@ import { DeviceItem } from '../components';
 import { FlatButton } from 'material-ui';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
-import { devicesFetch, devicesDelete } from '../actions';
+import { devicesAndStreamsFetch, devicesDelete } from '../actions';
 
 class Devices extends Component {
 
@@ -25,7 +25,9 @@ class Devices extends Component {
 
   renderItems(devices) {
     if (devices) {
-      return devices.map((device, i) => {
+      return Object.keys(devices).map((deviceId, i) => {
+        const device = devices[deviceId]
+
         return(
           <DeviceItem
             expandable
@@ -42,7 +44,7 @@ class Devices extends Component {
   }
 
   componentDidMount() {
-    this.props.devicesFetch()
+    this.props.devicesAndStreamsFetch()
   }
 
   render() {
@@ -62,7 +64,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    devicesFetch: () => dispatch(devicesFetch()),
+    devicesAndStreamsFetch: () => dispatch(devicesAndStreamsFetch()),
     devicesDelete: (deviceId) => dispatch(devicesDelete(deviceId)),
   };
 };

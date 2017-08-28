@@ -3,6 +3,7 @@ import { DeviceItem } from '../components';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import { connect } from 'react-redux';
+import differenceBy from 'lodash/differenceBy'
 
 import { devicesDiscover, devicesCreate, deviceTypesFetch } from '../actions';
 
@@ -13,7 +14,7 @@ class Discover extends Component {
   }
 
   renderDeviceTypes = (device, deviceTypes) => {
-    if (deviceTypes.length > 0) {
+    if (deviceTypes && deviceTypes.length > 0) {
       return deviceTypes.map((type, key) => {
         return (
           <MenuItem
@@ -36,7 +37,7 @@ class Discover extends Component {
         >
         <MenuItem value={null} label="Register" primaryText="Select device type" />
         {
-          this.renderDeviceTypes(device, deviceTypes)
+          this.renderDeviceTypes(device, deviceTypes[device.id])
         }
         </SelectField>
       </div>
@@ -59,26 +60,31 @@ class Discover extends Component {
     }
   }
 
-  componentDidMount() {
-    this.props.devicesDiscover();
-    this.props.devices.map((device) => {
+  updateDeviceTypes(devices) {
+    // fetch list of all available device's
+    devices.map((device) => {
       return this.props.deviceTypesFetch(device)
     });
   }
 
-  componentWillReceiveProps(nextProps) {
-    // get new deviceTypes if there are new devices
-    const { devices } = nextProps
-    if (devices.length > this.props.devices.length) {
-      devices.map((device) => {
-        return this.props.deviceTypesFetch(device)
-      });
-    }
+  componentDidMount() {
+    this.props.devicesDiscover();
 
-    // Poll for new devices
-    setTimeout(() => {
-      this.props.devicesDiscover()
+    this.poller = setInterval(() => {
+      this.props.devicesDiscover();
     }, 7000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.poller);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { devices } = nextProps;
+    const newDevices = differenceBy(devices, this.props.devices, 'id')
+    if (newDevices) {
+      this.updateDeviceTypes(newDevices);
+    }
   }
 
   render() {

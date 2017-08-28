@@ -1,50 +1,128 @@
-import { Card } from 'material-ui/Card';
-import React from 'react';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import {
+  recordsFetch,
+  deviceSubscribe,
+  streamsFetch
+} from '../actions';
 
-function Graph(props) {
-  tempDrawGraph(props.graphs, props.id, props.fieldName, props.data)
+class Graph extends Component {
+  constructor(props){
+    super(props)
+    this.state = {
+      g: undefined,
+      data: []
+    }
+  }
 
-  return (
-    <div className='graph'>
-      <div
-        id={`graphdiv${props.id}`}
-        style={{
-          "width": "100%",
-          "height": "100%"
-        }}
+  componentDidMount(){
+    const {deviceId, componentId} = this.props
+    this.props.recordsFetch(deviceId, componentId)
+    this.props.deviceSubscribe(deviceId, componentId)
+  }
+
+  componentDidUpdate() {
+    this.renderGraph()
+  }
+
+  componentWillReceiveProps(nextProps){
+    let toAdd = this.state.data.concat()
+
+    if (toAdd && toAdd.length  === 0)
+      if (nextProps.records[this.props.deviceId].length)
+        toAdd = formatData(nextProps.records[this.props.deviceId], this.props.componentId)
+
+    if (nextProps.streams[this.props.deviceId]) {
+      const latest = this.props.streams[this.props.deviceId]
+        .find(str => str.componentID === this.props.componentId)
+
+      const {lastUpdate, value} = latest
+      toAdd.push([new Date(lastUpdate), parseInt(value)])
+    }
+
+    this.setState({data: toAdd})
+  }
+
+  render(){
+    if (this.state.data.length === 0)
+      return null
+
+    if (document.getElementById(`graphdiv${this.props.componentId}`))
+      this.renderGraph()
+
+    return (
+      <div className='graph'>
+        <div
+          id={`graphdiv${this.props.componentId}`}
+          style={{
+            "width": "100%",
+            "height": "100%"
+          }}
         >
         </div>
-    </div>
-  )
-}
+      </div>
+    )
+  }
 
-const tempDrawGraph = (graphs, id, fieldName, data) => {
-  if (!document.getElementById(`graphdiv${id}`))
-    return
+  renderGraph(){
+    if (!document.getElementById(`graphdiv${this.props.componentId}`))
+      return
 
-  var g = new window.Dygraph(
-    document.getElementById(`graphdiv${id}`),
-    getCSVForField(fieldName, data),
-    {
-      'title': ' ',
-      'legend': 'always',
-      'fillGraph': true,
-      'strokeWidth': 1.5,
-      'color': '#00BCD4'
+    if (this.state.g) {
+      this.state.g.updateOptions( {'file': this.state.data} );
+    } else {
+      this.state.g = new window.Dygraph(
+        document.getElementById(`graphdiv${this.props.componentId}`),
+        this.state.data,
+        {
+          title: ' ',
+          legend: 'always',
+          fillGraph: true,
+          strokeWidth: 1.5,
+          color: '#00BCD4',
+          labels: ['Time', this.props.componentId]
+        }
+      );
     }
-  );
-
-  window.graphs.push(g)
+  }
 }
 
-const getCSVForField = (fieldName) => {
-  var CSV = `Date, ${fieldName}`
-  const data = `[{"time":"2017-08-08T18:56:57.073Z","componentID":"Humidity","deviceID":"ble247189E6E280","format":"","lastUpdate":1502229387301,"unit":"Relative humidity (%RH)","value":"41.97998"},{"time":"2017-08-08T19:56:57.073Z","componentID":"Humidity","deviceID":"ble247189E6E280","format":"","lastUpdate":1502222217073,"unit":"Relative humidity (%RH)","value":"43.97998"},{"time":"2017-08-08T20:56:57.073Z","componentID":"Humidity","deviceID":"ble247189E6E280","format":"","lastUpdate":1502225817073,"unit":"Relative humidity (%RH)","value":"49.97998"},{"time":"2017-08-08T21:56:57.073Z","componentID":"Humidity","deviceID":"ble247189E6E280","format":"","lastUpdate":1502229417073,"unit":"Relative humidity (%RH)","value":"52.97998"},{"time":"2017-08-08T22:56:57.073Z","componentID":"Humidity","deviceID":"ble247189E6E280","format":"","lastUpdate":1502233017073,"unit":"Relative humidity (%RH)","value":"41.97998"},{"time":"2017-08-08T23:56:57.073Z","componentID":"Humidity","deviceID":"ble247189E6E280","format":"","lastUpdate":1502236617073,"unit":"Relative humidity (%RH)","value":"41.97998"}]`
-
-  JSON.parse(data).forEach(r => {
-      CSV += `,\n${new Date(r.lastUpdate)}, ${r.value}`
+// This is here because the api call to retrieve data per componentID is not
+// yet working
+const _tempSortFunc = (data, componentId) => {
+  const relevant = []
+  data.forEach(r => {
+    if (r.componentID === componentId)
+      relevant.push([new Date(r.lastUpdate), parseInt(r.value)])
   })
-  return CSV
+
+  return relevant
 }
 
-export default Graph
+const formatData = (data, compId) => {
+  var graphData = _tempSortFunc(data, compId)
+  /*
+  data.forEach(r => {
+    graphData.push([new Date(r.lastUpdate), parseInt(r.value)])
+  })
+  */
+
+  return graphData
+}
+
+const mapStateToProps = (state) => {
+  return {
+    streams: state.streams,
+    records: state.records
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    deviceSubscribe: (deviceId, componentId) => dispatch(deviceSubscribe(deviceId, componentId)),
+    recordsFetch: (deviceId, componentId) => dispatch(recordsFetch(deviceId, componentId)),
+    streamsFetch: (deviceId) => dispatch(streamsFetch(deviceId))
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Graph);

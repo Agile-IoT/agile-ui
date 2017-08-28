@@ -23,9 +23,24 @@ import {
 
 
 class Device extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      device: this.props.devices[this.props.params.deviceId],
+      streams: this.props.streams[this.props.params.deviceId]
+    }
+  }
+
   componentDidMount() {
-    this.props.deviceFetch(this.props.params.deviceId);
-    this.props.streamsFetch(this.props.params.deviceId);
+    this.subscribe(this.props.params.deviceId)
+
+    // In case we refresh on this view
+    if(!this.state.device)
+      this.props.deviceFetch(this.props.params.deviceId)
+
+    if(!this.state.streams)
+      this.props.streamsFetch(this.props.params.deviceId)
   }
 
   subscribe(device, streams) {
@@ -47,10 +62,16 @@ class Device extends Component {
   }
 
   componentWillUnmount() {
-    this.unsubscribe(this.props.device);
+    this.unsubscribe(this.state.device);
   }
 
   componentWillReceiveProps(nextProps) {
+    this.setState({streams: nextProps.streams[this.props.params.deviceId]})
+
+    if (!this.state.device)
+      this.setState({device: nextProps.devices[this.props.params.deviceId]})
+
+
     // Poll for new readings
     setTimeout(() => {
       this.props.streamsFetch(this.props.params.deviceId);
@@ -72,13 +93,9 @@ class Device extends Component {
       })
     }
   }
-  // TEMP
-  streamToCSV(stream) {
-    return ``
-  }
 
   render() {
-    const { device, streams } = this.props;
+    const { device, streams } = this.state;
     if (!isEmpty(device)) {
       return (
         <div>
@@ -92,10 +109,10 @@ class Device extends Component {
             meta={device}
           />
 
-          <LocalStorageSettings />
-          <CloudUploadSettings />
+          <LocalStorageSettings device={device}/>
+          <CloudUploadSettings device={device}/>
 
-          { this.renderStreams(streams[device.deviceId]) }
+          { this.renderStreams(streams) }
         </div>
       );
     }
@@ -105,7 +122,7 @@ class Device extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    device: state.device,
+    devices: state.devices,
     streams: state.streams,
     locStorPolicies: state.localStoragePolicies
   };
