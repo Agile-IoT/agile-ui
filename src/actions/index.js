@@ -158,6 +158,7 @@ export const devicesAndStreamsFetch = () => {
     agile.deviceManager.get()
     .then(devices => {
       const deviceMap = {}
+
       devices.forEach(d => deviceMap[d.deviceId] = d)
 
       dispatch(action('DEVICES', deviceMap));

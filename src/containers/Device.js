@@ -71,7 +71,6 @@ class Device extends Component {
     if (!this.state.device)
       this.setState({device: nextProps.devices[this.props.params.deviceId]})
 
-
     // Poll for new readings
     setTimeout(() => {
       this.props.streamsFetch(this.props.params.deviceId);

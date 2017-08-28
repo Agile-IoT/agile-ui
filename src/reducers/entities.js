@@ -133,6 +133,7 @@ export function deviceTypes(state = {}, action) {
   }
 }
 
+<<<<<<< HEAD
 export function records(state = {}, action) {
   switch (action.type) {
     case 'DEVICE_RECORDS':
@@ -147,6 +148,8 @@ export function records(state = {}, action) {
   }
 }
 
+=======
+>>>>>>> master
 export function streams(state = [], action) {
   switch (action.type) {
     case 'STREAMS':
