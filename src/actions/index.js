@@ -13,7 +13,7 @@ export const setToken = (new_token) => {
   console.log('creating new sdk with token starting wih ' + token.substring(0, 20))
   agile = agileSDK({
     api: 'http://agile-core:8080',
-    idm: 'http://agile-security:3000'
+    idm: 'http://agile-security:3000',
     token: token
   });
 }
@@ -182,20 +182,6 @@ export const devicesDelete = (deviceId) => {
   };
 }
 
-/*export const devicesCreate = (device, type) => {
-  return (dispatch) => {
-    dispatch(loading(true))
-    agile.deviceManager.create(device, type)
-      .then((newDevice) => {
-        dispatch(action('DEVICES_CREATE', newDevice));
-        dispatch(loading(false));
-      })
-      .catch(err => {
-        errorHandle(err, dispatch)
-      });
-  };
-}*/
-//TODO temporary solution, copied from https://github.com/Agile-IoT/agile-ui/blob/security/src/actions/index.js#L171
 export const devicesCreate = (device, type) => {
   return (dispatch) => {
     var newDevice;

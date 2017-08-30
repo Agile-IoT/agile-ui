@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
 import {List, ListItem} from 'material-ui/List';
-import InlineEdit from '../../node_modules/react-edit-inline/index';
+import InlineEdit from 'react-edit-inline';
 import {setEntityData, deleteAttribute, canExecuteActions} from '../actions';
 import {connect} from 'react-redux';
-import {RaisedButton} from 'material-ui';
 import { FloatingActionButton } from 'material-ui';
 
 import ContentRemove from 'material-ui/svg-icons/content/remove';
@@ -25,12 +24,6 @@ const addButtonStyle = {
   position: 'absolute'
 };
 
-const passwordButtonStyle = {
-  margin: 0,
-  top: 10,
-  right: 50,
-  position: 'absolute'
-};
 
 const actions = {write: ['delete', 'edit', 'add']};
 
