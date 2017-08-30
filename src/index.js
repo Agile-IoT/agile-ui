@@ -8,6 +8,8 @@ import {
   App,
   Discover,
   Devices,
+  Users,
+  Entity,
   Device
 } from './containers';
 
@@ -31,6 +33,8 @@ render(
         <Route path="/" component={App}>
           <IndexRoute component={Discover} />
           <Route path="devices" component={Devices} />
+          <Route path="list/:type" component={Users} />
+          <Route path="entity/:id/:type" component={Entity} />
           <Route path="devices/:deviceId" component={Device} />
         </Route>
       </Router>

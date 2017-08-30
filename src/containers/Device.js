@@ -1,10 +1,31 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { FlatButton } from 'material-ui';
-import { DeviceSummary, Stream } from '../components';
-import { deviceFetch, devicesDelete, streamsFetch, deviceSubscribe, deviceUnsubscribe } from '../actions';
+import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import {FlatButton} from 'material-ui';
+import {DeviceSummary, Stream} from '../components';
+import {
+  deviceFetch,
+  devicesDelete,
+  streamsFetch,
+  deviceSubscribe,
+  deviceUnsubscribe,
+  setEntityData,
+  deleteAttribute
+} from '../actions';
+
+import SecurityDetails from './SecurityDetails';
+import {entityFetch} from '../actions/index';
+
+const hiddenAndDisabledAttributes = {
+  notEditable: ['id', 'owner', 'type'],
+  hidden: ['password']
+};
 
 class Device extends Component {
+
+  componentWillMount() {
+    this.props.entityFetch('device')
+  }
+
   constructor(props) {
     super(props);
 
@@ -76,9 +97,18 @@ class Device extends Component {
     }
   }
 
+  getEntity() {
+    for (var i in this.props.entityList) { //Get the right entity from the entity list
+      var e = this.props.entityList[i];
+      if (e.id === this.props.params.deviceId && e.type.replace('/', '') === 'device' ? e : undefined)
+        return e;
+    }
+  }
+
   render() {
+    var entity = this.getEntity();
     const { device, streams } = this.state;
-    if (device) {
+    if (device && entity) {
       return (
         <div>
           <DeviceSummary
@@ -90,9 +120,31 @@ class Device extends Component {
             actions={this.renderActions(device)}
             meta={device}
           />
-          { this.renderStreams(streams[device.deviceId]) }
+          <SecurityDetails
+            expandable
+            showExpandableButton
+            title={'Security'}
+            subtitle={''}
+            entity={entity}
+            entityType={'device'}
+            fieldProperties={hiddenAndDisabledAttributes}
+          />
+          {this.renderStreams(streams[device.deviceId])}
         </div>
       );
+    } else if (device) {
+      return (
+        <div>
+          <DeviceSummary
+            expandable
+            showExpandableButton
+            title={device.name}
+            subtitle={device.deviceId}
+            status={device.status}
+            actions={this.renderActions(device)}
+            meta={device}
+          />
+        </div>)
     }
     return <div></div>
   }
@@ -101,7 +153,9 @@ class Device extends Component {
 const mapStateToProps = (state) => {
   return {
     devices: state.devices,
-    streams: state.streams
+    streams: state.streams,
+    actions: state.entityPolicies,
+    entityList: state.entityList
   };
 };
 
@@ -111,7 +165,10 @@ const mapDispatchToProps = (dispatch) => {
     devicesDelete: (deviceId) => dispatch(devicesDelete(deviceId)),
     streamsFetch: (deviceId) => dispatch(streamsFetch(deviceId)),
     deviceSubscribe: (deviceId, componentId) => dispatch(deviceSubscribe(deviceId, componentId)),
-    deviceUnsubscribe: (deviceId, componentId) => dispatch(deviceUnsubscribe(deviceId, componentId))
+    deviceUnsubscribe: (deviceId, componentId) => dispatch(deviceUnsubscribe(deviceId, componentId)),
+    setEntityAttributes: (params) => dispatch(setEntityData(params)),
+    deleteAttribute: (params) => dispatch(deleteAttribute(params)),
+    entityFetch: (params) => dispatch(entityFetch(params))
   };
 };
 
