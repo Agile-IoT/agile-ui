@@ -203,17 +203,12 @@ class SecurityDetails extends Component {
     if (meta) {
       var addAttribute = this.canWrite(parent) ? (<ListItem>{this.getAddAttributeFields(parent)}</ListItem>) : null;
       var sortedAttributes = Object.keys(meta);
-      console.log('1 '+sortedAttributes.length)
       sortedAttributes = sortedAttributes.filter((attr) => {
         return fieldProperties.hidden.indexOf(attr)<0;
       })
-      console.log('2 '+sortedAttributes.length)
       sortedAttributes = sortedAttributes.sort((attr1, attr2) =>{
-        console.log(attr1+' '+weight.bind(this)(attr1, fieldProperties));
         return  weight.bind(this)(attr2, fieldProperties) - weight.bind(this)(attr1, fieldProperties);
       })
-      console.log('3 '+sortedAttributes.length)
-      console.log(' '+JSON.stringify(sortedAttributes));
       return (<List>{
 
         sortedAttributes.map((k) => {
