@@ -141,7 +141,6 @@ export function records(state = {}, action) {
         ...state,
         [deviceId]: action.data.records
       }
-      return action.data
     default:
       return state
   }

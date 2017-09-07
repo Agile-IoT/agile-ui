@@ -33,7 +33,7 @@ class Device extends Component {
   }
 
   componentDidMount() {
-    // this.subscribe(this.props.params.deviceId)
+    this.subscribe()
 
     // In case we refresh on this view
     if(!this.state.device)
@@ -44,7 +44,7 @@ class Device extends Component {
   }
 
   subscribe() {
-    const { device, streams } = this.state
+    const { device } = this.state
 
     if (device && device.streams) {
       device.streams.map(s => {
@@ -53,27 +53,15 @@ class Device extends Component {
     }
   }
 
-  unsubscribe(device) {
-    if (device) {
-      if (device.streams) {
-        device.streams.map(s => {
-          return this.props.deviceSubscribe(device.deviceId, s.id);
-        });
-      }
-    }
-  }
+  unsubscribe() {
+    const { device } = this.state
 
-  /*
-  unsubscribe(device) {
-    if (device) {
-      if (device.streams) {
-        device.streams.map(s => {
-          return this.props.deviceUnsubscribe(device.deviceId, s.id);
-        });
-      }
+    if (device && device.streams) {
+      device.streams.map(s => {
+        return this.props.deviceUnsubscribe(device.deviceId, s.id);
+      });
     }
   }
-  */
 
   componentWillUnmount() {
     this.unsubscribe(this.state.device);
