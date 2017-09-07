@@ -82,7 +82,7 @@ class Graph extends Component {
     if (this.state.g) {
       this.state.g.updateOptions( {'file': this.state.data} );
     } else {
-      this.state.g = new window.Dygraph(
+      const g = new window.Dygraph(
         document.getElementById(`graphdiv${this.props.componentId}`),
         this.state.data,
         {
@@ -91,9 +91,13 @@ class Graph extends Component {
           fillGraph: true,
           strokeWidth: 1.5,
           color: '#00BCD4',
-          labels: ['Time', this.props.componentId]
+          labels: ['Time', this.props.componentId],
+          animatedZooms: true,
+          stackedGraphNaNFill: 'inside'
         }
       );
+      this.props.graphsArray.push(g)
+      this.setState({ g: g })
     }
   }
 }
