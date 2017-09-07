@@ -319,6 +319,9 @@ export const recordsFetch = (deviceId, componentId) => {
     agile.data.record.get(query).then(records => {
       dispatch(loading(false))
       dispatch(action('DEVICE_RECORDS', {deviceId, records}))
+    }).catch(err => {
+      err.message = `Connecting to Agile Data : ${err.message}`
+      errorHandle(err, dispatch)
     })
   }
 }

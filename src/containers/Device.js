@@ -33,7 +33,7 @@ class Device extends Component {
   }
 
   componentDidMount() {
-    this.subscribe(this.props.params.deviceId)
+    // this.subscribe(this.props.params.deviceId)
 
     // In case we refresh on this view
     if(!this.state.device)
@@ -43,7 +43,9 @@ class Device extends Component {
       this.props.streamsFetch(this.props.params.deviceId)
   }
 
-  subscribe(device, streams) {
+  subscribe() {
+    const { device, streams } = this.state
+
     if (device && device.streams) {
       device.streams.map(s => {
         return this.props.deviceSubscribe(device.deviceId, s.id);
@@ -60,6 +62,18 @@ class Device extends Component {
       }
     }
   }
+
+  /*
+  unsubscribe(device) {
+    if (device) {
+      if (device.streams) {
+        device.streams.map(s => {
+          return this.props.deviceUnsubscribe(device.deviceId, s.id);
+        });
+      }
+    }
+  }
+  */
 
   componentWillUnmount() {
     this.unsubscribe(this.state.device);

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import {
   recordsFetch,
   deviceSubscribe,
-  streamsFetch
+  deviceUnsubscribe
 } from '../actions';
 
 class Graph extends Component {
@@ -21,6 +21,11 @@ class Graph extends Component {
     this.props.deviceSubscribe(deviceId, componentId)
   }
 
+  componentWillUnmount() {
+    const { deviceId, componentId } = this.props
+    this.props.deviceUnsubscribe(deviceId, componentId)
+  }
+
   componentDidUpdate() {
     this.renderGraph()
   }
@@ -28,15 +33,21 @@ class Graph extends Component {
   componentWillReceiveProps(nextProps){
     let toAdd = this.state.data.concat()
 
-    if (toAdd && toAdd.length  === 0)
-      if (nextProps.records[this.props.deviceId].length)
-        toAdd = formatData(nextProps.records[this.props.deviceId], this.props.componentId)
+    const { deviceId, componentId } = this.props
+    const agileDataRecords = nextProps.records[deviceId]
 
-    if (nextProps.streams[this.props.deviceId]) {
-      const latest = this.props.streams[this.props.deviceId]
-        .find(str => str.componentID === this.props.componentId)
+    // If data is empty, populate with local records from Agile Data
+    if (this.state.data && this.state.data.length === 0) {
+      if (agileDataRecords && agileDataRecords.length)
+        toAdd = formatData(agileDataRecords, componentId)
+    }
 
-      const {lastUpdate, value} = latest
+    // Append the latest, realTime data to the graph
+    if (nextProps.streams[deviceId]) {
+      const realTimeRecord = this.props.streams[deviceId]
+        .find(str => str.componentID === componentId)
+
+      const {lastUpdate, value} = realTimeRecord
       toAdd.push([new Date(lastUpdate), parseInt(value)])
     }
 
@@ -120,8 +131,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     deviceSubscribe: (deviceId, componentId) => dispatch(deviceSubscribe(deviceId, componentId)),
-    recordsFetch: (deviceId, componentId) => dispatch(recordsFetch(deviceId, componentId)),
-    streamsFetch: (deviceId) => dispatch(streamsFetch(deviceId))
+    deviceUnsubscribe: (deviceId, componentId) => dispatch(deviceUnsubscribe(deviceId, componentId)),
+    recordsFetch: (deviceId, componentId) => dispatch(recordsFetch(deviceId, componentId))
   };
 };
 
