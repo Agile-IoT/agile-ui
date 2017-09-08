@@ -1,15 +1,17 @@
 import React, {Component} from 'react';
-import {List, ListItem} from 'material-ui/List';
-import InlineEdit from 'react-edit-inline';
-import {setEntityData, deleteAttribute, canExecuteActions} from '../actions';
+
+import {setEntityData, deleteAttribute, canExecuteActions, setPassword, setInputName, setInputValue} from '../actions';
 import {connect} from 'react-redux';
-import { FloatingActionButton } from 'material-ui';
+import recursiveKeys from 'recursive-keys';
+
+import {FloatingActionButton} from 'material-ui';
 
 import ContentRemove from 'material-ui/svg-icons/content/remove';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 
 import SecurityItem from '../components/SecurityItem';
-import {setPassword} from '../actions/index';
+
+const actions = ['write'];
 
 const deleteButtonStyle = {
   margin: 0,
@@ -21,52 +23,23 @@ const addButtonStyle = {
   margin: 0,
   top: 2,
   right: 2,
-  position: 'absolute'
+  display: 'inline'
 };
 
 
-const actions = {write: ['delete', 'edit', 'add']};
-
-const weight = function (attr, fieldProperties) {
-  if (fieldProperties.notEditable.indexOf(attr)<0){
-    return 0;
-  }
-  else if (this.isPrimitive(attr)){
-    return 1;
-  }
-  else if (this.isPrimitive(attr) && !this.canWrite(attr)){
-    return 1;
-  }
-  else if (this.isPrimitive(attr) && this.canWrite(attr)){
-    return 2;
-  }
-  else if (!this.isPrimitive(attr) && !this.canWrite(attr)){
-    return 3;
-  }
-  else if (!this.isPrimitive(attr) && this.canWrite(attr)){
-    return 4;
-  }
-  else {
-    return 5;
-  }
-}
-
 class SecurityDetails extends Component {
 
-  getAttributeNames = (entity) => {
-    var attributeList = [];
-    for (var attribute in entity) {
-      if (entity.hasOwnProperty(attribute)) {
-        attributeList.push(attribute);
-        if (entity[attribute] instanceof Object) {
-          var sublist = this.getAttributeNames(entity[attribute]);
-          for (var i in sublist) {
-            attributeList.push(attribute + '.' + sublist[i]);
-          }
-        }
-      }
-    }
-    return attributeList;
+  isPrimitive(object) {
+    return (object !== Object(object));
+  }
+
+  isHidden(fieldProperties, attribute) {
+    return fieldProperties && fieldProperties.hidden && fieldProperties.hidden.indexOf(attribute) !== -1
+  }
+
+  isEditable(fieldProperties, attribute) {
+    return this.canWrite(attribute)
+      && fieldProperties && fieldProperties.notEditable && fieldProperties.notEditable.indexOf(attribute) === -1;
   }
 
   canWrite(attribute) {
@@ -74,199 +47,130 @@ class SecurityDetails extends Component {
     return (this.props.entityActionsPolicies.policies
       && this.props.entityActionsPolicies.policies[attribute]
       && this.props.entityActionsPolicies.policies[attribute].write)
-
   }
 
-  canRead(attribute) {
-    attribute = attribute ? attribute : 'actions.self';
-    return (this.props.entityActionsPolicies.policies
-      && this.props.entityActionsPolicies.policies[attribute]
-      && this.props.entityActionsPolicies.policies[attribute].read)
+  addAttribute(id, type) {
+    if(this.props.input.input_name !== '') {
+      let inputValue = this.props.input.input_value !== '' ? this.props.input.input_value : {};
+      let params = {entityId: id, entityType: type, attributeType: this.props.input.input_name, attributeValue: inputValue};
+      this.props.setEntityAttributes(params);
+      this.props.setInputName('');
+      this.props.setInputValue('');
+    }
   }
 
-  getDeleteButton(params) {
+  addAttributeField (id, type, parent) {
     return (
-      <FloatingActionButton mini={true}  id={'delete_' + params.id + '_' + params.attribute}
-                    key={params.id + '_' + params.attribute}
-                    style={deleteButtonStyle}
-                    label='Delete'
-                    onClick={() => {
-                      this.props.deleteAttribute(params)
-                    }}>
-            <ContentRemove />
+      <div>
+        <input defaultValue={this.props.input.input_name} placeholder='New Attribute' onBlur={event => {
+          const inputName = parent ? parent + '.' + event.target.value : event.target.value.toString();
+          this.props.setInputName(inputName)
+        }}/>
+
+        <input defaultValue={this.props.input.input_value} placeholder='Value' onBlur={event =>
+          this.props.setInputValue(event.target.value.toString())}/>
+
+        <FloatingActionButton mini={true} style={addButtonStyle}
+                              label='Add'
+                              onClick={event => {this.addAttribute(id, type)}}>
+          <ContentAdd/>
+        </FloatingActionButton>
+      </div>
+    )
+  }
+
+  renderDeleteButton = (id, type, attribute) => {
+    return (
+      <FloatingActionButton mini={true} id={'delete_' + id + '_' + attribute}
+                            key={id + '_' + attribute}
+                            style={deleteButtonStyle}
+                            label='Delete'
+                            onClick={() => {
+                              this.props.deleteAttribute({id: id, type: type, attribute: attribute})
+                            }}>
+        <ContentRemove/>
       </FloatingActionButton>
     )
   }
 
-  getAddAttributeFields(parent) {
-    if (this.canWrite(parent)) {
-      var newAttribute = {};
-      var attributeName = parent ? parent + 'newAttr' : 'newAttr';
-      var attributeValue = parent ? parent + 'newAttrVal' : 'newAttrVal';
-      return (
-        <div>
-          <input onFocus={(event) => {
-            event.stopPropagation()
-          }} onClick={(event) => {
-            event.stopPropagation()
-          }}
-                 id={attributeName} placeholder='New Attribute'/>
-          <input onFocus={(event) => {
-            event.stopPropagation()
-          }} onClick={(event) => {
-            event.stopPropagation()
-          }}
-                 id={attributeValue} placeholder='Value'/>
-           <FloatingActionButton mini={true}  style={addButtonStyle}
-                         label='Add'
-                         onClick={(event) => {
-                           event.stopPropagation();
-                           if (parent) {
-                             newAttribute[parent + '.' + document.getElementById(attributeName).value] =
-                               document.getElementById(attributeValue).value;
-                           } else {
-                             newAttribute[document.getElementById(attributeName).value] =
-                               document.getElementById(attributeValue).value;
-                           }
-                           this.dataChanged(this.props.entity.id, this.props.entityType.replace('/', ''), newAttribute);
-                           document.getElementById(attributeName).value = '';
-                           document.getElementById(attributeValue).value = '';
-                         }}>
-                       <ContentAdd />
-          </FloatingActionButton>
+  renderDetails(entity, fieldProperties, parent) {
+    if (entity) {
+      let sortedAttributes = Object.keys(entity);
 
-        </div>
-      )
-    }
-    return null;
-  }
-
-  isAdmin(id) {
-    for (var i in this.props.entityList) { //Get the right entity from the entity list
-      var e = this.props.entityList[i];
-      if(e.id === id && e.type.replace('/', '') === 'user' ? e : undefined)
-        return e.role === 'admin';
-    }
-    return false;
-  }
-
-  renderAttributeActions(id, type, attribute) {
-    var actionButtons = [];
-    if (this.canWrite(attribute)) {
-      actionButtons.push(this.getDeleteButton({id: id, type: type, attribute: attribute}));
-    }
-    return (<div>{actionButtons}</div>);
-  }
-
-  dataChanged(id, type, data) {
-    var params = {};
-    params.entityId = id;
-    params.entityType = type;
-    for (var attribute in data) {
-      if (data.hasOwnProperty(attribute)) {
-        params.attributeType = attribute;
-        try {
-          params.attributeValue = JSON.parse(data[attribute]);
-        } catch (err) {
-          params.attributeValue = data[attribute];
-        }
-      }
-    }
-    this.props.setEntityAttributes(params);
-  }
-
-  customValidateText(text) {
-    return (text.length > 0);
-
-  }
-
-  isPrimitive(object) {
-    return typeof object !== 'object';
-  }
-
-  stringifyDetail(value, attribute, event) {
-    event.stopPropagation();
-    if (!this.isPrimitive(value)) {
-      var checkExist = setInterval(function () {
-        if (document.getElementsByClassName('editing').length) {
-          document.getElementsByClassName('editing')[0].value = JSON.stringify(value);
-          clearInterval(checkExist);
-        }
-      }, 50)
-    }
-  }
-
-
-
-  renderDetails(meta, id, fieldProperties, parent) {
-
-    if (meta) {
-      var addAttribute = this.canWrite(parent) ? (<ListItem>{this.getAddAttributeFields(parent)}</ListItem>) : null;
-      var sortedAttributes = Object.keys(meta);
       sortedAttributes = sortedAttributes.filter((attr) => {
-        return fieldProperties.hidden.indexOf(attr)<0;
+        return !this.isHidden(fieldProperties, attr);
       })
-      sortedAttributes = sortedAttributes.sort((attr1, attr2) =>{
-        return  weight.bind(this)(attr2, fieldProperties) - weight.bind(this)(attr1, fieldProperties);
-      })
-      return (<List>{
 
-        sortedAttributes.map((k) => {
-        var attribute = k;
+      /*sor attributes. Sort out to have within each attribute the following order:
+        primitive attributes before objects
+        non editable attributes before editable ones
+        if they have the same values for the previously mentioned criteria, then use lexicographical order
+      */
+      sortedAttributes = sortedAttributes.sort((attr1, attr2) => {
+        let editableLast = this.isEditable(fieldProperties,attr1) -this.isEditable(fieldProperties,attr2);
+        let objectLast = this.isPrimitive(entity[attr2]) -this.isPrimitive(entity[attr1]);
+        if(editableLast === 0){
+          if(objectLast === 0){
+            return attr1.localeCompare(attr2);
+          } else {
+            return objectLast;
+          }
+        }
+        else {
+          return editableLast;
+        }
+      })
+
+
+
+      return sortedAttributes.map((k) => {
+        let attribute = k;
         if (parent) {
           attribute = parent + '.' + k;
         }
 
-        if (fieldProperties && fieldProperties.hidden && fieldProperties.hidden.indexOf(attribute) === -1) {
-          if (!this.canWrite(attribute) || (fieldProperties && fieldProperties.notEditable && fieldProperties.notEditable.indexOf(attribute) !== -1)) {
-            return (
-              <ListItem id={attribute} key={`${id}${k}${meta[k]}`}>
-                {k}: <div className='notEditable'>{ this.isPrimitive(meta[k]) ? meta[k] :
-                  this.renderDetails(meta[k], id, fieldProperties, attribute) }
-                </div>
-              </ListItem>
-            )
-          } else {
-            return (
-              <ListItem id={attribute} onClick={this.stringifyDetail.bind(this, meta[k], attribute)}
-                        key={`${id}${k}${meta[k]}`}>
-                {k}: <InlineEdit activeClassName='editing'
-                                 validate={this.customValidateText}
-                                 text={ this.isPrimitive(meta[k]) ? meta[k] :
-                                   this.renderDetails(meta[k], id, fieldProperties, attribute) }
-                                 change={this.dataChanged.bind(this, id, this.props.entityType.replace('/', ''))}
-                                 paramName={attribute}
-              />
-                {
-                  this.renderAttributeActions(id, this.props.entityType.replace('/', ''), attribute)
-                }
-              </ListItem>
-
-            )
-          }
+        let attributeField = {
+          name: k,
+          value: this.isPrimitive(entity[k]) ? entity[k] : this.renderDetails(entity[k], fieldProperties, attribute),
+          editable: this.isEditable(fieldProperties, attribute) && this.canWrite(attribute)
         }
-        return null;
-      })}
-        {addAttribute}
-      </List>)
+
+        //Add deleteButton if we can write to the attribute
+        if(attributeField.editable) {
+          attributeField.deleteButton = this.renderDeleteButton(this.props.entity.id, this.props.entityType, attribute);
+        }
+
+        //Add addAttributeField if the attribute is a JSON object (or not a primitive)
+        if(!this.isPrimitive(attributeField.value)) {
+          attributeField.addAttributeField = this.addAttributeField(this.props.entity.id, this.props.entityType, attribute);
+        }
+
+        return attributeField;
+      })
     }
   }
 
   componentDidMount() {
-    this.props.canExecuteActions(this.props.entity.id, this.props.entityType.replace('/', ''), this.getAttributeNames(this.props.entity), actions)
+    this.props.canExecuteActions(this.props.entity.id, this.props.entityType.replace('/', ''),
+      recursiveKeys.dumpKeysRecursively(this.props.entity), actions);
+    this.props.setInputName('');
+    this.props.setInputValue('');
   }
 
   render() {
-    var entity = this.props.entity;
-    if (entity && this.props.entityActionsPolicies) {
-      var details = this.renderDetails(entity, entity.id, this.props.fieldProperties);
+    const {entity, entityType, title, subtitle, fieldProperties, entityActionsPolicies} = this.props;
+    if (entity && entityActionsPolicies) {
       return (<SecurityItem
         expandable
         showExpandableButton
-        key={entity.id + '_' + this.props.entityType}
-        title={this.props.title}
-        subtitle={this.props.subtitle}
-        details={details}
+        key={entity.id + '_' + entityType}
+        title={title}
+        subtitle={subtitle}
+        entity={entity}
+        entityType={entityType.replace('/', '')}
+        addAttributeField={this.addAttributeField(entity.id, entityType)}
+        attributes={this.renderDetails(entity, fieldProperties)}
+        dataChanged={this.props.setEntityAttributes}
       />)
     }
   }
@@ -276,7 +180,8 @@ const mapStateToProps = (state) => {
   return {
     entityActionsPolicies: state.entityPolicies,
     currentUser: state.currentUser,
-    entityList: state.entityList
+    entityList: state.entityList,
+    input: state.input
   };
 };
 
@@ -286,7 +191,9 @@ const
       setEntityAttributes: (params) => dispatch(setEntityData(params)),
       deleteAttribute: (params) => dispatch(deleteAttribute(params)),
       canExecuteActions: (id, type, attributes, actions) => dispatch(canExecuteActions(id, type, attributes, actions)),
-      setPassword: (params) => dispatch(setPassword(params))
+      setPassword: (params) => dispatch(setPassword(params)),
+      setInputName: (name) => dispatch(setInputName(name)),
+      setInputValue: (value) => dispatch(setInputValue(value))
     };
   };
 

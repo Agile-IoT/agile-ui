@@ -7,15 +7,8 @@ var agile = agileSDK({
 });
 
 //This sets the token for the calls to the sdk and reloads the SDK object
-
-export const setToken = (new_token) => {
-  var token = new_token;
-  console.log('creating new sdk with token starting wih ' + token.substring(0, 20))
-  agile = agileSDK({
-    api: 'http://agile-core:8080',
-    idm: 'http://agile-security:3000',
-    token: token
-  });
+export const setToken = (newToken) => {
+  agile.tokenSet(newToken);
 }
 
 //****** UTILS ******//
@@ -192,7 +185,7 @@ export const devicesCreate = (device, type) => {
         return agile.idm.entity.get(d.deviceId, DEVICE_TYPE);
       })
       .then((entity) => {
-        return Promise.resolve(entity);
+        return Promise.resolve(newDevice);
       })
       .catch(err => {
         var entity = {name:newDevice.name, credentials:{}};
@@ -280,16 +273,30 @@ export const deleteAttribute = (params) => {
   };
 }
 
+export const setInputName = (name) => {
+  return (dispatch) => {
+    dispatch(action('INPUT_NAME', name))
+  }
+}
+
+export const setInputValue = (value) => {
+  return (dispatch) => {
+    dispatch(action('INPUT_VALUE', value))
+  }
+}
+
 export const canExecuteActions = (id, type, attribute_names, actions) => {
   return (dispatch) => {
     dispatch(loading(true))
     var queryObject = [];
     var actions_seen = [];
-    for (var act in actions) {
-      if (actions.hasOwnProperty(act) && actions_seen.indexOf(act) === -1) {
-        actions_seen.push(act);
+    actions_seen = actions.map(action => {
+      if (actions_seen.indexOf(action) === -1) {
+        return action;
       }
-    }
+      return null;
+    });
+
     attribute_names.push('actions.self'); //Add root object
     attribute_names.forEach(attribute => {
       actions_seen.forEach(method => {

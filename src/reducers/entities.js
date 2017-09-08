@@ -59,6 +59,19 @@ export function entityList(state = [], action) {
   }
 }
 
+export function input(state = {}, action) {
+  switch (action.type) {
+    case 'INPUT_NAME':
+      state.input_name = action.data;
+      return state;
+    case 'INPUT_VALUE':
+      state.input_value = action.data;
+      return state;
+    default:
+      return state;
+  }
+}
+
 export function devicesDiscover(state = [], action) {
   switch (action.type) {
     case 'DEVICES_DISCOVER':

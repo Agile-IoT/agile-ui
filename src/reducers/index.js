@@ -3,6 +3,7 @@ import {
   devices,
   currentUser,
   entityList,
+  input,
   entityPolicies,
   devicesDiscover,
   messages,
@@ -17,6 +18,7 @@ import {
 export default combineReducers({
     devices,
     entityList,
+    input,
     entityPolicies,
     currentUser,
     devicesDiscover,

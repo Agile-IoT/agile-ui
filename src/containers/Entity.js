@@ -26,21 +26,13 @@ class Entity extends Component {
     return null;
   }
 
-  getEntity() {
-    for (var i in this.props.entityList) { //Get the right entity from the entity list
-      var e = this.props.entityList[i];
-      if(e.id === this.props.params.id && e.type.replace('/', '') === this.props.params.type ? e : undefined)
-        return e;
-    }
-  }
-
   componentWillMount() {
     this.props.entityFetch(this.props.params.type);
   }
 
-
   render() {
-    var entity = this.getEntity();
+    let entity = this.props.entityList.find(entity => entity.id === this.props.params.id && entity.type.replace('/', '') === this.props.params.type);
+
     if (entity) {
       return (
         <div>
