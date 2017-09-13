@@ -10,7 +10,7 @@ class Devices extends Component {
   renderActions(device) {
     return (
       <div className='devices'>
-        <FlatButton label='Delete' onClick={() => {
+        <FlatButton label='Disconnect' onClick={() => {
           this.props.devicesDelete(device.deviceId)}
         } />
         <Link to={`/graphs/${device.deviceId}`}>

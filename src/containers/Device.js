@@ -82,7 +82,9 @@ class Device extends Component {
   renderActions(device) {
     return (
       <div>
-        <FlatButton label='Delete' onClick={() => {this.props.devicesDelete(device.deviceId)}} />
+        <FlatButton label='Disconnect' onClick={() => {
+          this.props.devicesDelete(device.deviceId)
+        }} />
       </div>
     )
   }

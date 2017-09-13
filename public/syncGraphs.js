@@ -216,6 +216,20 @@ function attachSelectionHandlers(gs, prevCallbacks) {
             continue;
           }
           var idx = gs[i].getRowForX(x);
+          var range = 0;
+
+          if (!idx) {
+            var lowBound = x - 50000;
+            var highBound = x + 50000;
+            while (range < 50000) {
+                idx = gs[i].getRowForX(x - range) || gs[i].getRowForX(x + range);
+                if (idx !== null) {
+                    break;
+                }
+                range ++;
+            }
+          }
+
           if (idx !== null) {
             gs[i].setSelection(idx, seriesName);
           }

@@ -1,6 +1,8 @@
 var agile = require('agile-sdk') ({
   api: 'http://agile.local:8080',
-  data: 'http://127.0.0.1:1338'
+  data: 'http://127.0.0.1:1338',
+  token: 'fB1GGLl43DXbhSWgfcTWcYpJU6r8un3sXV8P1BbMlIgTqcZmOc0Ue4tzPKCifXrq',
+  idm: 'http://agile.local:3000'
 })
 
 //****** UTILS ******//
@@ -258,10 +260,15 @@ export const discoveryToggle = () => {
 }
 
 // TODO EXPIREMENTAL
-export const locStorPolicyAdd = (deviceID, componentID, interval) => {
+export const locStorPolicyAdd = (deviceID, componentID, interval, retention) => {
   return (dispatch, currentState) => {
     dispatch(loading(true))
-    agile.data.subscription.create({deviceID, componentID, interval})
+    agile.data.subscription.create({
+      deviceID,
+      componentID,
+      interval,
+      retention: retention + "d"
+    })
     .then(() => {
       dispatch(locStorPoliciesFetch(deviceID))
       dispatch(loading(false));

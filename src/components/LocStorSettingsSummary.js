@@ -20,21 +20,30 @@ const styles = {
     color: '#000'
   },
   fullWidthButton: {
-    width: '100%' 
+    width: '100%'
   }
 }
 
 const LocStorSettingsSummary = (props) => {
   const {
-    deviceId, 
+    deviceId,
     streams,
     interval,
+    retention,
     localStorage,
-    locStorPolicyDelete
+    locStorPolicyDelete,
+    selectedComponent,
+    handleComponentChange,
+    handleIntervalChange,
+    handleRetentionChange,
+    handleButtonClick
   } = props
 
-  const locStorageSection = localStorage.length 
-    ?  <LocalStoragePolicies policies={localStorage} handleRemoval={locStorPolicyDelete} />
+  const locStorageSection = localStorage.length
+    ? <LocalStoragePolicies
+        policies={localStorage}
+        handleRemoval={locStorPolicyDelete}
+      />
     : null
 
   return (
@@ -57,8 +66,8 @@ const LocStorSettingsSummary = (props) => {
           leftEl='Component Id'
           rightEl={
             <SelectField
-              value={props.selectedComponent}
-              onChange={props.handleComponentChange}>
+              value={selectedComponent}
+              onChange={handleComponentChange}>
               {formatStreams(streams)}
             </SelectField>
           }
@@ -67,17 +76,27 @@ const LocStorSettingsSummary = (props) => {
         <GenericListItem
           leftEl='Interval'
           rightEl={
-            <TextField 
+            <TextField
               value={interval}
-              onChange={props.handleIntervalChange}
-              hintText='Frequency in MS'/> 
+              onChange={handleIntervalChange}
+              hintText='Frequency in MS'/>
           }
         />
 
-        <FlatButton 
+        <GenericListItem
+          leftEl='Retention'
+          rightEl={
+            <TextField
+              value={retention}
+              onChange={handleRetentionChange}
+              hintText='Period in days'/>
+          }
+        />
+
+        <FlatButton
           style={styles.fullWidthButton}
           label='Add'
-          onClick={props.handleButtonClick}
+          onClick={handleButtonClick}
         />
       </List>
 
@@ -92,7 +111,7 @@ const formatStreams = (streams) => {
     return streams.map(s => {
       return <MenuItem key={s.id} value={s.id} primaryText={s.id} />
     })
-  } 
+  }
 }
 
 export default LocStorSettingsSummary

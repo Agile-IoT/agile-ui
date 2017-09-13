@@ -16,6 +16,7 @@ class LocalStorageSettings extends Component {
       deviceId: props.device.deviceId,
       streams: props.device.streams,
       interval: 3000,
+      retention: 7,
       selectedComponent: props.device.streams[0].id
     }
   }
@@ -26,13 +27,19 @@ class LocalStorageSettings extends Component {
   }
 
   handleIntervalChange = (event, value) => this.setState({interval: value})
+  handleRetentionChange = (event, value) => this.setState({retention: value})
   handleComponentChange = (event, key, value) => this.setState({selectedComponent: value})
   handleButtonClick = () => {
     const existing =
       this.props.localStorage.find(pol => pol.componentID === this.state.selectedComponent)
 
     if (!existing)
-      this.props.locStorPolicyAdd(this.state.deviceId, this.state.selectedComponent, this.state.interval)
+      this.props.locStorPolicyAdd(
+        this.state.deviceId,
+        this.state.selectedComponent,
+        this.state.interval,
+        this.state.retention
+      )
   }
 
   render() {
@@ -42,10 +49,13 @@ class LocalStorageSettings extends Component {
         deviceId={this.state.deviceId}
         streams={this.state.streams}
         interval={this.state.interval}
+        retention={this.state.retention}
+
         selectedComponent={this.state.selectedComponent}
 
         handleIntervalChange={this.handleIntervalChange}
         handleComponentChange={this.handleComponentChange}
+        handleRetentionChange={this.handleRetentionChange}
         handleButtonClick={this.handleButtonClick}
 
         localStorage={localStorage}
@@ -64,7 +74,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     streamsFetch: (deviceId) => dispatch(streamsFetch(deviceId)),
-    locStorPolicyAdd: (deviceId, componentId, interval) => dispatch(locStorPolicyAdd(deviceId, componentId, interval)),
+    locStorPolicyAdd: (deviceId, componentId, interval, retention) =>
+      dispatch(locStorPolicyAdd(deviceId, componentId, interval, retention)),
     locStorPolicyDelete: (deviceId, componentId) => dispatch(locStorPolicyDelete(deviceId, componentId)),
     locStorPoliciesFetch: (deviceId, componentId) => dispatch(locStorPoliciesFetch(deviceId, componentId)),
   };

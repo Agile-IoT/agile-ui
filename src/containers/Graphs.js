@@ -3,10 +3,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Graph } from '../components/';
-import MenuItem from 'material-ui/MenuItem';
 import Checkbox from 'material-ui/Checkbox'
 import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
 import { streamsFetch } from '../actions';
+import CircularProgress from 'material-ui/CircularProgress';
 
 
 class Graphs extends Component {
@@ -80,7 +80,6 @@ class Graphs extends Component {
       })
       this.setState({synchronize})
     }
-
   }
 
   render() {
@@ -88,12 +87,16 @@ class Graphs extends Component {
     return (
       <div>
         {this.renderSettings()}
-        <div className='graphs'>
-          {streams
-            ? this.renderGraphs(streams)
-            : null}
+        {
+          streams
+          ? <div className='graphs'>
+              {this.renderGraphs(streams)}
+            </div>
+          : <div id='loadingScreen'>
+              <CircularProgress size={250} thickness={10}/>
+            </div>
+        }
         </div>
-      </div>
     );
   }
 }
