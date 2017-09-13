@@ -1,6 +1,10 @@
 import { combineReducers } from 'redux';
 import {
   devices,
+  currentUser,
+  entityList,
+  input,
+  entityPolicies,
   devicesDiscover,
   messages,
   loading,
@@ -13,6 +17,10 @@ import {
 
 export default combineReducers({
     devices,
+    entityList,
+    input,
+    entityPolicies,
+    currentUser,
     devicesDiscover,
     messages,
     loading,

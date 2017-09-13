@@ -23,6 +23,55 @@ export function devices(state = {}, action) {
   }
 }
 
+export function currentUser(state = {}, action) {
+  switch (action.type) {
+    case 'CURRENT_USER':
+      return action.data;
+    default:
+      return state;
+  }
+}
+
+export function entityPolicies(state = {}, action) {
+  switch (action.type) {
+    case 'ENTITY_POLICIES':
+      return action.data;
+    default:
+      return state;
+  }
+}
+
+export function entityList(state = [], action) {
+  switch (action.type) {
+    case 'ENTITIES':
+      return action.data;
+    case 'ENTITY_DELETE':
+      return state.filter(element => element.user_name !== action.data);
+    case 'ENTITY_ATTRIBUTE_SET':
+      return state.map(entity => {
+        if (entity.id === action.data.id && entity.type === action.data.type) {
+          entity = action.data;
+        }
+        return entity;
+      });
+    default:
+      return state;
+  }
+}
+
+export function input(state = {}, action) {
+  switch (action.type) {
+    case 'INPUT_NAME':
+      state.input_name = action.data;
+      return state;
+    case 'INPUT_VALUE':
+      state.input_value = action.data;
+      return state;
+    default:
+      return state;
+  }
+}
+
 export function devicesDiscover(state = [], action) {
   switch (action.type) {
     case 'DEVICES_DISCOVER':
@@ -35,7 +84,7 @@ export function devicesDiscover(state = [], action) {
 }
 
 
-export function messages(state=[], action) {
+export function messages(state = [], action) {
   switch (action.type) {
     case 'MESSAGE':
       return [
@@ -92,7 +141,7 @@ export function deviceTypes(state = {}, action) {
       if (action.data.types.length > 0) {
         return {
           ...state,
-          [action.data.id] : action.data.types
+          [action.data.id]: action.data.types
         };
       }
       return state

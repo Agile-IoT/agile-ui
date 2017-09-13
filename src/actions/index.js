@@ -1,10 +1,22 @@
 import agileSDK from 'agile-sdk';
-const agile = agileSDK('/api');
+
+
+var agile = agileSDK({
+  api: 'http://agile-core:8080',
+  idm: 'http://agile-security:3000'
+});
+
+//This sets the token for the calls to the sdk and reloads the SDK object
+export const setToken = (newToken) => {
+  agile.tokenSet(newToken);
+}
 
 //****** UTILS ******//
 const action = (type, data) => {
   return {type, data}
 }
+
+const DEVICE_TYPE = 'device';
 
 export const loading = bool => {
   return {
@@ -151,8 +163,10 @@ export const devicesDelete = (deviceId) => {
     dispatch(loading(true))
     agile.deviceManager.delete(deviceId)
     .then(() => {
+      return agile.idm.entity.delete(deviceId, DEVICE_TYPE);
+    }).then(() => {
       dispatch(action('DEVICES_DELETE', deviceId));
-      dispatch(message(`Device ${`deviceId`} deleted.`));
+      dispatch(message(`Device ${deviceId} deleted.`));
       dispatch(loading(false));
     })
     .catch(err => {
@@ -163,15 +177,192 @@ export const devicesDelete = (deviceId) => {
 
 export const devicesCreate = (device, type) => {
   return (dispatch) => {
+    var newDevice;
     dispatch(loading(true))
     agile.deviceManager.create(device, type)
-    .then((newDevice) => {
-      dispatch(action('DEVICES_CREATE', newDevice));
-      dispatch(loading(false));
-    })
-    .catch(err => {
-      errorHandle(err, dispatch)
+      .then((d) => {
+        newDevice = d;
+        return agile.idm.entity.get(d.deviceId, DEVICE_TYPE);
+      })
+      .then((entity) => {
+        return Promise.resolve(newDevice);
+      })
+      .catch(err => {
+        var entity = {name:newDevice.name, credentials:{}};
+        return agile.idm.entity.create(newDevice.deviceId, DEVICE_TYPE, entity);
+      })
+      .then(entity => {
+        dispatch(action('DEVICES_CREATE', newDevice));
+        dispatch(loading(false));
+      })
+      .catch(err => {
+        console.log('entity seems to be there already...');
+        dispatch(loading(false));
+      });
+  };
+}
+
+// fetch all curent user data
+export const fetchCurrentUser = () => {
+  return (dispatch) => {
+    dispatch(loading(true))
+    agile.idm.user.getCurrentUserInfo()
+      .then(user => {
+        dispatch(action('CURRENT_USER', user));
+        dispatch(loading(false));
+      })
+      .catch(err => {
+        errorHandle(err, dispatch)
+      });
+  };
+}
+
+export const userFetch = (id) => {
+  return (dispatch) => {
+    dispatch(loading(true))
+    agile.idm.entity.get(id, 'user')
+      .then(user => {
+        dispatch(action('USER', user));
+        dispatch(loading(false));
+      })
+      .catch(err => {
+        errorHandle(err, dispatch)
+      });
+  };
+}
+
+export const setPassword = (params) => {
+  return (dispatch) => {
+    dispatch(loading(true))
+    agile.idm.entity.setAttribute(params) // TODO set password through user in stack
+      .then(entity => {
+        dispatch(action('ENTITY_ATTRIBUTE_SET', entity));
+        dispatch(loading(false));
+      })
+      .catch(err => {
+        errorHandle(err, dispatch)
+      });
+  };
+}
+
+export const setEntityData = (params) => {
+  return (dispatch) => {
+    dispatch(loading(true))
+    agile.idm.entity.setAttribute(params)
+      .then(entity => {
+        dispatch(action('ENTITY_ATTRIBUTE_SET', entity));
+        dispatch(loading(false));
+      })
+      .catch(err => {
+        errorHandle(err, dispatch)
+      });
+  };
+}
+
+export const deleteAttribute = (params) => {
+  return (dispatch) => {
+    dispatch(loading(true))
+    agile.idm.entity.deleteAttribute(params.id, params.type, params.attribute)
+      .then(entity => {
+        dispatch(action('ENTITY_ATTRIBUTE_SET', entity));
+        dispatch(loading(false));
+      })
+      .catch(err => {
+        errorHandle(err, dispatch)
+      });
+  };
+}
+
+export const setInputName = (name) => {
+  return (dispatch) => {
+    dispatch(action('INPUT_NAME', name))
+  }
+}
+
+export const setInputValue = (value) => {
+  return (dispatch) => {
+    dispatch(action('INPUT_VALUE', value))
+  }
+}
+
+export const canExecuteActions = (id, type, attribute_names, actions) => {
+  return (dispatch) => {
+    dispatch(loading(true))
+    var queryObject = [];
+    var actions_seen = [];
+    actions_seen = actions.map(action => {
+      if (actions_seen.indexOf(action) === -1) {
+        return action;
+      }
+      return null;
     });
+
+    attribute_names.push('actions.self'); //Add root object
+    attribute_names.forEach(attribute => {
+      actions_seen.forEach(method => {
+        queryObject.push({entityId: id, entityType: type.startsWith('/') ? type : '/' + type, method: method, field: attribute});
+      });
+    });
+
+    agile.policies.pdp.evaluate(queryObject).then(
+      results => {
+        var result_list = {id: id, type: type, policies: {}};
+        var i = 0;
+        attribute_names.forEach(attribute => {
+          actions_seen.forEach(act => {
+            if (!result_list.policies[attribute]) {
+              result_list.policies[attribute] = {};
+            }
+            result_list.policies[attribute][act] = results[i++];
+          });
+        });
+        dispatch(action('ENTITY_POLICIES', result_list));
+        dispatch(loading(false))
+      })
+  }
+}
+
+// fetch all users
+export const entityFetch = (type) => {
+  return (dispatch) => {
+    dispatch(loading(true))
+    agile.idm.entity.getByType(type)
+      .then(entities => {
+        dispatch(action('ENTITIES', entities));
+        dispatch(loading(false));
+      })
+      .catch(err => {
+        errorHandle(err, dispatch)
+      });
+  };
+}
+
+export const usersDelete = (userName, auth_type) => {
+  return (dispatch) => {
+    dispatch(loading(true))
+    agile.idm.user.delete(userName, auth_type)
+      .then(() => {
+        dispatch(action('ENTITY_DELETE', userName));
+        dispatch(message(`User ${`userName`} deleted.`));
+        dispatch(loading(false));
+      })
+      .catch(err => {
+        errorHandle(err, dispatch)
+      });
+  };
+}
+
+export const usersCreate = (user, type) => {
+  return (dispatch) => {
+    dispatch(loading(true))
+    agile.idm.user.create(user, type)
+      .then((newUser) => {
+        dispatch(action('USERS_CREATE', newUser));
+        dispatch(loading(false));
+      })
+      .catch(err => {
+        errorHandle(err, dispatch)
+      });
   };
 }
 
