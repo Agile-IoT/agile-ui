@@ -1,8 +1,8 @@
 var agile = require('agile-sdk') ({
   api: 'http://agile.local:8080',
-  data: 'http://127.0.0.1:1338',
-  token: 'fB1GGLl43DXbhSWgfcTWcYpJU6r8un3sXV8P1BbMlIgTqcZmOc0Ue4tzPKCifXrq',
-  idm: 'http://agile.local:3000'
+  data: 'http://127.0.0.1:1338'
+  // token: 'fB1GGLl43DXbhSWgfcTWcYpJU6r8un3sXV8P1BbMlIgTqcZmOc0Ue4tzPKCifXrq'
+  // idm: 'http://agile.local:3000'
 })
 
 //****** UTILS ******//

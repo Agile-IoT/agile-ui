@@ -11,7 +11,8 @@ class Graph extends Component {
     super(props)
     this.state = {
       g: undefined,
-      data: []
+      data: [],
+      recordsAdded: false
     }
   }
 
@@ -36,10 +37,13 @@ class Graph extends Component {
     const { deviceId, componentId } = this.props
     const agileDataRecords = nextProps.records[deviceId]
 
-    // If data is empty, populate with local records from Agile Data
-    if (this.state.data && this.state.data.length === 0) {
-      if (agileDataRecords && agileDataRecords.length)
-        toAdd = formatData(agileDataRecords, componentId)
+    if (
+      !this.state.recordsAdded &&
+      agileDataRecords &&
+      agileDataRecords.length
+    ) {
+      this.setState({recordsAdded: true})
+      toAdd = formatData(agileDataRecords, componentId)
     }
 
     // Append the latest, realTime data to the graph
