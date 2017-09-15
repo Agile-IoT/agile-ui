@@ -1,5 +1,3 @@
-// TODO STREAMS FETCH AND RETRIEVE DATA
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Graph } from '../components/';

@@ -112,6 +112,7 @@ class Device extends Component {
   render() {
     var entity = this.getEntity();
     const { device, streams } = this.state;
+    console.log(streams)
     if (!isEmpty(device)) {
       return (
         <div>
@@ -124,34 +125,24 @@ class Device extends Component {
             actions={this.renderActions(device)}
             meta={device}
           />
-
           <LocalStorageSettings device={device}/>
           <CloudUploadSettings device={device}/>
-          <SecurityDetails
-            expandable
-            showExpandableButton
-            title={'Security'}
-            subtitle={''}
-            entity={entity}
-            entityType={'device'}
-            fieldProperties={hiddenAndDisabledAttributes}
-          />
-          {this.renderStreams(streams[device.deviceId])}
+
+          {entity
+            ? <SecurityDetails
+                expandable
+                showExpandableButton
+                title={'Security'}
+                subtitle={''}
+                entity={entity}
+                entityType={'device'}
+                fieldProperties={hiddenAndDisabledAttributes}
+              />
+            : null
+          }
+          {this.renderStreams(streams)}
         </div>
       );
-    } else if (device) {
-      return (
-        <div>
-          <DeviceSummary
-            expandable
-            showExpandableButton
-            title={device.name}
-            subtitle={device.deviceId}
-            status={device.status}
-            actions={this.renderActions(device)}
-            meta={device}
-          />
-        </div>)
     }
     return <div></div>
   }
