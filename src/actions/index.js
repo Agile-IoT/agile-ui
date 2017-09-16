@@ -1,9 +1,9 @@
 import agileSDK from 'agile-sdk';
 
 var agile = agileSDK({
-  api: 'http://agile-core:8080',
-  idm: 'http://agile-security:3000',
-  data: 'http://agile-data:1338'
+  api: '/api/agile-core',
+  idm: '/api/agile-security',
+  data: '/api/agile-data'
 });
 
 //This sets the token for the calls to the sdk and reloads the SDK object
