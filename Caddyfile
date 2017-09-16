@@ -1,8 +1,6 @@
 # https://caddyserver.com/docs/caddyfile
 0.0.0.0:1337 {
-  log stdout
-  errors stdout
-  root ./build
+  root /home/build
   gzip
 
   proxy /api/agile-core agile-core:8080 {
