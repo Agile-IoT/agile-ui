@@ -3,6 +3,10 @@
   root /home/build
   gzip
 
+  rewrite {
+    to {path} {path}/ /index.html
+  }
+
   proxy /api/agile-core agile-core:8080 {
     without /api/agile-core
   }

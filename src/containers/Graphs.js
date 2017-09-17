@@ -44,6 +44,17 @@ class Graphs extends Component {
    })
   }
 
+  renderNoDataMessage() {
+    return <Toolbar>
+      <ToolbarGroup >
+        <ToolbarTitle text='No incoming or local data available' />
+      </ToolbarGroup>
+      <ToolbarGroup >
+        <CircularProgress size={30}/>
+      </ToolbarGroup>
+     </Toolbar>
+  }
+
   renderSettings() {
     return <Toolbar>
       <ToolbarGroup>
@@ -81,10 +92,14 @@ class Graphs extends Component {
   }
 
   render() {
-    const { streams } = this.state;
+    const { streams, graphs } = this.state;
     return (
       <div>
-        {this.renderSettings()}
+        {
+          graphs.length === 0
+            ? this.renderNoDataMessage()
+            : this.renderSettings()
+        }
         {
           streams
           ? <div className='graphs'>
