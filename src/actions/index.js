@@ -167,13 +167,13 @@ export const devicesAndStreamsFetch = () => {
     dispatch(loading(true))
     agile.deviceManager.get()
     .then(devices => {
-      const deviceMap = {}
-
-      devices.forEach(d => deviceMap[d.deviceId] = d)
-
-      dispatch(action('DEVICES', deviceMap));
-      dispatch(loading(false));
-      devices.forEach(d => dispatch(streamsFetch(d.deviceId)));
+      if (devices) {
+        const deviceMap = {}
+        devices.forEach(d => deviceMap[d.deviceId] = d)
+        dispatch(action('DEVICES', deviceMap));
+        devices.forEach(d => dispatch(streamsFetch(d.deviceId)));
+      }
+      dispatch(loading(false))
     })
     .catch(err => {
       errorHandle(err, dispatch)
