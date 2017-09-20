@@ -6,9 +6,6 @@ import { cloudUploadData } from '../actions';
 class CloudUploadSettings extends Component {
   constructor(props) {
     super(props)
-    // This is slightly silly, provider related stuff needs to come
-    // from props perhaps
-
     this.state = {
       deviceId: props.device.deviceId,
       streams: props.device.streams,
