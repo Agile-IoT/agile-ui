@@ -1,7 +1,11 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
-import {FlatButton} from 'material-ui';
-import {DeviceSummary, Stream} from '../components';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { isEmpty } from 'underscore';
+import { FlatButton } from 'material-ui';
+import { DeviceSummary, Stream } from '../components';
+import { LocalStorageSettings, CloudUploadSettings } from './'
+import SecurityDetails from './SecurityDetails';
+
 import {
   deviceFetch,
   devicesDelete,
@@ -9,11 +13,9 @@ import {
   deviceSubscribe,
   deviceUnsubscribe,
   setEntityData,
-  deleteAttribute
+  deleteAttribute,
+  entityFetch
 } from '../actions';
-
-import SecurityDetails from './SecurityDetails';
-import {entityFetch} from '../actions/index';
 
 const hiddenAndDisabledAttributes = {
   notEditable: ['id', 'owner', 'type'],
@@ -21,7 +23,6 @@ const hiddenAndDisabledAttributes = {
 };
 
 class Device extends Component {
-
   componentWillMount() {
     this.props.entityFetch('device')
   }
@@ -36,6 +37,8 @@ class Device extends Component {
   }
 
   componentDidMount() {
+    this.subscribe()
+
     // In case we refresh on this view
     if(!this.state.device)
       this.props.deviceFetch(this.props.params.deviceId)
@@ -44,23 +47,23 @@ class Device extends Component {
       this.props.streamsFetch(this.props.params.deviceId)
   }
 
-  subscribe(device, streams) {
-    if (device) {
-      if (device.streams) {
-        device.streams.map(s => {
-          return this.props.deviceSubscribe(device.deviceId, s.id);
-        });
-      }
+  subscribe() {
+    const { device } = this.state
+
+    if (device && device.streams) {
+      device.streams.map(s => {
+        return this.props.deviceSubscribe(device.deviceId, s.id);
+      });
     }
   }
 
-  unsubscribe(device) {
-    if (device) {
-      if (device.streams) {
-        device.streams.map(s => {
-          return this.props.deviceSubscribe(device.deviceId, s.id);
-        });
-      }
+  unsubscribe() {
+    const { device } = this.state
+
+    if (device && device.streams) {
+      device.streams.map(s => {
+        return this.props.deviceUnsubscribe(device.deviceId, s.id);
+      });
     }
   }
 
@@ -69,11 +72,10 @@ class Device extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    this.setState({streams: nextProps.streams[this.props.params.deviceId]})
+
     if (!this.state.device)
       this.setState({device: nextProps.devices[this.props.params.deviceId]})
-    if (!this.state.streams)
-      this.setState({streams: nextProps.streams[this.props.params.deviceId]})
-
 
     // Poll for new readings
     setTimeout(() => {
@@ -84,7 +86,9 @@ class Device extends Component {
   renderActions(device) {
     return (
       <div>
-        <FlatButton label='Delete' onClick={() => {this.props.devicesDelete(device.deviceId)}} />
+        <FlatButton label='Disconnect' onClick={() => {
+          this.props.devicesDelete(device.deviceId)
+        }} />
       </div>
     )
   }
@@ -108,7 +112,8 @@ class Device extends Component {
   render() {
     var entity = this.getEntity();
     const { device, streams } = this.state;
-    if (device && entity) {
+    console.log(streams)
+    if (!isEmpty(device)) {
       return (
         <div>
           <DeviceSummary
@@ -120,31 +125,24 @@ class Device extends Component {
             actions={this.renderActions(device)}
             meta={device}
           />
-          <SecurityDetails
-            expandable
-            showExpandableButton
-            title={'Security'}
-            subtitle={''}
-            entity={entity}
-            entityType={'device'}
-            fieldProperties={hiddenAndDisabledAttributes}
-          />
-          {this.renderStreams(streams[device.deviceId])}
+          <LocalStorageSettings device={device}/>
+          <CloudUploadSettings device={device}/>
+
+          {entity
+            ? <SecurityDetails
+                expandable
+                showExpandableButton
+                title={'Security'}
+                subtitle={''}
+                entity={entity}
+                entityType={'device'}
+                fieldProperties={hiddenAndDisabledAttributes}
+              />
+            : null
+          }
+          {this.renderStreams(streams)}
         </div>
       );
-    } else if (device) {
-      return (
-        <div>
-          <DeviceSummary
-            expandable
-            showExpandableButton
-            title={device.name}
-            subtitle={device.deviceId}
-            status={device.status}
-            actions={this.renderActions(device)}
-            meta={device}
-          />
-        </div>)
     }
     return <div></div>
   }
@@ -154,6 +152,7 @@ const mapStateToProps = (state) => {
   return {
     devices: state.devices,
     streams: state.streams,
+    locStorPolicies: state.localStoragePolicies,
     actions: state.entityPolicies,
     entityList: state.entityList
   };

@@ -1,9 +1,9 @@
 import agileSDK from 'agile-sdk';
 
-
 var agile = agileSDK({
-  api: 'http://agile-core:8080',
-  idm: 'http://agile-security:3000'
+  api: '/api/agile-core',
+  idm: '/api/agile-security',
+  data: '/api/agile-data'
 });
 
 //This sets the token for the calls to the sdk and reloads the SDK object
@@ -43,6 +43,29 @@ export const errorHandle = (err, dispatch) => {
   dispatch(message(err.message));
   dispatch(loading(false));
 }
+
+// Local storage related.
+export const setInterval = (interval) => {
+  return (dispatch) => {
+    dispatch(action('INTERVAL', interval))
+  }
+}
+
+export const setLocDeviceId = (deviceId) => {
+  return (dispatch) => {
+    dispatch(action('LOC_DEVICE_ID', deviceId))
+  }
+}
+
+export const setLocComponentId = (componentId) => {
+  return (dispatch) => {
+    dispatch(action('LOC_COMPONENT_ID', componentId))
+  }
+}
+
+// Cloud upload related
+
+//
 //****** ASYNC *****//
 // fetch all unregistered devices
 export const devicesDiscover = () => {
@@ -144,13 +167,13 @@ export const devicesAndStreamsFetch = () => {
     dispatch(loading(true))
     agile.deviceManager.get()
     .then(devices => {
-      const deviceMap = {}
-
-      devices.forEach(d => deviceMap[d.deviceId] = d)
-
-      dispatch(action('DEVICES', deviceMap));
-      dispatch(loading(false));
-      devices.forEach(d => dispatch(streamsFetch(d.deviceId)));
+      if (devices) {
+        const deviceMap = {}
+        devices.forEach(d => deviceMap[d.deviceId] = d)
+        dispatch(action('DEVICES', deviceMap));
+        devices.forEach(d => dispatch(streamsFetch(d.deviceId)));
+      }
+      dispatch(loading(false))
     })
     .catch(err => {
       errorHandle(err, dispatch)
@@ -420,5 +443,106 @@ export const discoveryToggle = () => {
         errorHandle(err, dispatch)
       });
     }
+  }
+}
+
+// TODO EXPIREMENTAL
+export const locStorPolicyAdd = (deviceID, componentID, interval, retention) => {
+  return (dispatch, currentState) => {
+    dispatch(loading(true))
+    agile.data.subscription.create({
+      deviceID,
+      componentID,
+      interval,
+      retention: retention + "d"
+    })
+    .then(() => {
+      dispatch(locStorPoliciesFetch(deviceID))
+      dispatch(loading(false));
+    })
+    .catch(err => {
+      errorHandle(err, dispatch)
+    })
+  }
+}
+
+export const locStorPolicyDelete = (deviceID, componentID) => {
+  return (dispatch, currentState) => {
+    dispatch(loading(true))
+    agile.data.subscription.get().then(subscriptions => {
+      const matching = subscriptions
+        .find(sub => sub.deviceID === deviceID && sub.componentID === componentID)
+
+      if (!matching)
+        errorHandle({msg: 'Could not remove subscription'}, dispatch)
+
+      agile.data.subscription.delete(matching._id).then(() => {
+        dispatch(loading(false))
+        dispatch(message('Subscription deleted.'));
+        dispatch(locStorPoliciesFetch(deviceID))
+      }).catch(err => {
+        errorHandle(err, dispatch)
+      })
+    })
+  }
+}
+
+// TODO Policies per device ID / Component ID do not work atm.
+export const locStorPoliciesFetch = (deviceID) => {
+  return (dispatch, currentState) => {
+    dispatch(loading(true))
+    agile.data.subscription.get()
+    .then(policies => {
+      dispatch(loading(false))
+      dispatch(action('POLICIES', policies));
+    })
+    .catch(err => {
+      errorHandle(err, dispatch)
+    })
+  }
+}
+
+export const recordsFetch = (deviceId, componentId) => {
+  return(dispatch) => {
+    const query = `where={
+      "deviceID": "${deviceId}",
+      "componentID": "${componentId}"
+    }`
+
+    dispatch(loading(true))
+    agile.data.record.get(query).then(records => {
+      dispatch(loading(false))
+      dispatch(action('DEVICE_RECORDS', {deviceId, records}))
+    }).catch(err => {
+      err.message = `Connecting to Agile Data : ${err.message}`
+      errorHandle(err, dispatch)
+    })
+  }
+}
+
+export const cloudUploadData = (deviceID, componentID, startDate, endDate, provider) => {
+  // TODO Workaround, will go away once we provide the user with a way to select precise time.
+  const query = `where={"deviceID": "${deviceID}", "componentID": "${componentID}"}`
+  startDate.setHours(0, 0)
+  endDate.setHours(23, 59)
+  return (dispatch) => {
+    dispatch(loading(true))
+    agile.data.record.get(query)
+    .then(entries => {
+      // TODO this is a workaround, ideally should be able to query the DB directly.
+      const relevant = entries.filter(entry => {
+        let entryDate = new Date(entry.time)
+        const tooEarly = entryDate < startDate
+        const tooLate = entryDate > endDate
+        return !tooEarly && !tooLate
+      })
+
+      return relevant
+    }).then(data => {
+      dispatch(loading(false))
+      alert(`${data.length} entries are ready for upload to ${provider}`)
+    }).catch(err => {
+      errorHandle(err, dispatch)
+    })
   }
 }

@@ -23,6 +23,23 @@ export function devices(state = {}, action) {
   }
 }
 
+export function cloudUpload(state = {}, action) {
+  switch (action.type) {
+    case 'DEVICE_ID':
+      return Object.assign({}, state, {deviceId: action.data})
+    case 'COMPOENT_ID':
+      return Object.assign({}, state, {componentId: action.data})
+    case 'START_DATE':
+      return Object.assign({}, state, {startDate: action.data})
+    case 'END_DATE':
+      return Object.assign({}, state, {endDate: action.data})
+    case 'PROVIDER':
+      return Object.assign({}, state, {provider: action.data})
+    default:
+      return state;
+  }
+}
+
 export function currentUser(state = {}, action) {
   switch (action.type) {
     case 'CURRENT_USER':
@@ -35,6 +52,21 @@ export function currentUser(state = {}, action) {
 export function entityPolicies(state = {}, action) {
   switch (action.type) {
     case 'ENTITY_POLICIES':
+      return action.data;
+    default:
+      return state;
+  }
+}
+
+export function localStorage(state = {}, action) {
+  switch (action.type) {
+    case 'LOC_DEVICE_ID':
+      return Object.assign({}, state, {deviceId: action.data})
+    case 'LOC_COMPOENT_ID':
+      return Object.assign({}, state, {componentId: action.data})
+    case 'INTERVAL':
+      return Object.assign({}, state, {interval: action.data})
+    case 'POLICIES':
       return action.data;
     default:
       return state;
@@ -150,10 +182,23 @@ export function deviceTypes(state = {}, action) {
   }
 }
 
+export function records(state = {}, action) {
+  switch (action.type) {
+    case 'DEVICE_RECORDS':
+      const { deviceId } = action.data
+      return {
+        ...state,
+        [deviceId]: action.data.records
+      }
+    default:
+      return state
+  }
+}
+
 export function streams(state = [], action) {
   switch (action.type) {
     case 'STREAMS':
-      const deviceId = action.data.deviceId
+      const { deviceId } = action.data
       return {
         ...state,
         [deviceId]: sortBy(action.data.streams, 'componentID')

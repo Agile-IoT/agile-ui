@@ -89,7 +89,7 @@ class Discover extends Component {
 
   render() {
     return (
-      <div>
+      <div className='discover'>
         {this.renderItems(this.props.devices)}
       </div>
     );

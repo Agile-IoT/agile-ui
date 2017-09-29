@@ -7,7 +7,25 @@ import Discover from './Discover';
 import MessageBar from './MessageBar';
 import LoadingBar from './LoadingBar';
 import Settings from './Settings';
+import LocalStorageSettings from './LocalStorageSettings';
+import CloudUploadSettings from './CloudUploadSettings';
+import Graphs from './Graphs';
 import SecurityDetails from './SecurityDetails';
 import Nav from './Nav';
 
-export { App, Devices, Users, Device, Entity, Discover, MessageBar, LoadingBar, Settings, SecurityDetails, Nav }
+export {
+  App,
+  Devices,
+  Device,
+  Discover,
+  MessageBar,
+  LoadingBar,
+  Settings,
+  LocalStorageSettings,
+  CloudUploadSettings,
+  Graphs,
+  Users,
+  Entity,
+  SecurityDetails,
+  Nav
+ }

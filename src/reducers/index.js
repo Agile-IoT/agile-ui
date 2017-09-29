@@ -12,7 +12,10 @@ import {
   drawer,
   protocols,
   deviceTypes,
-  streams
+  streams,
+  localStorage,
+  cloudUpload,
+  records
 } from './entities';
 
 export default combineReducers({
@@ -28,5 +31,8 @@ export default combineReducers({
     drawer,
     protocols,
     deviceTypes,
-    streams
+    streams,
+    localStorage,
+    cloudUpload,
+    records
 });

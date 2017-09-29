@@ -38,30 +38,32 @@ const renderMeta = (meta, id) => {
   }
 }
 
-const Device = (props) => {
-  return (
-    <Card>
-      <CardHeader
-        title={props.title}
-        subtitle={props.subtitle}
-        actAsExpander={props.actAsExpander}
-        showExpandableButton={props.showExpandableButton}
-        avatar={
-          <Avatar
-            backgroundColor={computeColor(props.status)}
-            >{props.title && props.title.charAt(0)}</Avatar>}
-      />
-      <CardText expandable>
-        <List>
-          {renderMeta(props.meta, props.subtitle)}
-        </List>
-      </CardText>
-      <CardActions>
-        {props.actions}
-      </CardActions>
-    </Card>
-  );
+class Device extends React.Component {
+  render() {
+    return (
+      <Card>
+        <CardHeader
+          title={this.props.title}
+          subtitle={this.props.subtitle}
+          actAsExpander={this.props.actAsExpander}
+          showExpandableButton={this.props.showExpandableButton}
+          avatar={
+            <Avatar
+              backgroundColor={computeColor(this.props.status)}
+              >{this.props.title && this.props.title.charAt(0)}
+            </Avatar>}
+        />
+        <CardText expandable>
+          <List>
+            {renderMeta(this.props.meta, this.props.subtitle)}
+          </List>
+        </CardText>
+        <CardActions>
+          {this.props.actions}
+        </CardActions>
+      </Card>
+    );
+  }
 }
-
 
 export default Device

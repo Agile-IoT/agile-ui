@@ -9,10 +9,15 @@ class Devices extends Component {
 
   renderActions(device) {
     return (
-      <div>
-        <FlatButton label='Delete' onClick={() => {this.props.devicesDelete(device.deviceId)}} />
+      <div className='devices'>
+        <FlatButton label='Disconnect' onClick={() => {
+          this.props.devicesDelete(device.deviceId)}
+        } />
+        <Link to={`/graphs/${device.deviceId}`}>
+          <FlatButton label='View Data' />
+        </Link>
         <Link to={`/devices/${device.deviceId}`}>
-          <FlatButton label='View' />
+          <FlatButton label='Configure' />
         </Link>
       </div>
     )
@@ -44,7 +49,7 @@ class Devices extends Component {
 
   render() {
     return (
-      <div>
+      <div className="devices">
         {this.renderItems(this.props.devices)}
       </div>
     );

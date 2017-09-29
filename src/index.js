@@ -8,9 +8,10 @@ import {
   App,
   Discover,
   Devices,
+  Device,
+  Graphs,
   Users,
-  Entity,
-  Device
+  Entity
 } from './containers';
 
 // global styles
@@ -36,6 +37,7 @@ render(
           <Route path="list/:type" component={Users} />
           <Route path="entity/:id/:type" component={Entity} />
           <Route path="devices/:deviceId" component={Device} />
+          <Route path="graphs/:deviceId" component={Graphs} />
         </Route>
       </Router>
     </MuiThemeProvider>

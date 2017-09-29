@@ -2,7 +2,19 @@
 0.0.0.0:1337 {
   root /home/build
   gzip
-  proxy /api agile-core:8080
+
+  proxy /api/agile-core agile-core:8080 {
+    without /api/agile-core
+  }
+
+  proxy /api/agile-security agile-security:3000 {
+    without /api/agile-security
+  }
+
+  proxy /api/agile-data agile-data:1338 {
+    without /api/agile-data
+  }
+
   proxy /ws agile-core:8080 {
     websocket
   }
