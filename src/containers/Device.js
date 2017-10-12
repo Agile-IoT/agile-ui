@@ -17,11 +17,6 @@ import {
   entityFetch
 } from '../actions';
 
-const hiddenAndDisabledAttributes = {
-  notEditable: ['id', 'owner', 'type'],
-  hidden: ['password']
-};
-
 class Device extends Component {
   componentWillMount() {
     this.props.entityFetch('device')
@@ -136,7 +131,8 @@ class Device extends Component {
                 subtitle={''}
                 entity={entity}
                 entityType={'device'}
-                fieldProperties={hiddenAndDisabledAttributes}
+                fieldProperties={this.props.schemas.ui && this.props.schemas.ui["/device"]
+                && this.props.schemas.ui["/device"].attributes ? this.props.schemas.ui["/device"].attributes : {}}
               />
             : null
           }
@@ -154,7 +150,8 @@ const mapStateToProps = (state) => {
     streams: state.streams,
     locStorPolicies: state.localStoragePolicies,
     actions: state.entityPolicies,
-    entityList: state.entityList
+    entityList: state.entityList,
+    schemas: state.schemas
   };
 };
 

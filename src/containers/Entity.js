@@ -3,15 +3,11 @@ import {connect} from 'react-redux';
 import {entityFetch} from '../actions';
 import {SecurityDetails} from './';
 
-const hiddenAndDisabledAttributes = {
-  notEditable: ['id', 'owner', 'name', 'type', 'auth_type'],
-  hidden: ['password']
-};
-
 class Entity extends Component {
 
   renderEntity(entity) {
     if (entity) {
+      const fieldProperties = this.props.schemas.ui && this.props.schemas.ui[entity.type] ? this.props.schemas.ui[entity.type].attributes : {};
       return (<SecurityDetails
         expandable
         showExpandableButton
@@ -19,8 +15,8 @@ class Entity extends Component {
         title={entity.id}
         subtitle={entity.owner}
         entity={entity}
-        entityType={'user'}
-        fieldProperties={hiddenAndDisabledAttributes}
+        entityType={entity.type}
+        fieldProperties={fieldProperties}
       />)
     }
     return null;
@@ -46,7 +42,8 @@ class Entity extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    entityList: state.entityList
+    entityList: state.entityList,
+    schemas: state.schemas
   };
 };
 

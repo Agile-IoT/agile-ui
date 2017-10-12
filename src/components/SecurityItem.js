@@ -7,6 +7,8 @@ import {
 import {List, ListItem} from 'material-ui/List';
 import InlineEdit from 'react-edit-inline';
 
+let ui = {};
+
 const isPrimitive = (attribute) => {
   return (attribute !== Object(attribute));
 }
@@ -31,7 +33,7 @@ const changedData = (id, type, dataChanged, data) => {
 
 const getInlineEditField = (id, type, key, value, parent, dataChanged, deleteButton) => {
   return (<div key={`${id}${key}`}>
-    {key}: {<InlineEdit activeClassName='editing'
+    {ui[key] && ui[key].name ? ui[key].name : key}: {<InlineEdit activeClassName='editing'
                         text={value}
                         change={(data) => changedData(id, type, dataChanged, data)}
                         paramName={parent}
@@ -43,7 +45,7 @@ const getInlineEditField = (id, type, key, value, parent, dataChanged, deleteBut
 
 const getNestedField = (id, type, key, attributes, parent, dataChanged, deleteButton, addAttributeField) => {
   return (<div key={`${id}${key}`}>
-    {key}: {renderAttributes(id, type, attributes, addAttributeField, dataChanged, parent)}
+    {ui[key] && ui[key].name ? ui[key].name : key}: {renderAttributes(id, type, attributes, addAttributeField, dataChanged, parent)}
     {deleteButton}
   </div>);
 }
@@ -65,7 +67,7 @@ const renderAttribute = (id, type, attribute, parent, dataChanged) => {
 
   return (
     <div key={`${id}${attribute.name}`}>
-      {attribute.name}: {value}
+      {ui[attribute.name] && ui[attribute.name].name ? ui[attribute.name].name : attribute.name}: {value}
     </div>
   );
 }
@@ -96,6 +98,7 @@ const renderAttributes = (id, type, attributes, addAttributeField, dataChanged, 
 }
 
 const SecurityItem = (props) => {
+  ui = props.ui;
   return (
     <Card
       style={{marginBottom: '20px'}}>
@@ -105,6 +108,8 @@ const SecurityItem = (props) => {
         title={props.title}
         subtitle={props.subtitle}
       />
+      {props.passwordField}
+	    {props.groupField}
       <CardText expandable>
         {renderAttributes(props.entity.id, props.entityType, props.attributes, props.addAttributeField, props.dataChanged)}
       </CardText>

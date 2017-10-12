@@ -3,31 +3,56 @@ import {EntityItem} from '../components';
 import {FlatButton} from 'material-ui';
 import {connect} from 'react-redux';
 import {Link} from 'react-router';
-import {usersDelete, entityFetch} from '../actions';
+import {entityDelete, entityFetch} from '../actions';
 
 class Entities extends Component {
 
-  renderActions(entity) {
+  renderNewEntityButton() {
     return (
       <div>
-        <FlatButton label='Delete' onClick={() => {
-          if(entity.type === '/user'){
-            this.props.userDelete(entity.user_name);
-          }           
-        }}/>
-        <Link to={`/entity/${entity.id}/${entity.type.replace('/','')}`}>
-          <FlatButton label='View'/>
+        <Link to={`/add/${this.props.params.type.replace('/','')}`}>
+          <FlatButton label={`Add new ${this.props.params.type.replace('/','')}`}/>
         </Link>
       </div>
     )
   }
 
-  renderItems(entities) {
-    if (entities) {
-      return entities.map((entity, i) => {
+  renderActions(entity) {
+    switch (this.props.params.type) {
+      case 'group':
+	      return (
+          <div>
+            <FlatButton label='Delete' onClick={() => {
+				      this.props.entityDelete(entity, this.props.params.type);
+			      }}/>
+            <Link to={`/group/${entity.group_name}`}>
+              <FlatButton label='View members'/>
+            </Link>
+          </div>
+	      )
+      default:
+	      return (
+          <div>
+            <FlatButton label='Delete' onClick={() => {
+				      this.props.entityDelete(entity, this.props.params.type);
+			      }}/>
+            <Link to={`/entity/${entity.id}/${this.props.params.type}`}>
+              <FlatButton label='View'/>
+            </Link>
+            <Link to={`/group/${entity.id}/${this.props.params.type}`}>
+              <FlatButton label='Group'/>
+            </Link>
+          </div>
+	      )
+    }
+  }
+
+  renderItems() {
+    if (this.props.entityList) {
+      return this.props.entityList.map((entity, i) => {
         return (
           <EntityItem
-            title={entity.id}
+            title={entity.id || entity.group_name}
             key={i}
             status={entity.status}
             actions={this.renderActions(entity)}
@@ -35,7 +60,7 @@ class Entities extends Component {
           />)
       });
     } else {
-      return 'Userlist is empty'
+      return 'Entitylist is empty'
     }
   }
 
@@ -43,11 +68,20 @@ class Entities extends Component {
     this.props.entityFetch(this.props.params.type);
   }
 
+  componentDidUpdate(prevProps) {
+    if(prevProps.currentTab !== this.props.currentTab) {
+			this.props.entityFetch(this.props.params.type);
+    }
+	}
 
   render() {
+    const addnewExists = this.props.ui && this.props.ui['/' + this.props.params.type]
+      && Object.keys(this.props.ui['/' + this.props.params.type]).includes('addNew');
     return (
       <div>
-        {this.renderItems(this.props.entityList)}
+        {this.renderItems()}
+        {(addnewExists && this.props.ui['/' + this.props.params.type].addNew) || !addnewExists ?
+					this.renderNewEntityButton() : undefined}
       </div>
     );
   }
@@ -55,14 +89,16 @@ class Entities extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    entityList: state.entityList
+    entityList: state.entityList,
+    ui: state.schemas.ui,
+    currentTab: state.currentTab
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
     entityFetch: (type) => dispatch(entityFetch(type)),
-    userDelete: (user_name, auth_type) => dispatch(usersDelete(user_name, auth_type))
+    entityDelete: (entity, type) => dispatch(entityDelete(entity, type))
   };
 };
 

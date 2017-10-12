@@ -1,14 +1,21 @@
 import agileSDK from 'agile-sdk';
 
 var agile = agileSDK({
-  api: '/api/agile-core',
-  idm: '/api/agile-security',
-  data: '/api/agile-data'
+  api: 'http://localhost:8080',
+  idm: 'http://localhost:3000',
+  token: 'Qj3P3UiV4ANZUJXlWY61LooiPLAs9TtifYvwP6Ry5wGyLMkgHJjEtWjpwu6eOGDo'
 });
 
 //This sets the token for the calls to the sdk and reloads the SDK object
-export const setToken = (newToken) => {
-  agile.tokenSet(newToken);
+
+export const setToken = (new_token) => {
+  var token = new_token;
+  console.log('creating new sdk with token starting wih ' + token.substring(0, 20))
+  agile = agileSDK({
+    api: 'http://localhost:8080',
+    idm: 'http://localhost:3000',
+    token: token
+  });
 }
 
 //****** UTILS ******//
@@ -181,6 +188,20 @@ export const devicesAndStreamsFetch = () => {
   };
 }
 
+export const fetchEntitySchemas = () => {
+  return (dispatch) => {
+    dispatch(loading(true))
+    agile.idm.entity.getEntitiesSchema()
+      .then((schema) => {
+        dispatch(action('SCHEMA', schema));
+        dispatch(loading(false));
+      }).catch(err => {
+      errorHandle(err, dispatch)
+    });
+  }
+}
+
+
 export const devicesDelete = (deviceId) => {
   return (dispatch) => {
     dispatch(loading(true))
@@ -254,18 +275,32 @@ export const userFetch = (id) => {
   };
 }
 
-export const setPassword = (params) => {
-  return (dispatch) => {
-    dispatch(loading(true))
-    agile.idm.entity.setAttribute(params) // TODO set password through user in stack
-      .then(entity => {
-        dispatch(action('ENTITY_ATTRIBUTE_SET', entity));
-        dispatch(loading(false));
-      })
-      .catch(err => {
-        errorHandle(err, dispatch)
-      });
-  };
+export const updatePassword = (oldPassword, newPassword) => {
+	return (dispatch) => {
+		dispatch(loading(true))
+		agile.idm.user.updatePassword(oldPassword, newPassword)
+			.then(entity => {
+				//dispatch(action('PASSWORD', entity));
+				dispatch(message(`Password changed.`));
+				dispatch(loading(false));
+			}).catch(err => {
+			errorHandle(err, dispatch)
+		});
+	};
+}
+
+export const resetPassword = (username, authType, newPassword) => {
+	return (dispatch) => {
+		dispatch(loading(true))
+		agile.idm.user.resetPassword(username, authType, newPassword)
+			.then(entity => {
+				// dispatch(action('PASSWORD', entity));
+				dispatch(message(`Password for ${username} changed.`));
+				dispatch(loading(false));
+			}).catch(err => {
+			errorHandle(err, dispatch)
+		});
+	};
 }
 
 export const setEntityData = (params) => {
@@ -308,6 +343,18 @@ export const setInputValue = (value) => {
   }
 }
 
+export const oldPasswordInput = (value) => {
+	return (dispatch) => {
+		dispatch(action('INPUT_OLD_PASSWORD', value))
+	}
+}
+
+export const newPasswordInput = (value) => {
+	return (dispatch) => {
+		dispatch(action('INPUT_NEW_PASSWORD', value))
+	}
+}
+
 export const canExecuteActions = (id, type, attribute_names, actions) => {
   return (dispatch) => {
     dispatch(loading(true))
@@ -321,7 +368,10 @@ export const canExecuteActions = (id, type, attribute_names, actions) => {
     });
 
     attribute_names.push('actions.self'); //Add root object
-    attribute_names.forEach(attribute => {
+		if(attribute_names.indexOf('password') === -1 && type === 'user') {
+			attribute_names.push('password'); //Make sure that it is checked whether the current user can set the password
+		}
+		attribute_names.forEach(attribute => {
       actions_seen.forEach(method => {
         queryObject.push({entityId: id, entityType: type.startsWith('/') ? type : '/' + type, method: method, field: attribute});
       });
@@ -345,19 +395,84 @@ export const canExecuteActions = (id, type, attribute_names, actions) => {
   }
 }
 
-// fetch all users
+export const currentTab = (type) => {
+	return (dispatch) => {
+		dispatch(loading(true))
+		dispatch(action('CURRENT_TAB', type));
+		dispatch(loading(false));
+	};
+}
+
+// fetch all entities by type
 export const entityFetch = (type) => {
   return (dispatch) => {
     dispatch(loading(true))
-    agile.idm.entity.getByType(type)
-      .then(entities => {
-        dispatch(action('ENTITIES', entities));
-        dispatch(loading(false));
-      })
-      .catch(err => {
-        errorHandle(err, dispatch)
-      });
+    switch(type) {
+      case 'group':
+	      agile.idm.group.get()
+		      .then(entities => {
+			      dispatch(action('ENTITIES', entities));
+			      dispatch(loading(false));
+		      })
+		      .catch(err => {
+			      errorHandle(err, dispatch)
+		      });
+        break;
+      default:
+	      agile.idm.entity.getByType(type)
+		      .then(entities => {
+			      dispatch(action('ENTITIES', entities));
+			      dispatch(loading(false));
+		      })
+		      .catch(err => {
+			      errorHandle(err, dispatch)
+		      });
+    }
   };
+}
+
+// fetch all groups
+export const groupsFetch = () => {
+	return (dispatch) => {
+		dispatch(loading(true))
+		agile.idm.group.get()
+			.then(groups => {
+				dispatch(action('GROUPS', groups));
+				dispatch(loading(false));
+			})
+			.catch(err => {
+				errorHandle(err, dispatch)
+			});
+	};
+}
+
+export const addToGroup = (owner, name, type, id) => {
+	return (dispatch) => {
+		dispatch(loading(true))
+		agile.idm.group.addEntity({owner: owner, name: name, entityType: type, entityId: id})
+			.then(entity => {
+				dispatch(action('ENTITY_ADDED_GROUP', entity));
+				dispatch(message(`User added to group ${name}.`));
+				dispatch(loading(false));
+			}).catch(err => {
+			errorHandle(err, dispatch)
+		});
+	};
+}
+
+export const removeFromGroup = (owner, name, type, id) => {
+	return (dispatch) => {
+		dispatch(loading(true))
+		agile.idm.group.removeEntity({owner: owner, name: name, entityType: type, entityId: id})
+			.then(entity => {
+				dispatch(action('ENTITY_REMOVED_GROUP', entity));
+				dispatch(message(`User removed from group ${name}.`));
+				dispatch(loading(false));
+			})
+			.catch(err => {
+				errorHandle(err, dispatch)
+			});
+	};
 }
 
 export const usersDelete = (userName, auth_type) => {
@@ -366,7 +481,7 @@ export const usersDelete = (userName, auth_type) => {
     agile.idm.user.delete(userName, auth_type)
       .then(() => {
         dispatch(action('ENTITY_DELETE', userName));
-        dispatch(message(`User ${`userName`} deleted.`));
+        dispatch(message(`User ${userName} deleted.`));
         dispatch(loading(false));
       })
       .catch(err => {
@@ -375,18 +490,72 @@ export const usersDelete = (userName, auth_type) => {
   };
 }
 
-export const usersCreate = (user, type) => {
+export const groupDelete = (owner, name) => {
+	return (dispatch) => {
+		dispatch(loading(true))
+		agile.idm.group.delete(owner, name)
+			.then(() => {
+				dispatch(action('GROUP_DELETE', name));
+				dispatch(message(`Group ${name} deleted.`));
+				dispatch(loading(false));
+			})
+			.catch(err => {
+				errorHandle(err, dispatch)
+			});
+	};
+}
+
+export const entityDelete = (entity, type) => {
+  switch(type) {
+    case 'user':
+      return usersDelete(entity.user_name, entity.auth_type);
+    case 'group':
+	    return groupDelete(entity.owner, entity.group_name);
+    default:
+      return (dispatch) => {dispatch(message(`Unknown type.`))}
+  }
+}
+
+export const usersCreate = (user, authType, options) => {
   return (dispatch) => {
     dispatch(loading(true))
-    agile.idm.user.create(user, type)
+    agile.idm.user.create(user, authType, options)
       .then((newUser) => {
         dispatch(action('USERS_CREATE', newUser));
+        dispatch(message(`User ${user} created.`));
         dispatch(loading(false));
       })
       .catch(err => {
         errorHandle(err, dispatch)
       });
   };
+}
+
+export const groupCreate = (group_name) => {
+	return (dispatch) => {
+		dispatch(loading(true))
+		agile.idm.group.create(group_name,)
+			.then((newGroup) => {
+				dispatch(action('GROUP_CREATE', newGroup));
+				dispatch(message(`Group ${group_name} created.`));
+				dispatch(loading(false));
+			})
+			.catch(err => {
+				errorHandle(err, dispatch)
+			});
+	};
+}
+
+
+export const entityCreate = (data, type) => {
+  switch(type) {
+    case 'user':
+      return usersCreate(data.user_name, data.auth_type, data);
+    case 'group':
+      return groupCreate(data.group_name);
+    default:
+      return (dispatch) => {dispatch(message(`Unknown type.`))}
+  }
 }
 
 // fetch all available protocols
