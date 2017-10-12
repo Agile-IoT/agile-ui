@@ -3,14 +3,17 @@ import { connect } from 'react-redux';
 import { Graph } from '../components/';
 import Checkbox from 'material-ui/Checkbox'
 import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
-import { streamsFetch } from '../actions';
+import {
+  streamsFetch ,
+  deviceSubscribe,
+  deviceUnsubscribe
+} from '../actions';
 import CircularProgress from 'material-ui/CircularProgress';
 
 
 class Graphs extends Component {
   constructor(props){
       super(props);
-
       this.state={
         streams: this.props.streams[this.props.params.deviceId],
         graphs: [],
@@ -19,7 +22,14 @@ class Graphs extends Component {
   }
 
   componentDidMount() {
+
     // TODO Refresh on the page
+    if (this.props.params.deviceId && this.state.streams) {
+      this.state.streams.forEach((s) => {
+        this.props.deviceSubscribe(this.props.params.deviceId, s.id);
+      });
+    }
+
     this.props.streamsFetch(this.props.params.deviceId)
   }
 
@@ -88,6 +98,14 @@ class Graphs extends Component {
         range: false
       })
       this.setState({synchronize})
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.props.params.deviceId && this.state.streams) {
+      this.state.streams.forEach((s) => {
+        this.props.deviceUnsubscribe(this.props.params.deviceId, s.id);
+      });
     }
   }
 
