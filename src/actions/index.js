@@ -2,12 +2,11 @@ import agileSDK from 'agile-sdk';
 
 var agile = agileSDK({
   api: '/api/agile-core',
-	idm: '/api/agile-security',
+  idm: '/api/agile-security',
   data: '/api/agile-data'
 });
 
 //This sets the token for the calls to the sdk and reloads the SDK object
-
 export const setToken = (new_token) => {
   agile.tokenSet(newToken);
 }
