@@ -24,7 +24,7 @@ import {
 export default combineReducers({
     devices,
     entityList,
-  	groups,
+    groups,
     input,
     schemas,
     currentTab,

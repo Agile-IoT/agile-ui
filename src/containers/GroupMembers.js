@@ -5,36 +5,36 @@ import EntityItem from "../components/EntityItem";
 
 class GroupMembers extends Component {
 
-	render() {
-		const group = this.props.groups.find(group => group.group_name === this.props.params.group_name);
-		console.log(group);
-		if (group && group.entities) {
-			return (
-				<EntityItem
-				title={group.group_name}
-				text={group.entities.map(entity => {return JSON.stringify(entity)})}
-				/>
-			);
-		}
-		return (<div>No group members</div>)
-	}
+  render() {
+    const group = this.props.groups.find(group => group.group_name === this.props.params.group_name);
+    console.log(group);
+    if (group && group.entities) {
+      return (
+        <EntityItem
+        title={group.group_name}
+        text={group.entities.map(entity => {return JSON.stringify(entity)})}
+        />
+      );
+    }
+    return (<div>No group members</div>)
+  }
 
-	componentWillMount() {
-		this.props.groupsFetch();
-	}
+  componentWillMount() {
+    this.props.groupsFetch();
+  }
 }
 
 const mapStateToProps = (state) => {
-	return {
-		groups: state.groups
-	};
+  return {
+    groups: state.groups
+  };
 };
 
 const
-	mapDispatchToProps = (dispatch) => {
-		return {
-			groupsFetch: () => dispatch(groupsFetch())
-		};
-	};
+  mapDispatchToProps = (dispatch) => {
+    return {
+      groupsFetch: () => dispatch(groupsFetch())
+    };
+  };
 
 export default connect(mapStateToProps, mapDispatchToProps)(GroupMembers);

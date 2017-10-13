@@ -47,9 +47,9 @@ const passwordFieldStyle = {
 }
 
 const groupButtonStyle = {
-	position: 'absolute',
-	right: 600,
-	top: 10
+  position: 'absolute',
+  right: 600,
+  top: 10
 }
 
 class SecurityDetails extends Component {
@@ -86,7 +86,7 @@ class SecurityDetails extends Component {
       this.props.setInputName('');
       this.refs[inputName].value = '';
       this.props.setInputValue('');
-			this.refs[inputValueName].value = '';
+      this.refs[inputValueName].value = '';
     }
   }
 
@@ -105,10 +105,10 @@ class SecurityDetails extends Component {
                               onClick={event => {
                                 event.stopPropagation();
                                 this.props.updatePassword(this.props.input.old_password, this.props.input.new_password);
-																this.props.oldPasswordInput('');
-																this.refs.old_password.value = '';
-																this.props.newPasswordInput('');
-																this.refs.new_password.value = '';
+                                this.props.oldPasswordInput('');
+                                this.refs.old_password.value = '';
+                                this.props.newPasswordInput('');
+                                this.refs.new_password.value = '';
                               }}>
           <ContentSave/>
         </FloatingActionButton>
@@ -128,8 +128,8 @@ class SecurityDetails extends Component {
                                 event.stopPropagation();
                                 this.props.resetPassword(this.props.entity.user_name,
                                   this.props.entity.auth_type, this.props.input.new_password);
-																this.props.newPasswordInput('');
-																this.refs.new_password.value = '';
+                                this.props.newPasswordInput('');
+                                this.refs.new_password.value = '';
                               }}>
           <ContentSave/>
         </FloatingActionButton>
@@ -151,11 +151,11 @@ class SecurityDetails extends Component {
 
   addAttributeField(id, type, parent) {
     const inputNameField = parent + '_name';
-		const inputValueField = parent + '_value';
+    const inputValueField = parent + '_value';
     return (
       <div>
         <input ref={inputNameField} defaultValue={this.props.input.input_name} placeholder='New Attribute' onBlur={event => {
-					const inputName = parent ? parent + '.' + event.target.value : event.target.value.toString();
+          const inputName = parent ? parent + '.' + event.target.value : event.target.value.toString();
           this.props.setInputName(inputName)
         }}/>
 
@@ -189,14 +189,14 @@ class SecurityDetails extends Component {
 
   renderGroupEditButton = (id, type, groups) => {
     const groupNames = groups.map(group => {return group.group_name});
-	  return (
-	    <div style={groupButtonStyle}>
-		    {'Groups: ' + groupNames + " "}
+    return (
+      <div style={groupButtonStyle}>
+        {'Groups: ' + groupNames + " "}
         <Link style={{"vertical-align": "sub"}} to={`/group/${id}/${type.replace('/','')}`}>
           <FloatingActionButton mini={true} label='Group'><ContentEdit/></FloatingActionButton>
         </Link>
       </div>
-	  )
+    )
   }
 
   renderDetails(entity, fieldProperties, parent) {

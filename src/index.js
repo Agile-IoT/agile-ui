@@ -12,7 +12,7 @@ import {
   Entity,
   AddEntity,
   Group,
-	GroupMembers,
+  GroupMembers,
   Device,
   Graphs
 } from './containers';

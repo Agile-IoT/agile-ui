@@ -20,22 +20,22 @@ class Entities extends Component {
   renderActions(entity) {
     switch (this.props.params.type) {
       case 'group':
-	      return (
+        return (
           <div>
             <FlatButton label='Delete' onClick={() => {
-				      this.props.entityDelete(entity, this.props.params.type);
-			      }}/>
+              this.props.entityDelete(entity, this.props.params.type);
+            }}/>
             <Link to={`/group/${entity.group_name}`}>
               <FlatButton label='View members'/>
             </Link>
           </div>
-	      )
+        )
       default:
-	      return (
+        return (
           <div>
             <FlatButton label='Delete' onClick={() => {
-				      this.props.entityDelete(entity, this.props.params.type);
-			      }}/>
+              this.props.entityDelete(entity, this.props.params.type);
+            }}/>
             <Link to={`/entity/${entity.id}/${this.props.params.type}`}>
               <FlatButton label='View'/>
             </Link>
@@ -43,7 +43,7 @@ class Entities extends Component {
               <FlatButton label='Group'/>
             </Link>
           </div>
-	      )
+        )
     }
   }
 
@@ -70,9 +70,9 @@ class Entities extends Component {
 
   componentDidUpdate(prevProps) {
     if(prevProps.currentTab !== this.props.currentTab) {
-			this.props.entityFetch(this.props.params.type);
+      this.props.entityFetch(this.props.params.type);
     }
-	}
+  }
 
   render() {
     const addnewExists = this.props.ui && this.props.ui['/' + this.props.params.type]
@@ -81,7 +81,7 @@ class Entities extends Component {
       <div>
         {this.renderItems()}
         {(addnewExists && this.props.ui['/' + this.props.params.type].addNew) || !addnewExists ?
-					this.renderNewEntityButton() : undefined}
+          this.renderNewEntityButton() : undefined}
       </div>
     );
   }

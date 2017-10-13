@@ -5,71 +5,71 @@ import {fetchCurrentUser, fetchEntitySchemas, currentTab} from '../actions';
 import {connect} from 'react-redux';
 
 class Nav extends Component {
-	handleActive(tab) {
-		browserHistory.push(tab.props.value);
-		this.props.currentTab(tab.props.value.replace('/list', ''));
-	}
+  handleActive(tab) {
+    browserHistory.push(tab.props.value);
+    this.props.currentTab(tab.props.value.replace('/list', ''));
+  }
 
-	componentDidMount() {
-		this.props.fetchEntitySchemas();
-		this.props.fetchCurrentUser();
-	}
+  componentDidMount() {
+    this.props.fetchEntitySchemas();
+    this.props.fetchCurrentUser();
+  }
 
-	getTabs() {
-		if (this.props.schemas.schema) {
-			return this.props.schemas.schema.filter(schema => {
-				const ui = this.props.schemas.ui && this.props.schemas.ui[schema.id] ? this.props.schemas.ui[schema.id] : {};
-				return !ui.hidden;
-			}).map(schema => {
-				const ui = this.props.schemas.ui && this.props.schemas.ui[schema.id] ? this.props.schemas.ui[schema.id] : {};
-				return (
-					<Tab key={schema.id}
-							 label={ui.name ? ui.name : schema.id}
-							 value={"/list" + schema.id}
-							 onActive={this.handleActive.bind(this)}
-					>
-					</Tab>)
-			})
-		}
-	}
+  getTabs() {
+    if (this.props.schemas.schema) {
+      return this.props.schemas.schema.filter(schema => {
+        const ui = this.props.schemas.ui && this.props.schemas.ui[schema.id] ? this.props.schemas.ui[schema.id] : {};
+        return !ui.hidden;
+      }).map(schema => {
+        const ui = this.props.schemas.ui && this.props.schemas.ui[schema.id] ? this.props.schemas.ui[schema.id] : {};
+        return (
+          <Tab key={schema.id}
+               label={ui.name ? ui.name : schema.id}
+               value={"/list" + schema.id}
+               onActive={this.handleActive.bind(this)}
+          >
+          </Tab>)
+      })
+    }
+  }
 
-	render() {
-		return (
-			<Tabs value={this.props.location.pathname}>
-				<Tab label="Discover"
-						 value="/"
-						 onActive={this.handleActive.bind(this)}
-				>
-				</Tab>
-				<Tab label="Devices"
-						 value="/devices"
-						 onActive={this.handleActive.bind(this)}
-				>
-				</Tab>
-				<Tab label="User profile"
-						 value={"/entity/" + this.props.currentUser.id + "/user"}
-						 onActive={this.handleActive.bind(this)}
-				>
-				</Tab>
-				{this.getTabs()}
-			</Tabs>
-		)
-	}
+  render() {
+    return (
+      <Tabs value={this.props.location.pathname}>
+        <Tab label="Discover"
+             value="/"
+             onActive={this.handleActive.bind(this)}
+        >
+        </Tab>
+        <Tab label="Devices"
+             value="/devices"
+             onActive={this.handleActive.bind(this)}
+        >
+        </Tab>
+        <Tab label="User profile"
+             value={"/entity/" + this.props.currentUser.id + "/user"}
+             onActive={this.handleActive.bind(this)}
+        >
+        </Tab>
+        {this.getTabs()}
+      </Tabs>
+    )
+  }
 }
 
 const mapStateToProps = (state) => {
-	return {
-		currentUser: state.currentUser,
-		schemas: state.schemas
-	};
+  return {
+    currentUser: state.currentUser,
+    schemas: state.schemas
+  };
 };
 
 const mapDispatchToProps = (dispatch) => {
-	return {
-		fetchCurrentUser: () => dispatch(fetchCurrentUser()),
-		fetchEntitySchemas: () => dispatch(fetchEntitySchemas()),
-		currentTab: (type) => dispatch(currentTab(type))
-	};
+  return {
+    fetchCurrentUser: () => dispatch(fetchCurrentUser()),
+    fetchEntitySchemas: () => dispatch(fetchEntitySchemas()),
+    currentTab: (type) => dispatch(currentTab(type))
+  };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Nav);

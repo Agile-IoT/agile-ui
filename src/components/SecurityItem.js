@@ -109,7 +109,7 @@ const SecurityItem = (props) => {
         subtitle={props.subtitle}
       />
       {props.passwordField}
-	    {props.groupField}
+      {props.groupField}
       <CardText expandable>
         {renderAttributes(props.entity.id, props.entityType, props.attributes, props.addAttributeField, props.dataChanged)}
       </CardText>

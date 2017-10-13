@@ -30,7 +30,7 @@ export {
   AddEntity,
   Group,
   GroupMembers,
-	Entities,
+  Entities,
   Entity,
   SecurityDetails,
   Nav

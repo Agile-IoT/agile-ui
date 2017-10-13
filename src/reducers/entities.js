@@ -79,11 +79,11 @@ export function entityList(state = [], action) {
       return action.data;
     case 'ENTITY_DELETE':
       return state.filter(element => element.user_name !== action.data);
-	  case 'GROUP_DELETE':
-		  return state.filter(element => element.group_name !== action.data);
-		case 'ENTITY_ADDED_GROUP':
-		case 'ENTITY_REMOVED_GROUP':
-		case 'ENTITY_ATTRIBUTE_SET':
+    case 'GROUP_DELETE':
+      return state.filter(element => element.group_name !== action.data);
+    case 'ENTITY_ADDED_GROUP':
+    case 'ENTITY_REMOVED_GROUP':
+    case 'ENTITY_ATTRIBUTE_SET':
       return state.map(entity => {
         if (entity.id === action.data.id && entity.type === action.data.type) {
           entity = action.data;
@@ -96,12 +96,12 @@ export function entityList(state = [], action) {
 }
 
 export function groups(state = [], action) {
-	switch (action.type) {
-		case 'GROUPS':
-			return action.data;
-		default:
-			return state;
-	}
+  switch (action.type) {
+    case 'GROUPS':
+      return action.data;
+    default:
+      return state;
+  }
 }
 
 export function input(state = {}, action) {
@@ -124,12 +124,12 @@ export function input(state = {}, action) {
 }
 
 export function currentTab(state = '', action) {
-	switch (action.type) {
-		case 'CURRENT_TAB':
-			return action.data;
-		default:
-			return state;
-	}
+  switch (action.type) {
+    case 'CURRENT_TAB':
+      return action.data;
+    default:
+      return state;
+  }
 }
 
 export function schemas(state = {}, action) {
