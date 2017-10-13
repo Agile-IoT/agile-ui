@@ -7,7 +7,7 @@ var agile = agileSDK({
 });
 
 //This sets the token for the calls to the sdk and reloads the SDK object
-export const setToken = (new_token) => {
+export const setToken = (newToken) => {
   agile.tokenSet(newToken);
 }
 
