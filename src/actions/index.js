@@ -1,21 +1,15 @@
 import agileSDK from 'agile-sdk';
 
 var agile = agileSDK({
-  api: 'http://localhost:8080',
-  idm: 'http://localhost:3000',
-  token: 'Qj3P3UiV4ANZUJXlWY61LooiPLAs9TtifYvwP6Ry5wGyLMkgHJjEtWjpwu6eOGDo'
+  api: '/api/agile-core',
+	idm: '/api/agile-security',
+  data: '/api/agile-data'
 });
 
 //This sets the token for the calls to the sdk and reloads the SDK object
 
 export const setToken = (new_token) => {
-  var token = new_token;
-  console.log('creating new sdk with token starting wih ' + token.substring(0, 20))
-  agile = agileSDK({
-    api: 'http://localhost:8080',
-    idm: 'http://localhost:3000',
-    token: token
-  });
+  agile.tokenSet(newToken);
 }
 
 //****** UTILS ******//
