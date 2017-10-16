@@ -22,6 +22,7 @@
     "react-tap-event-plugin": "2.0.1",
     "recursive-keys": "^0.9.0",
     "redux": "3.6.0",
+    "redux-localstorage": "0.4.1",
     "redux-thunk": "2.2.0",
     "underscore": "^1.8.3"
   },
