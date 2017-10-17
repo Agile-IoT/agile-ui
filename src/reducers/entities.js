@@ -78,7 +78,7 @@ export function entityList(state = [], action) {
     case 'ENTITIES':
       return action.data;
     case 'ENTITY_DELETE':
-      return state.filter(element => element.user_name !== action.data);
+      return state.filter(element => element.user_name ? element.user_name !== action.data : element.name !== action.data);
     case 'GROUP_DELETE':
       return state.filter(element => element.group_name !== action.data);
     case 'ENTITY_ADDED_GROUP':

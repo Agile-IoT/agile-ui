@@ -1,14 +1,21 @@
 import agileSDK from 'agile-sdk';
 
 var agile = agileSDK({
-  api: '/api/agile-core',
-  idm: '/api/agile-security',
-  data: '/api/agile-data'
+	api: 'http://localhost:8080',
+	idm: 'http://localhost:3000',
+	token: 'XLWyG8Ec2dpYjwMoYjjZoYR3U5pLqdelA7qkftabOAI9MH3e8HgxzhZbQFsDMoUr'
 });
 
 //This sets the token for the calls to the sdk and reloads the SDK object
-export const setToken = (newToken) => {
-  agile.tokenSet(newToken);
+
+export const setToken = (new_token) => {
+	var token = new_token;
+	console.log('creating new sdk with token starting wih ' + token.substring(0, 20))
+	agile = agileSDK({
+		api: 'http://localhost:8080',
+		idm: 'http://localhost:3000',
+		token: token
+	});
 }
 
 //****** UTILS ******//
@@ -498,14 +505,29 @@ export const groupDelete = (owner, name) => {
   };
 }
 
-export const entityDelete = (entity, type) => {
+export const entityDelete = (entityId, entityType) => {
+  return (dispatch) => {
+		dispatch(loading(true))
+		agile.idm.entity.delete(entityId, entityType)
+			.then(() => {
+				dispatch(action('ENTITY_DELETE', entityId));
+				dispatch(message(`Entity ${entityId} deleted.`));
+				dispatch(loading(false));
+			})
+			.catch(err => {
+				errorHandle(err, dispatch)
+			});
+  }
+}
+
+export const entityDeleteByType = (entity, type) => {
   switch(type) {
     case 'user':
       return usersDelete(entity.user_name, entity.auth_type);
     case 'group':
       return groupDelete(entity.owner, entity.group_name);
     default:
-      return (dispatch) => {dispatch(message(`Unknown type.`))}
+      return entityDelete(entity.name, type)
   }
 }
 
@@ -527,7 +549,7 @@ export const usersCreate = (user, authType, options) => {
 export const groupCreate = (group_name) => {
   return (dispatch) => {
     dispatch(loading(true))
-    agile.idm.group.create(group_name,)
+    agile.idm.group.create(group_name)
       .then((newGroup) => {
         dispatch(action('GROUP_CREATE', newGroup));
         dispatch(message(`Group ${group_name} created.`));
@@ -539,15 +561,28 @@ export const groupCreate = (group_name) => {
   };
 }
 
+export const entityCreate = (entity, type) => {
+  return (dispatch) => {
+    dispatch(loading(true))
+    agile.idm.entity.create(entity.name, type, entity).then(entity => {
+			dispatch(action('ENTITY_CREATE', entity));
+			dispatch(message(`Entity ${entity.name} created.`));
+			dispatch(loading(false));
+    }).catch(err => {
+			errorHandle(err, dispatch)
+		});
+  }
+}
 
-export const entityCreate = (data, type) => {
+
+export const entityCreateByType = (data, type) => {
   switch(type) {
     case 'user':
       return usersCreate(data.user_name, data.auth_type, data);
     case 'group':
       return groupCreate(data.group_name);
     default:
-      return (dispatch) => {dispatch(message(`Unknown type.`))}
+      return entityCreate(data, type);
   }
 }
 
