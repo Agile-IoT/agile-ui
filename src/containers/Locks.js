@@ -61,6 +61,10 @@ class Locks extends Component {
 														style={deleteButtonStyle}
 														onClick={() => {
 															let blocks = this.props.policies[field].flows.map(block => {
+																block.locks.forEach(lock => {
+																	delete lock.deleteButton;
+																	return lock;
+																});
 																delete block.deleteButton;
 																return block;
 															}).filter((block, j)=> {
