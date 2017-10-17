@@ -1,25 +1,19 @@
-import { createStore, applyMiddleware, compose } from 'redux';
-import persistState from 'redux-localstorage'
+import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import rootReducer from './reducers';
 
-const applyDevMiddleware = () => {
-  if (process.env.NODE_ENV === `development`) {
-    const createLogger = require(`redux-logger`);
-    return applyMiddleware(createLogger())
-  }
-}
+const middlewares = [thunk];
 
-const middlewares = compose(
-  applyMiddleware(thunk),
-  persistState('discovery'),
-  applyDevMiddleware()
-)
+if (process.env.NODE_ENV === `development`) {
+  const createLogger = require(`redux-logger`);
+  const logger = createLogger();
+  middlewares.push(logger);
+}
 
 export default function configureStore(initialState) {
   return createStore(
     rootReducer,
     initialState,
-    middlewares
+    applyMiddleware(...middlewares)
   );
 }
