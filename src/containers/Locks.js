@@ -142,7 +142,7 @@ class Locks extends Component {
 	}
 
 	componentWillMount() {
-		this.props.fetchEntityLocks(this.props.params.id, this.props.params.type, this.props.params.field);
+		this.props.fetchEntityLocks(this.props.params.id, this.props.params.type);
 	}
 
 	render() {
@@ -166,7 +166,7 @@ const mapStateToProps = (state) => {
 const
 	mapDispatchToProps = (dispatch) => {
 		return {
-			fetchEntityLocks: (entity_id, entity_type, field) => dispatch(fetchEntityLocks(entity_id, entity_type, field)),
+			fetchEntityLocks: (entity_id, entity_type) => dispatch(fetchEntityLocks(entity_id, entity_type)),
 			deleteLock: (params) => dispatch(deleteLock(params)),
 			setLock: (params) => dispatch(setLock(params))
 		};

@@ -3,7 +3,7 @@ import agileSDK from 'agile-sdk';
 var agile = agileSDK({
   api: 'http://localhost:8080',
   idm: 'http://localhost:3000',
-  token: 'T4Qv9vs6hyytraZE8XrvIFfyUZUePjhfcQK6lNDKOJyA5HVfP9Rbx0wJ0iaR3057'
+  token: 'XLWyG8Ec2dpYjwMoYjjZoYR3U5pLqdelA7qkftabOAI9MH3e8HgxzhZbQFsDMoUr'
 });
 
 //This sets the token for the calls to the sdk and reloads the SDK object
@@ -553,6 +553,8 @@ export const entityCreate = (data, type) => {
       return usersCreate(data.user_name, data.auth_type, data);
     case 'group':
       return groupCreate(data.group_name);
+    case 'client':
+
     default:
       return (dispatch) => {dispatch(message(`Unknown type.`))}
   }
@@ -591,7 +593,7 @@ export const fetchLocks = () => {
 	}
 	return (dispatch) => {
 		dispatch(loading(true));
-		dispatch(action('LOCKS', locks));
+		dispatch(action('LOCK_FORMATS', locks));
 		dispatch(loading(false));
 	}
 }
@@ -609,6 +611,7 @@ export const fetchEntityLocks = (entity_id, entity_type, field) => {
 export const setLock = (params) => {
   return (dispatch) => {
     dispatch(loading(true));
+    console.log(params);
 		agile.policies.pap.set(params).then(result => {
 		  dispatch(action('POLICY_SET', result.result));
       dispatch(loading(false));
@@ -627,7 +630,7 @@ export const deleteLock = (params) => {
 }
 
 export const formSelected = (formName) => {
-  return (dispatch) => {dispatch(action('FORM_SELECTED', formName))}
+  return (dispatch) => {dispatch(action('FORM_SELECTED', [formName]))}
 }
 
 // fetch all available protocols

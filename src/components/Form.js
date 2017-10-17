@@ -8,46 +8,42 @@ const getSelectOptions = (options) => {
 	return optionInputs;
 }
 
-const getInputFields = (args, onChange) => {
-	return args.map(arg => {
-		if (arg !== Object(arg)) {
-			return (
-				<label key={'label_' + arg}>
-					{arg}
-					<input name={arg} key={'input_' + arg} type="text" onChange={onChange}/>
-				</label>
-			)
-		} else {
-			const keys = Object.keys(arg);
-			if(Array.isArray(arg[keys[0]])) {
+const renderInputFields = (formNames, forms, onChange) => {
+	return formNames.map((formName, i) => {
+		if (forms[formName]) {
+			return (<div key={formName + '_' + i}>
+				{formName}: {forms[formName].args.map(arg => {
 				return (
-					<label key={'label_' + keys[0]}>
-						{keys[0]}
-						<select name={keys[0]} key={'input_' + keys[0]} type="text" onChange={onChange}>
-							{getSelectOptions(arg[keys[0]])}
-						</select>
+					<label key={'label_' + arg}>
+						{arg}
+						<input name={i + '_' + formName + '_' + arg}
+									 key={'input_' + i + '_' + formName + '_' + arg}
+									 type="text" onChange={onChange}/>
 					</label>
 				)
-			}
+			})}</div>)
 		}
-		return (<div></div>)
 	});
 }
 
-const Form = (props) => {
+const renderForm = (props, inputs) => {
 	return (
 		<div>
-			<h2>{props.description}</h2>
-		<form onSubmit={event => {
-			event.preventDefault();
-			props.onSubmit(event)
-		}}>
-			{props.options}
-			{getInputFields(props.args, props.onChange)}
-			<input type='submit' value={props.submitText}/>
-		</form>
+			<form onSubmit={event => {
+				event.preventDefault();
+				props.onSubmit(event)
+			}}>
+				{props.options}
+				{inputs}
+				<input type='submit' value={props.submitText}/>
+			</form>
 		</div>
 	);
+}
+
+const Form = (props) => {
+	const inputs = renderInputFields(props.formNames, props.forms, props.onChange);
+	return renderForm(props, inputs);
 }
 
 export default Form;

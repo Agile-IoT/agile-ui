@@ -97,8 +97,6 @@ export function entityList(state = [], action) {
 
 export function policies(state = {}, action) {
 	switch(action.type) {
-		case 'LOCKS':
-			return action.data;
     case 'ENTITY_FIELD_LOCKS':
       return action.data;
     case 'POLICY_DELETE':
@@ -110,10 +108,19 @@ export function policies(state = {}, action) {
 	}
 }
 
-export function form(state = '', action) {
+export function lockFormats(state = {}, action) {
+	switch(action.type) {
+		case 'LOCK_FORMATS':
+			return action.data;
+		default:
+			return state;
+	}
+}
+
+export function form(state = [], action) {
 	switch(action.type) {
 		case 'FORM_SELECTED':
-			return action.data;
+			return state.concat(action.data);
 		default:
 			return state;
 	}
