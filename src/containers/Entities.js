@@ -42,6 +42,9 @@ class Entities extends Component {
             <Link to={`/group/${entity.id}/${this.props.params.type}`}>
               <FlatButton label='Group'/>
             </Link>
+            <Link to={`/locks/${entity.id}/${this.props.params.type}`}>
+              <FlatButton label='Policies'/>
+            </Link>
           </div>
         )
     }

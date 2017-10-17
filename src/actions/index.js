@@ -1,14 +1,21 @@
 import agileSDK from 'agile-sdk';
 
 var agile = agileSDK({
-  api: '/api/agile-core',
-  idm: '/api/agile-security',
-  data: '/api/agile-data'
+  api: 'http://localhost:8080',
+  idm: 'http://localhost:3000',
+  token: 'T4Qv9vs6hyytraZE8XrvIFfyUZUePjhfcQK6lNDKOJyA5HVfP9Rbx0wJ0iaR3057'
 });
 
 //This sets the token for the calls to the sdk and reloads the SDK object
-export const setToken = (newToken) => {
-  agile.tokenSet(newToken);
+
+export const setToken = (new_token) => {
+  var token = new_token;
+  console.log('creating new sdk with token starting wih ' + token.substring(0, 20))
+  agile = agileSDK({
+    api: 'http://localhost:8080',
+    idm: 'http://localhost:3000',
+    token: token
+  });
 }
 
 //****** UTILS ******//
@@ -549,6 +556,78 @@ export const entityCreate = (data, type) => {
     default:
       return (dispatch) => {dispatch(message(`Unknown type.`))}
   }
+}
+
+export const fetchLocks = () => {
+	const locks = {
+		actionExecutedLessThan: {
+			arity: 2,
+			descr: "This lock is open iff the entity to which this lock is applied to has the specified ID.",
+			name: "has ID",
+			args: [
+				"action",
+				"count"
+			]
+		},
+		hasType: {
+			arity: 1,
+			descr: "This lock is open iff the entity to which this lock is applied to has the specified type",
+			name: "has type",
+			args: [
+				"type"
+			]
+		},
+		attrEq: {
+			scopes: ["/device", "/client", "/gateway"],
+			arity: 3,
+			descr: "This lock is open iff the entity to which this lock is applied to is tagged with the specified attibute which was defined in the specified group and whose value is equal to the specified value.",
+			name: "attr is eq",
+			args: [
+				"group",
+				"attr",
+				"value"
+			]
+		}
+	}
+	return (dispatch) => {
+		dispatch(loading(true));
+		dispatch(action('LOCKS', locks));
+		dispatch(loading(false));
+	}
+}
+
+export const fetchEntityLocks = (entity_id, entity_type, field) => {
+	return (dispatch) => {
+		dispatch(loading(true));
+		agile.policies.pap.get({entityId: entity_id, entityType: entity_type, field: field}).then(locks => {
+			dispatch(action('ENTITY_FIELD_LOCKS', locks.result));
+			dispatch(loading(false));
+		});
+	}
+}
+
+export const setLock = (params) => {
+  return (dispatch) => {
+    dispatch(loading(true));
+		agile.policies.pap.set(params).then(result => {
+		  dispatch(action('POLICY_SET', result.result));
+      dispatch(loading(false));
+    })
+  }
+}
+
+export const deleteLock = (params) => {
+	return (dispatch) => {
+		dispatch(loading(true));
+		agile.policies.pap.delete(params).then(result => {
+			dispatch(action('POLICY_DELETE', result.result));
+			dispatch(loading(false));
+		})
+	}
+}
+
+export const formSelected = (formName) => {
+  return (dispatch) => {dispatch(action('FORM_SELECTED', formName))}
 }
 
 // fetch all available protocols

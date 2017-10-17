@@ -13,7 +13,9 @@ import LocalStorageSettings from './LocalStorageSettings';
 import CloudUploadSettings from './CloudUploadSettings';
 import Graphs from './Graphs';
 import SecurityDetails from './SecurityDetails';
+import Locks from './Locks';
 import AddEntity from './AddEntity';
+import AddLock from './AddLock';
 import Nav from './Nav';
 
 export {
@@ -23,15 +25,17 @@ export {
   Discover,
   MessageBar,
   LoadingBar,
-  Settings,
-  LocalStorageSettings,
-  CloudUploadSettings,
-  Graphs,
-  AddEntity,
-  Group,
-  GroupMembers,
-  Entities,
-  Entity,
-  SecurityDetails,
+	Settings,
+	LocalStorageSettings,
+	CloudUploadSettings,
+	Graphs,
+	AddEntity,
+	AddLock,
+	Group,
+	GroupMembers,
+	Entities,
+	Entity,
+	Locks,
+	SecurityDetails,
   Nav
  }

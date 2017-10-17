@@ -3,6 +3,8 @@ import SettingsMenu from './SettingsMenu';
 import DeviceItem from './DeviceItem';
 import EntityItem from './EntityItem';
 import SecurityItem from './SecurityItem';
+import LockItem from './LockItem';
+import Form from './Form';
 import Stream from './Stream';
 import LocStorSettingsSummary from './LocStorSettingsSummary';
 import CloudUploadSettingsSummary from './CloudUploadSettingsSummary';
@@ -21,5 +23,7 @@ export {
   GenericListItem,
   Graph,
   EntityItem,
-  SecurityItem
+  SecurityItem,
+	LockItem,
+  Form
 }

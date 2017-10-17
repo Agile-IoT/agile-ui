@@ -31,7 +31,7 @@ const changedData = (id, type, dataChanged, data) => {
   dataChanged(params);
 }
 
-const getInlineEditField = (id, type, key, value, parent, dataChanged, deleteButton) => {
+const getInlineEditField = (id, type, key, value, parent, dataChanged, deleteButton, editLock) => {
   return (<div key={`${id}${key}`}>
     {ui[key] && ui[key].name ? ui[key].name : key}: {<InlineEdit activeClassName='editing'
                         text={value}
@@ -39,13 +39,15 @@ const getInlineEditField = (id, type, key, value, parent, dataChanged, deleteBut
                         paramName={parent}
           />
           }
+    {editLock}
     {deleteButton}
   </div>);
 }
 
-const getNestedField = (id, type, key, attributes, parent, dataChanged, deleteButton, addAttributeField) => {
+const getNestedField = (id, type, key, attributes, parent, dataChanged, deleteButton, addAttributeField, editLock) => {
   return (<div key={`${id}${key}`}>
-    {ui[key] && ui[key].name ? ui[key].name : key}: {renderAttributes(id, type, attributes, addAttributeField, dataChanged, parent)}
+    {ui[key] && ui[key].name ? ui[key].name : key}: {renderAttributes(id, type, attributes, addAttributeField, editLock, dataChanged, parent)}
+		{editLock}
     {deleteButton}
   </div>);
 }
@@ -54,16 +56,16 @@ const renderEditableAttribute = (id, type, attribute, dataChanged, parent) => {
   parent = parent ? parent + "." + attribute.name : attribute.name;
 
   if(isPrimitive(attribute.value)) {
-    return getInlineEditField(id, type, attribute.name, attribute.value, parent, dataChanged, attribute.deleteButton);
+    return getInlineEditField(id, type, attribute.name, attribute.value, parent, dataChanged, attribute.deleteButton, attribute.editLock);
   } else {
-    return getNestedField(id, type, attribute.name, attribute.value, parent, dataChanged, attribute.deleteButton, attribute.addAttributeField);
+    return getNestedField(id, type, attribute.name, attribute.value, parent, dataChanged, attribute.deleteButton, attribute.addAttributeField, attribute.editLock);
   }
 }
 
 const renderAttribute = (id, type, attribute, parent, dataChanged) => {
   parent = parent ? parent + "." + attribute.name : attribute.name;
   let value = isPrimitive(attribute.value) ? attribute.value :
-    renderAttributes(id, type, attribute.value, attribute.addAttributeField, dataChanged, parent);
+    renderAttributes(id, type, attribute.value, attribute.addAttributeField, attribute.editLock, dataChanged, parent);
 
   return (
     <div key={`${id}${attribute.name}`}>

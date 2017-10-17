@@ -11,9 +11,11 @@ import {
   Entities,
   Entity,
   AddEntity,
+  AddLock,
   Group,
   GroupMembers,
   Device,
+  Locks,
   Graphs
 } from './containers';
 
@@ -44,6 +46,8 @@ render(
           <Route path="add/:type" component={AddEntity} />
           <Route path="group/:id/:type" component={Group} />
           <Route path="group/:group_name" component={GroupMembers} />
+          <Route path="locks/:id/:type" component={Locks} />
+          <Route path="lock/add/:id/:type/:field/:op" component={AddLock} />
         </Route>
       </Router>
     </MuiThemeProvider>
