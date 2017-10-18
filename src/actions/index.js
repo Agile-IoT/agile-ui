@@ -507,16 +507,16 @@ export const groupDelete = (owner, name) => {
 
 export const entityDelete = (entityId, entityType) => {
   return (dispatch) => {
-		dispatch(loading(true))
-		agile.idm.entity.delete(entityId, entityType)
-			.then(() => {
-				dispatch(action('ENTITY_DELETE', entityId));
-				dispatch(message(`Entity ${entityId} deleted.`));
-				dispatch(loading(false));
-			})
-			.catch(err => {
-				errorHandle(err, dispatch)
-			});
+    dispatch(loading(true))
+    agile.idm.entity.delete(entityId, entityType)
+      .then(() => {
+        dispatch(action('ENTITY_DELETE', entityId));
+        dispatch(message(`Entity ${entityId} deleted.`));
+        dispatch(loading(false));
+      })
+      .catch(err => {
+        errorHandle(err, dispatch)
+      });
   }
 }
 
@@ -565,12 +565,12 @@ export const entityCreate = (entity, type) => {
   return (dispatch) => {
     dispatch(loading(true))
     agile.idm.entity.create(entity.name, type, entity).then(entity => {
-			dispatch(action('ENTITY_CREATE', entity));
-			dispatch(message(`Entity ${entity.name} created.`));
-			dispatch(loading(false));
+      dispatch(action('ENTITY_CREATE', entity));
+      dispatch(message(`Entity ${entity.name} created.`));
+      dispatch(loading(false));
     }).catch(err => {
-			errorHandle(err, dispatch)
-		});
+      errorHandle(err, dispatch)
+    });
   }
 }
 
@@ -587,72 +587,72 @@ export const entityCreateByType = (data, type) => {
 }
 
 export const fetchLocks = () => {
-	const locks = {
-		actionExecutedLessThan: {
-			arity: 2,
-			descr: "This lock is open iff the entity to which this lock is applied to has the specified ID.",
-			name: "has ID",
-			args: [
-				"action",
-				"count"
-			]
-		},
-		hasType: {
-			arity: 1,
-			descr: "This lock is open iff the entity to which this lock is applied to has the specified type",
-			name: "has type",
-			args: [
-				"type"
-			]
-		},
-		attrEq: {
-			scopes: ["/device", "/client", "/gateway"],
-			arity: 3,
-			descr: "This lock is open iff the entity to which this lock is applied to is tagged with the specified attibute which was defined in the specified group and whose value is equal to the specified value.",
-			name: "attr is eq",
-			args: [
-				"group",
-				"attr",
-				"value"
-			]
-		}
-	}
-	return (dispatch) => {
-		dispatch(loading(true));
-		dispatch(action('LOCK_FORMATS', locks));
-		dispatch(loading(false));
-	}
+  const locks = {
+    actionExecutedLessThan: {
+      arity: 2,
+      descr: "This lock is open iff the entity to which this lock is applied to has the specified ID.",
+      name: "has ID",
+      args: [
+        "action",
+        "count"
+      ]
+    },
+    hasType: {
+      arity: 1,
+      descr: "This lock is open iff the entity to which this lock is applied to has the specified type",
+      name: "has type",
+      args: [
+        "type"
+      ]
+    },
+    attrEq: {
+      scopes: ["/device", "/client", "/gateway"],
+      arity: 3,
+      descr: "This lock is open iff the entity to which this lock is applied to is tagged with the specified attibute which was defined in the specified group and whose value is equal to the specified value.",
+      name: "attr is eq",
+      args: [
+        "group",
+        "attr",
+        "value"
+      ]
+    }
+  }
+  return (dispatch) => {
+    dispatch(loading(true));
+    dispatch(action('LOCK_FORMATS', locks));
+    dispatch(loading(false));
+  }
 }
 
 export const fetchEntityLocks = (entity_id, entity_type, field) => {
-	return (dispatch) => {
-		dispatch(loading(true));
-		agile.policies.pap.get({entityId: entity_id, entityType: entity_type, field: field}).then(locks => {
-			dispatch(action('ENTITY_FIELD_LOCKS', locks.result));
-			dispatch(loading(false));
-		});
-	}
+  return (dispatch) => {
+    dispatch(loading(true));
+    agile.policies.pap.get({entityId: entity_id, entityType: entity_type, field: field}).then(locks => {
+      dispatch(action('ENTITY_FIELD_LOCKS', locks.result));
+      dispatch(loading(false));
+    });
+  }
 }
 
 export const setLock = (params) => {
   return (dispatch) => {
     dispatch(loading(true));
     console.log(params);
-		agile.policies.pap.set(params).then(result => {
-		  dispatch(action('POLICY_SET', result.result));
+    agile.policies.pap.set(params).then(result => {
+      dispatch(action('POLICY_SET', result.result));
       dispatch(loading(false));
     })
   }
 }
 
 export const deleteLock = (params) => {
-	return (dispatch) => {
-		dispatch(loading(true));
-		agile.policies.pap.delete(params).then(result => {
-			dispatch(action('POLICY_DELETE', result.result));
-			dispatch(loading(false));
-		})
-	}
+  return (dispatch) => {
+    dispatch(loading(true));
+    agile.policies.pap.delete(params).then(result => {
+      dispatch(action('POLICY_DELETE', result.result));
+      dispatch(loading(false));
+    })
+  }
 }
 
 export const formSelected = (formNames) => {

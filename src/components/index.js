@@ -24,6 +24,6 @@ export {
   Graph,
   EntityItem,
   SecurityItem,
-	LockItem,
+  LockItem,
   Form
 }

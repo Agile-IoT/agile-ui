@@ -47,7 +47,7 @@ const getInlineEditField = (id, type, key, value, parent, dataChanged, deleteBut
 const getNestedField = (id, type, key, attributes, parent, dataChanged, deleteButton, addAttributeField, editLock) => {
   return (<div key={`${id}${key}`}>
     {ui[key] && ui[key].name ? ui[key].name : key}: {renderAttributes(id, type, attributes, addAttributeField, editLock, dataChanged, parent)}
-		{editLock}
+    {editLock}
     {deleteButton}
   </div>);
 }
