@@ -1,14 +1,21 @@
 import React from 'react';
+import {FloatingActionButton} from 'material-ui';
+import ContentRemove from 'material-ui/svg-icons/content/remove';
 
-const getSelectOptions = (options) => {
-	let optionInputs = [(<option key="emptyOption"/>)]; // Empty field
-	optionInputs.concat(options.map(option => {
-		return (<option key={option} value={option}>{option}</option>)
-	}));
-	return optionInputs;
+const renderDeleteInputField = (position, formName, formNames, deleteFormName) => {
+	return (
+		<FloatingActionButton mini={true} id={'delete_' + formName + '_' + position}
+													key={'delete_' + formName + '_' + position}
+													label='Delete'
+													onClick={() => {
+														deleteFormName(formNames.filter((form, i) => {return position !== i}));
+													}}>
+			<ContentRemove/>
+		</FloatingActionButton>
+	)
 }
 
-const renderInputFields = (formNames, forms, onChange) => {
+const renderInputFields = (formNames, forms, deleteFormName, onChange) => {
 	return formNames.map((formName, i) => {
 		if (forms[formName]) {
 			return (<div key={formName + '_' + i}>
@@ -21,7 +28,9 @@ const renderInputFields = (formNames, forms, onChange) => {
 									 type="text" onChange={onChange}/>
 					</label>
 				)
-			})}</div>)
+			})}
+				{renderDeleteInputField(i, formName, formNames, deleteFormName)}
+			</div>)
 		}
 	});
 }
@@ -42,7 +51,7 @@ const renderForm = (props, inputs) => {
 }
 
 const Form = (props) => {
-	const inputs = renderInputFields(props.formNames, props.forms, props.onChange);
+	const inputs = renderInputFields(props.formNames, props.forms, props.deleteFormName, props.onChange);
 	return renderForm(props, inputs);
 }
 

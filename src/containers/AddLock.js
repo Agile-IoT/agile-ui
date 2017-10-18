@@ -40,6 +40,7 @@ class AddLock extends Component {
 		return (
 			<Form
 				formNames={this.props.form}
+				deleteFormName={this.props.formSelected}
 				forms={this.props.lockFormats}
 				submitText={'Submit'}
 				onSubmit={event => {
@@ -53,6 +54,7 @@ class AddLock extends Component {
 						++i;
 					}
 					this.addLock(locks);
+					this.props.formSelected([]);
 				}}
 			/>)
 	}
@@ -62,7 +64,7 @@ class AddLock extends Component {
 		if (options.length > 1) {
 			return (<select value={'empty'} onChange={event => {
 				if (event.target.value !== 'empty') {
-					this.props.formSelected(event.target.value);
+					this.props.formSelected(this.props.form.concat(event.target.value));
 				}
 			}}>
 				{options}

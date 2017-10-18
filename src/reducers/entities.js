@@ -120,7 +120,7 @@ export function lockFormats(state = {}, action) {
 export function form(state = [], action) {
 	switch(action.type) {
 		case 'FORM_SELECTED':
-			return state.concat(action.data);
+			return action.data;
 		default:
 			return state;
 	}

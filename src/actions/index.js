@@ -629,8 +629,8 @@ export const deleteLock = (params) => {
 	}
 }
 
-export const formSelected = (formName) => {
-  return (dispatch) => {dispatch(action('FORM_SELECTED', [formName]))}
+export const formSelected = (formNames) => {
+  return (dispatch) => {dispatch(action('FORM_SELECTED', formNames))}
 }
 
 // fetch all available protocols
