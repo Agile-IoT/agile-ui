@@ -3,7 +3,7 @@ import {EntityItem} from '../components';
 import {FlatButton} from 'material-ui';
 import {connect} from 'react-redux';
 import {Link} from 'react-router';
-import {entityDelete, entityFetch} from '../actions';
+import {entityDeleteByType, entityFetch} from '../actions';
 
 class Entities extends Component {
 
@@ -101,7 +101,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     entityFetch: (type) => dispatch(entityFetch(type)),
-    entityDelete: (entity, type) => dispatch(entityDelete(entity, type))
+    entityDelete: (entity, type) => dispatch(entityDeleteByType(entity, type))
   };
 };
 

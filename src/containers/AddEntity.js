@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import Form from 'react-jsonschema-form';
 import {connect} from 'react-redux';
-import {entityCreate, devicesCreate} from '../actions';
+import {entityCreateByType, devicesCreate} from '../actions';
 
 const deletedPropertyWarning = 'This entity type has predefined properties. ' +
   'Too add them, go to the single entity view. The predefined properties are: ';
@@ -62,7 +62,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    entityCreate: (data, authType) => dispatch(entityCreate(data, authType)),
+    entityCreate: (data, type) => dispatch(entityCreateByType(data, type)),
     devicesCreate: (device, type) => dispatch(devicesCreate(device, type))
   };
 };
