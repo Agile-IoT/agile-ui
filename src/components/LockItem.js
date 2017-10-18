@@ -15,14 +15,14 @@ const changedData = (data) => {
 const getArrayArgsListItems = (args, lock) => {
 	return args.map((arg, i) => {
 		return (<ListItem key={`arg_${i}`}>
-				{i}: {(
+				{i}:  {'' + arg}
+			</ListItem>
+		);/*{(
 				<InlineEdit activeClassName='editing'
 										text={'' + arg}
 										change={changedData}
 										paramName={lock + '[' + i + ']'}
-				/>)}
-			</ListItem>
-		);
+				/>)}*/
 	});
 }
 
@@ -34,14 +34,15 @@ const getArgsListItems = (args, lock) => {
 					{arg}: {
 					Array.isArray(args[arg]) ?
 						(<List>{getArrayArgsListItems(args[arg], lock + '.' + arg)}</List>) :
-						(<InlineEdit activeClassName='editing'
-												 text={'' + args[arg]}
-												 change={changedData}
-												 paramName={lock + '.' + arg}
-						/>)
+						'' + args[arg]
 				}
 				</ListItem>
 			);
+			/*<InlineEdit activeClassName='editing'
+									text={'' + args[arg]}
+									change={changedData}
+									paramName={lock + '.' + arg}
+			/>*/
 		}
 	}
 	return (<List>{itemList}</List>);
