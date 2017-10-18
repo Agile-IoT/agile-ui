@@ -70,7 +70,7 @@ class Locks extends Component {
 															}).filter((block, j)=> {
 																return j !== i;
 															});
-															console.log('sending', field, blocks);
+
 															this.props.setLock({
 																entityId: this.props.params.id,
 																entityType: this.props.params.type,
@@ -102,7 +102,6 @@ class Locks extends Component {
 																return block;
 															});
 
-															console.log('sending', field, blocks);
 															this.props.setLock({
 																entityId: this.props.params.id,
 																entityType: this.props.params.type,
