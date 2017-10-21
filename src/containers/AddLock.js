@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {Form} from '../components';
-import {FlatButton} from 'material-ui';
 import {connect} from 'react-redux';
 import {fetchLocks, fetchEntityLocks, setLock, formSelected} from '../actions';
 

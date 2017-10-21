@@ -32,6 +32,7 @@ const renderInputFields = (formNames, forms, deleteFormName, onChange) => {
         {renderDeleteInputField(i, formName, formNames, deleteFormName)}
       </div>)
     }
+    return null;
   });
 }
 

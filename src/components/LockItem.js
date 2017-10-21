@@ -6,11 +6,6 @@ import {
   CardActions
 } from 'material-ui/Card';
 import {List, ListItem} from 'material-ui/List';
-import InlineEdit from 'react-edit-inline';
-
-const changedData = (data) => {
-  console.log(data);
-}
 
 const getArrayArgsListItems = (args, lock) => {
   return args.map((arg, i) => {
