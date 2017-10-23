@@ -24,7 +24,7 @@ const getArrayArgsListItems = (args, lock) => {
 const getArgsListItems = (args, lock) => {
   let itemList = [];
   for (var arg in args) {
-    if(arg !== 'deleteButton') {
+    if(arg !== 'deleteButton' && arg !== 'not') {
       itemList.push(<ListItem key={`${arg}`}>
           {arg}: {
           Array.isArray(args[arg]) ?
