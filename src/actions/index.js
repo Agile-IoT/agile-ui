@@ -3,7 +3,7 @@ import agileSDK from 'agile-sdk';
 var agile = agileSDK({
   api: 'http://localhost:8080',
   idm: 'http://localhost:3000',
-  token: 'dp25SNDllxeoOXHCMG8ENJ85CNmFkeNr1b0TVK5wBCyygw4trDEGVMYyBDPofwmN'
+  token: 'WaPq7lYaWSi0xuzvylGMbnDcze2o5pNuBkuZ4g5uZZrUaEWS0L0YM0QM4iGMipOB'
 });
 
 //This sets the token for the calls to the sdk and reloads the SDK object
@@ -587,18 +587,29 @@ export const entityCreateByType = (data, type) => {
 }
 
 export const fetchLocks = () => {
+	/*TODO Lock format does not exist
+	actionExecutedLessThan: {
+	 arity: 2,
+	 descr: 'This lock ensures that the user attempting an action or accessing ' +
+	 'an attribute has not executed an action more than a certain number of times. This lock ' +
+	 'uses the audit mechanisms, which log security critical actions',
+	 name: 'action execute less than',
+	 args: [
+		 'action',
+		 'count'
+	 ]
+ },
+ timePeriodLock: {
+	 arity: 2,
+	 descr: 'This lock evaluates to true when the current time lies within an ' +
+	 'interval between a starting and end time of the day.',
+	 name: 'Time interval',
+	 args: [
+		 'startTime',
+		 'endTime'
+		 ]
+ },*/
   const locks = {
-    actionExecutedLessThan: {
-      arity: 2,
-      descr: 'This lock ensures that the user attempting an action or accessing ' +
-			'an attribute has not executed an action more than a certain number of times. This lock ' +
-			'uses the audit mechanisms, which log security critical actions',
-      name: 'action execute less than',
-      args: [
-        'action',
-        'count'
-      ]
-    },
     hasType: {
       arity: 1,
       descr: 'This lock validates that an entity has a particular type. This ensures, for ' +
@@ -617,7 +628,8 @@ export const fetchLocks = () => {
       args: [
         'attr',
         'value'
-      ]
+      ],
+			extendable: true
     },
 		isOwner: {
 			scopes: ["/client", "/device", "/gateway"],
@@ -627,17 +639,7 @@ export const fetchLocks = () => {
 			'creating entities have the right to read or write some attributes according to our ' +
 			'default security model.',
 			name: "owns"
-		},
-		timePeriodLock: {
-			arity: 2,
-			descr: 'This lock evaluates to true when the current time lies within an ' +
-			'interval between a starting and end time of the day.',
-      name: 'Time interval',
-			args: [
-				'startTime',
-				'endTime'
-			]
-		},
+		}
   }
   return (dispatch) => {
     dispatch(loading(true));

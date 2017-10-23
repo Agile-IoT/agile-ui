@@ -47,10 +47,15 @@ class AddLock extends Component {
           let locks = [];
           while(event.target[i]) {
             const lockInfo = event.target[i].name.split('_');
+            console.log(lockInfo);
             if(lockInfo[0] && lockInfo[0] !== '') {
-              locks[lockInfo[0]] = {lock: lockInfo[1]};
+              locks[lockInfo[0]] = locks[lockInfo[0]] ? locks[lockInfo[0]] : {lock: lockInfo[1]};
               if(event.target[i].value && lockInfo[2]) {
-                locks[lockInfo[0]].args =  [event.target[i].value];
+                if(locks[lockInfo[0]].args) {
+									locks[lockInfo[0]].args.push(event.target[i].value);
+								} else {
+									locks[lockInfo[0]].args = [event.target[i].value];
+								}
 							}
             }
             ++i;
