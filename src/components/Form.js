@@ -1,5 +1,6 @@
 import React from 'react';
 import {FloatingActionButton} from 'material-ui';
+import ReactTooltip from 'react-tooltip'
 import ContentRemove from 'material-ui/svg-icons/content/remove';
 
 const renderDeleteInputField = (position, formName, formNames, deleteFormName) => {
@@ -21,7 +22,9 @@ const renderInputFields = (formNames, forms, deleteFormName, onChange) => {
 	return formNames.map((formName, i) => {
 			if (forms[formName]) {
 				if (forms[formName].args) {
-					return (<div key={formName + '_' + i}>
+					return (<div key={formName + '_' + i}
+											 data-tip={forms[formName].descr}>
+						<ReactTooltip globalEventOff='click'/>
 						{formName}: {forms[formName].args.map(arg => {
 						return (
 							<label key={'label_' + arg}>
@@ -35,7 +38,10 @@ const renderInputFields = (formNames, forms, deleteFormName, onChange) => {
 						{renderDeleteInputField(i, formName, formNames, deleteFormName)}
 					</div>)
 				} else {
-					return (<div key={formName + '_' + i}>
+					return (<div key={formName + '_' + i}
+											 data-tip={forms[formName].descr}
+											 data-multiline={true}>
+						<ReactTooltip globalEventOff='click'/>
 						<label key={'label_' + formName}>
 							<input name={i + '_' + formName}
 										 key={'input_' + i + '_' + formName}
