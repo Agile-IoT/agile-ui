@@ -3,7 +3,7 @@ import agileSDK from 'agile-sdk';
 var agile = agileSDK({
   api: 'http://localhost:8080',
   idm: 'http://localhost:3000',
-  token: 'XLWyG8Ec2dpYjwMoYjjZoYR3U5pLqdelA7qkftabOAI9MH3e8HgxzhZbQFsDMoUr'
+  token: 'dp25SNDllxeoOXHCMG8ENJ85CNmFkeNr1b0TVK5wBCyygw4trDEGVMYyBDPofwmN'
 });
 
 //This sets the token for the calls to the sdk and reloads the SDK object
@@ -564,7 +564,7 @@ export const groupCreate = (group_name) => {
 export const entityCreate = (entity, type) => {
   return (dispatch) => {
     dispatch(loading(true))
-    agile.idm.entity.create(entity.name, type, entity).then(entity => {
+    agile.idm.entity.create(entity.id, type, entity).then(entity => {
       dispatch(action('ENTITY_CREATE', entity));
       dispatch(message(`Entity ${entity.name} created.`));
       dispatch(loading(false));
@@ -611,7 +611,6 @@ export const fetchLocks = () => {
       descr: "This lock is open iff the entity to which this lock is applied to is tagged with the specified attibute which was defined in the specified group and whose value is equal to the specified value.",
       name: "attr is eq",
       args: [
-        "group",
         "attr",
         "value"
       ]

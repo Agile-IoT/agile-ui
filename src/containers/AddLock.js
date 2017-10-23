@@ -75,7 +75,7 @@ class AddLock extends Component {
   render() {
     return (
       <div>
-        {this.props.form.length > 0 ? this.renderForm(this.props.form) : undefined}
+        {this.renderForm(this.props.form)}
         {this.renderSelectField()}
       </div>
     );
