@@ -3,7 +3,7 @@ import agileSDK from 'agile-sdk';
 var agile = agileSDK({
   api: 'http://localhost:8080',
   idm: 'http://localhost:3000',
-  token: 'WaPq7lYaWSi0xuzvylGMbnDcze2o5pNuBkuZ4g5uZZrUaEWS0L0YM0QM4iGMipOB'
+  token: 'tP1l1tArWm6eyr92lP9iicD9AtRe9YwsTU7HxNO9uGUNt8raBzbYxPMer22W1uhG'
 });
 
 //This sets the token for the calls to the sdk and reloads the SDK object

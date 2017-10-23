@@ -25,7 +25,7 @@ const renderInputFields = (formNames, forms, deleteFormName, onChange) => {
 					return (<div key={formName + '_' + i}
 											 data-tip={forms[formName].descr}>
 						<ReactTooltip globalEventOff='click'/>
-						{formName}: {forms[formName].args.map(arg => {
+						{forms[formName].name ? forms[formName].name : formName}: {forms[formName].args.map(arg => {
 						return (
 							<label key={'label_' + arg}>
 								{arg}
@@ -41,7 +41,7 @@ const renderInputFields = (formNames, forms, deleteFormName, onChange) => {
 					return (<div key={formName + '_' + i}
 											 data-tip={forms[formName].descr}
 											 data-multiline={true}>
-						<ReactTooltip globalEventOff='click'/>
+						<ReactTooltip />
 						<label key={'label_' + formName}>
 							<input name={i + '_' + formName}
 										 key={'input_' + i + '_' + formName}

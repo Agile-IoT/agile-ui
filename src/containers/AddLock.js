@@ -28,7 +28,7 @@ class AddLock extends Component {
     for (var key in options) {
       if (options.hasOwnProperty(key)) { //&& this.props.form.find(val => {return key === val}) === undefined to avoid duplicates
         optionFields.push((
-          <option key={key} value={key}>{key}</option>
+          <option key={key} value={key}>{options[key].name ? options[key].name : key}</option>
         ))
       }
     }
