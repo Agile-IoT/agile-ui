@@ -17,7 +17,7 @@ class Locks extends Component {
 
   renderAddWriteLockButton(field) {
     return (
-      <Link to={`/lock/add/${this.props.params.id}/${this.props.params.type}/${field}/write`}>
+      <Link key={'addread_' + field} to={`/lock/add/${this.props.params.id}/${this.props.params.type}/${field}/write`}>
         <FlatButton label={`Add write lock`}/>
       </Link>
     )
@@ -25,7 +25,7 @@ class Locks extends Component {
 
   renderAddReadLockButton(field) {
     return (
-      <Link to={`/lock/add/${this.props.params.id}/${this.props.params.type}/${field}/read`}>
+      <Link key={'addwrite_' + field} to={`/lock/add/${this.props.params.id}/${this.props.params.type}/${field}/read`}>
         <FlatButton label={`Add read lock`}/>
       </Link>
     )
