@@ -25,15 +25,25 @@ class AddEntity extends Component {
     return schema;
   }
 
+  addIdField(schema) {
+    var keys = Object.keys(schema.properties);
+    if(!keys.find(prop => {return prop.toLowerCase() === 'id'})) {
+      schema.properties.id = {type: 'string'};
+      schema.required.push('id');
+    }
+    return schema;
+  }
+
   renderForm() {
     let schema = this.props.schemas.schema.find(schema => {
       return schema.id.replace('/', '') === this.props.params.type
     });
     removedProperties = [];
     schema = this.removeEmptyObjects(schema);
+    schema = schema.id === '/user' || schema.id === '/group' ? schema : this.addIdField(schema); // Make sure that generic entities have ID field
     return (<div><Form schema={schema}
                        onSubmit={event => {
-                        console.log(this.props.params.type);
+
                          this.props.entityCreate(event.formData, this.props.params.type)
                        }}
                        onError={event => console.log('ERROR', event)}/>
