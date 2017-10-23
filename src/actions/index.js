@@ -587,34 +587,34 @@ export const entityCreateByType = (data, type) => {
 }
 
 export const fetchLocks = () => {
-	/*TODO Lock format does not exist
-	actionExecutedLessThan: {
-	 arity: 2,
-	 descr: 'This lock ensures that the user attempting an action or accessing ' +
-	 'an attribute has not executed an action more than a certain number of times. This lock ' +
-	 'uses the audit mechanisms, which log security critical actions',
-	 name: 'action execute less than',
-	 args: [
-		 'action',
-		 'count'
-	 ]
+  /*TODO Lock format does not exist
+  actionExecutedLessThan: {
+   arity: 2,
+   descr: 'This lock ensures that the user attempting an action or accessing ' +
+   'an attribute has not executed an action more than a certain number of times. This lock ' +
+   'uses the audit mechanisms, which log security critical actions',
+   name: 'action execute less than',
+   args: [
+     'action',
+     'count'
+   ]
  },
  timePeriodLock: {
-	 arity: 2,
-	 descr: 'This lock evaluates to true when the current time lies within an ' +
-	 'interval between a starting and end time of the day.',
-	 name: 'Time interval',
-	 args: [
-		 'startTime',
-		 'endTime'
-		 ]
+   arity: 2,
+   descr: 'This lock evaluates to true when the current time lies within an ' +
+   'interval between a starting and end time of the day.',
+   name: 'Time interval',
+   args: [
+     'startTime',
+     'endTime'
+     ]
  },*/
   const locks = {
     hasType: {
       arity: 1,
       descr: 'This lock validates that an entity has a particular type. This ensures, for ' +
-			'example, that the action performing or on which the action is being performed is of ' +
-			'type "user"',
+      'example, that the action performing or on which the action is being performed is of ' +
+      'type "user"',
       name: 'has type',
       args: [
         'type'
@@ -629,17 +629,17 @@ export const fetchLocks = () => {
         'attr',
         'value'
       ],
-			extendable: true
+      extendable: true
     },
-		isOwner: {
-			scopes: ["/client", "/device", "/gateway"],
-			arity: 1,
-			descr: 'This lock allows us to ensure that the entity on which the action is being ' +
-			'performed is owned by the entity performing the action on it. This ensures that users ' +
-			'creating entities have the right to read or write some attributes according to our ' +
-			'default security model.',
-			name: "owns"
-		}
+    isOwner: {
+      scopes: ["/client", "/device", "/gateway"],
+      arity: 1,
+      descr: 'This lock allows us to ensure that the entity on which the action is being ' +
+      'performed is owned by the entity performing the action on it. This ensures that users ' +
+      'creating entities have the right to read or write some attributes according to our ' +
+      'default security model.',
+      name: "owns"
+    }
   }
   return (dispatch) => {
     dispatch(loading(true));

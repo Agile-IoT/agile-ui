@@ -52,11 +52,11 @@ class AddLock extends Component {
               locks[lockInfo[0]] = locks[lockInfo[0]] ? locks[lockInfo[0]] : {lock: lockInfo[1]};
               if(event.target[i].value && lockInfo[2]) {
                 if(locks[lockInfo[0]].args) {
-									locks[lockInfo[0]].args.push(event.target[i].value);
-								} else {
-									locks[lockInfo[0]].args = [event.target[i].value];
-								}
-							}
+                  locks[lockInfo[0]].args.push(event.target[i].value);
+                } else {
+                  locks[lockInfo[0]].args = [event.target[i].value];
+                }
+              }
             }
             ++i;
           }
