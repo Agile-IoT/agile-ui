@@ -7,7 +7,6 @@ class GroupMembers extends Component {
 
   render() {
     const group = this.props.groups.find(group => group.group_name === this.props.params.group_name);
-    console.log(group);
     if (group && group.entities) {
       return (
         <EntityItem
