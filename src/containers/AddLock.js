@@ -6,6 +6,7 @@ import {fetchLocks, fetchEntityLocks, setLock, formSelected} from '../actions';
 class AddLock extends Component {
 
   componentDidMount() {
+    this.props.formSelected([]);
     this.props.fetchLocks();
     this.props.fetchEntityLocks(this.props.params.id, this.props.params.type);
   }

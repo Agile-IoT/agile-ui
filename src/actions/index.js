@@ -621,8 +621,7 @@ export const fetchLocks = () => {
       args: [
         'attr',
         'value'
-      ],
-      extendable: true
+      ]
     },
     isOwner: {
       scopes: ["/client", "/device", "/gateway"],
@@ -654,9 +653,9 @@ export const fetchEntityLocks = (entity_id, entity_type, field) => {
 export const setLock = (params) => {
   return (dispatch) => {
     dispatch(loading(true));
-    console.log(params);
     agile.policies.pap.set(params).then(result => {
       dispatch(action('POLICY_SET', result.result));
+      dispatch(message(`Successfully set policy of ${params.entityId} for '${params.field}'.`));
       dispatch(loading(false));
     })
   }
