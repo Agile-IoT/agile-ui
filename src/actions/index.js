@@ -1,6 +1,6 @@
 import agileSDK from 'agile-sdk';
 
-var agile = agileSDK({
+const agile = agileSDK({
   api: '/api/agile-core',
   idm: '/api/agile-security',
   data: '/api/agile-data'
@@ -697,7 +697,6 @@ export const discoveryStatus = () => {
   return (dispatch) => {
     agile.protocolManager.discovery.status()
     .then(protocols => {
-      dispatch(action('DISCOVERY', protocols[0]));
       protocols.map((protocols) => {
         return dispatch(message(`${protocols.name} is ${protocols.status}`));
       })
@@ -710,7 +709,7 @@ export const discoveryStatus = () => {
 
 export const discoveryToggle = () => {
   return (dispatch, currentState) => {
-    if (currentState.discovery) {
+    if (currentState().discovery) {
       agile.protocolManager.discovery.stop()
       .then(() => {
         dispatch(action('DISCOVERY', false));
