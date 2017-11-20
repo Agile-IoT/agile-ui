@@ -44,17 +44,21 @@ class AddLock extends Component {
         forms={this.props.lockFormats}
         submitText={'Submit'}
         onSubmit={event => {
+          //Iterate over all new locks added in the UI and prepare it for the format in IDM
           let i = 0;
           let locks = [];
           while(event.target[i]) {
             const lockInfo = event.target[i].name.split('_');
-            if(lockInfo[0] && lockInfo[0] !== '') {
-              locks[lockInfo[0]] = locks[lockInfo[0]] ? locks[lockInfo[0]] : {lock: lockInfo[1]};
-              if(event.target[i].value && lockInfo[2]) {
-                if(locks[lockInfo[0]].args) {
-                  locks[lockInfo[0]].args.push(event.target[i].value);
+            const lockNumber = lockInfo[0];
+            const lockType = lockInfo[1];
+            const lockProperty = lockInfo[2];
+            if(lockNumber && lockNumber !== '') {
+              locks[lockNumber] = locks[lockNumber] ? locks[lockNumber] : {lock: lockType};
+              if(event.target[i].value && lockProperty) {
+                if(locks[lockNumber].args) {
+                  locks[lockNumber].args.push(event.target[i].value);
                 } else {
-                  locks[lockInfo[0]].args = [event.target[i].value];
+                  locks[lockNumber].args = [event.target[i].value];
                 }
               }
             }

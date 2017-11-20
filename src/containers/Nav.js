@@ -1,13 +1,12 @@
 import {Tabs, Tab} from 'material-ui/Tabs';
 import React, {Component} from 'react';
 import {browserHistory} from 'react-router';
-import {fetchCurrentUser, fetchEntitySchemas, currentTab} from '../actions';
+import {fetchCurrentUser, fetchEntitySchemas} from '../actions';
 import {connect} from 'react-redux';
 
 class Nav extends Component {
   handleActive(tab) {
     browserHistory.push(tab.props.value);
-    this.props.currentTab(tab.props.value.replace('/list', ''));
   }
 
   componentDidMount() {
@@ -67,8 +66,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     fetchCurrentUser: () => dispatch(fetchCurrentUser()),
-    fetchEntitySchemas: () => dispatch(fetchEntitySchemas()),
-    currentTab: (type) => dispatch(currentTab(type))
+    fetchEntitySchemas: () => dispatch(fetchEntitySchemas())
   };
 };
 

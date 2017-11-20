@@ -154,15 +154,6 @@ export function input(state = {}, action) {
   }
 }
 
-export function currentTab(state = '', action) {
-  switch (action.type) {
-    case 'CURRENT_TAB':
-      return action.data;
-    default:
-      return state;
-  }
-}
-
 export function schemas(state = {}, action) {
   switch (action.type) {
     case 'SCHEMA':
