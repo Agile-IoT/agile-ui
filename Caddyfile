@@ -3,16 +3,16 @@
   root /home/build
   gzip
 
-  proxy /api/agile-core agile-core:8080 {
-    without /api/agile-core
+  proxy /agile-core agile-core:8080 {
+    without /agile-core
   }
 
-  proxy /api/agile-security agile-security:3000 {
-    without /api/agile-security
+  proxy /agile-security agile-security:3000 {
+    without /agile-security
   }
 
-  proxy /api/agile-data agile-data:1338 {
-    without /api/agile-data
+  proxy /agile-data agile-data:1338 {
+    without /agile-data
   }
 
   proxy /ws agile-core:8080 {

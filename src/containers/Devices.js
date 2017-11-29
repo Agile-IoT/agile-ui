@@ -6,7 +6,6 @@ import { Link } from 'react-router';
 import { devicesAndStreamsFetch, devicesDelete } from '../actions';
 
 class Devices extends Component {
-
   renderActions(device) {
     return (
       <div className='devices'>
