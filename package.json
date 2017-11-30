@@ -11,7 +11,11 @@
   },
   "license": "MIT",
   "dependencies": {
-    "agile-sdk": "1.2.3",
+    "agile-sdk": "^1.2.5",
+    "compression": "1.7.1",
+    "express": "4.16.2",
+    "express-bearer-token": "2.1.0",
+    "http-proxy-middleware": "0.17.4",
     "lodash": "4.17.4",
     "material-ui": "0.17.0",
     "react": "15.4.2",
