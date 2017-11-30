@@ -1,4 +1,3 @@
-import Nav from './Nav';
 import DeviceSummary from './DeviceSummary';
 import SettingsMenu from './SettingsMenu';
 import DeviceItem from './DeviceItem';
@@ -12,7 +11,6 @@ import GenericListItem from './GenericListItem';
 import Graph from './Graph';
 
 export {
-  Nav,
   DeviceSummary,
   SettingsMenu,
   DeviceItem,

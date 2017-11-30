@@ -33,5 +33,24 @@
     "eject": "react-scripts eject",
     "version": "versionist"
   },
-  "proxy": "http://0.0.0.0:8080"
+  "proxy": {
+    "/agile-core": {
+      "target": "http://0.0.0.0:8080",
+      "pathRewrite": {
+        "^/agile-core": ""
+      }
+    },
+    "/agile-data": {
+      "target": "http://0.0.0.0:1338",
+      "pathRewrite": {
+        "^/agile-data": ""
+      }
+    },
+    "/agile-security": {
+      "target": "http://0.0.0.0:3000",
+      "pathRewrite": {
+        "^/agile-security": ""
+      }
+    }
+  }
 }
