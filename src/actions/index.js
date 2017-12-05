@@ -239,7 +239,6 @@ export const devicesCreate = (device, type) => {
   };
 }
 
-// fetch all curent user data
 export const fetchCurrentUser = () => {
   return (dispatch) => {
     dispatch(loading(true))
@@ -352,7 +351,7 @@ export const canExecuteActions = (id, type, attribute_names, actions) => {
   return (dispatch) => {
     dispatch(loading(true))
     var queryObject = [];
-    var actions_seen = [];
+    var actions_seen = [agile];
     actions_seen = actions.map(action => {
       if (actions_seen.indexOf(action) === -1) {
         return action;
@@ -396,7 +395,6 @@ export const currentTab = (type) => {
   };
 }
 
-// fetch all entities by type
 export const entityFetch = (type) => {
   return (dispatch) => {
     dispatch(loading(true))

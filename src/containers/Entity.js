@@ -6,20 +6,17 @@ import {SecurityDetails} from './';
 class Entity extends Component {
 
   renderEntity(entity) {
-    if (entity) {
-      const fieldProperties = this.props.schemas.ui && this.props.schemas.ui[entity.type] ? this.props.schemas.ui[entity.type].attributes : {};
-      return (<SecurityDetails
-        expandable
-        showExpandableButton
-        key={entity.id + '_' + entity.type}
-        title={entity.id}
-        subtitle={entity.owner}
-        entity={entity}
-        entityType={entity.type}
-        fieldProperties={fieldProperties}
-      />)
-    }
-    return null;
+    const fieldProperties = this.props.schemas.ui && this.props.schemas.ui[entity.type] ? this.props.schemas.ui[entity.type].attributes : {};
+    return (<SecurityDetails
+      expandable
+      showExpandableButton
+      key={entity.id + '_' + entity.type}
+      title={entity.id}
+      subtitle={entity.owner}
+      entity={entity}
+      entityType={entity.type}
+      fieldProperties={fieldProperties}
+    />)
   }
 
   componentWillMount() {
@@ -27,20 +24,22 @@ class Entity extends Component {
   }
 
   render() {
-    let entity = this.props.entityList.find(entity => entity.id === this.props.params.id && entity.type.replace('/', '') === this.props.params.type);
+    const {id, type} = this.props.params
 
-    if (entity) {
+    const relevantEntity = this.props.entityList.find(entity =>
+      entity.id === id && entity.type.replace('/', '') === type);
+
+    if (relevantEntity) {
       return (
-        <div>
-          {this.renderEntity(entity)}
-        </div>
+        <div> {this.renderEntity(relevantEntity)} </div>
       );
     }
-    return (<div>Entity data not found</div>)
+
+    return (<div> No Entity data was found </div>)
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     entityList: state.entityList,
     schemas: state.schemas
@@ -48,7 +47,7 @@ const mapStateToProps = (state) => {
 };
 
 const
-  mapDispatchToProps = (dispatch) => {
+  mapDispatchToProps = dispatch => {
     return {
       entityFetch: (id, type, actions) => dispatch(entityFetch(id, type, actions))
     };

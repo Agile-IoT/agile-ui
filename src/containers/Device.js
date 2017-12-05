@@ -107,7 +107,6 @@ class Device extends Component {
   render() {
     var entity = this.getEntity();
     const { device, streams } = this.state;
-    console.log(streams)
     if (!isEmpty(device)) {
       return (
         <div>

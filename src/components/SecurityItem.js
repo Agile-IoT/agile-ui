@@ -1,109 +1,216 @@
 import React from 'react';
-import {
-  Card,
-  CardText,
-  CardHeader
-} from 'material-ui/Card';
-import {List, ListItem} from 'material-ui/List';
-import InlineEdit from 'react-edit-inline';
+import Divider from 'material-ui/Divider';
+import { RaisedButton } from 'material-ui';
+import { Card, CardText, CardHeader } from 'material-ui/Card';
+import { List, ListItem } from 'material-ui/List';
+import TextField from 'material-ui/TextField';
+import RemoveIcon from 'material-ui/svg-icons/action/delete-forever'
 
-let ui = {};
+const helpers = {
+  _isPrimitive: (attribute) => {
+    return (attribute !== Object(attribute));
+  },
 
-const isPrimitive = (attribute) => {
-  return (attribute !== Object(attribute));
-}
-
-const changedData = (id, type, dataChanged, data) => {
-  let params = {};
-  params.entityId = id;
-  params.entityType = type;
-  for (var attribute in data) {
-    if (data.hasOwnProperty(attribute)) {
-      params.attributeType = attribute;
-      try {
-        params.attributeValue = JSON.parse(data[attribute]);
-      } catch (err) {
-        params.attributeValue = data[attribute];
-      }
+  _abbreviate: (value) => {
+    const max = 15
+    if (value.length > max) {
+      value = `${value.substring(0, max)}...`
     }
-  }
-
-  dataChanged(params);
-}
-
-const getInlineEditField = (id, type, key, value, parent, dataChanged, deleteButton, editLock) => {
-  return (<div key={`${id}${key}`}>
-    {ui[key] && ui[key].name ? ui[key].name : key}: {<InlineEdit activeClassName='editing'
-                        text={value}
-                        change={(data) => changedData(id, type, dataChanged, data)}
-                        paramName={parent}
-          />
-          }
-    {editLock}
-    {deleteButton}
-  </div>);
-}
-
-const getNestedField = (id, type, key, attributes, parent, dataChanged, deleteButton, addAttributeField, editLock) => {
-  return (<div key={`${id}${key}`}>
-    {ui[key] && ui[key].name ? ui[key].name : key}: {renderAttributes(id, type, attributes, addAttributeField, editLock, dataChanged, parent)}
-    {editLock}
-    {deleteButton}
-  </div>);
-}
-
-const renderEditableAttribute = (id, type, attribute, dataChanged, parent) => {
-  parent = parent ? parent + "." + attribute.name : attribute.name;
-
-  if(isPrimitive(attribute.value)) {
-    return getInlineEditField(id, type, attribute.name, attribute.value, parent, dataChanged, attribute.deleteButton, attribute.editLock);
-  } else {
-    return getNestedField(id, type, attribute.name, attribute.value, parent, dataChanged, attribute.deleteButton, attribute.addAttributeField, attribute.editLock);
-  }
-}
-
-const renderAttribute = (id, type, attribute, parent, dataChanged) => {
-  parent = parent ? parent + "." + attribute.name : attribute.name;
-  let value = isPrimitive(attribute.value) ? attribute.value :
-    renderAttributes(id, type, attribute.value, attribute.addAttributeField, attribute.editLock, dataChanged, parent);
-
-  return (
-    <div key={`${id}${attribute.name}`}>
-      {ui[attribute.name] && ui[attribute.name].name ? ui[attribute.name].name : attribute.name}: {value}
-    </div>
-  );
-}
-
-const renderAttributes = (id, type, attributes, addAttributeField, dataChanged, parent) => {
-  if (attributes) {
-    let attributesRendered = attributes.map((attribute) => {
-      if (attribute.editable) {
-        return (
-          <ListItem id={`${attribute.name}`} key={`${id}${attribute.name}`}>
-            {renderEditableAttribute(id, type, attribute, dataChanged, parent)}
-          </ListItem>)
-      }
-      else {
-        return (
-          <ListItem id={`${attribute.name}`} key={`${id}${attribute.name}`}>
-            {renderAttribute(id, type, attribute, dataChanged, parent)}
-          </ListItem>)
-      }
-    });
-    return (
-      <List>
-        {attributesRendered}
-        {addAttributeField}
-      </List>
-    )
+    return <span style={{float: 'right'}}> {value} </span>
   }
 }
 
 const SecurityItem = (props) => {
-  ui = props.ui;
+  const { entityType, attributes, addAttributeField, handleDelete, handleSectionDelete } = props
+  const { id } = props.entity
+
+  const getNestedField = ({
+      id,
+      entityType,
+      name,
+      value,
+      addAttributeField,
+      parent,
+      editLock
+    }) => {
+      const nestedElement = renderAttributes({
+        id,
+        entityType,
+        attributes: value,
+        addAttributeField,
+        parent
+      })
+
+      const styles = {
+        title: {
+          fontWeight: 'bold',
+          fontSize: '1.3em'
+        },
+        hint: {
+          color: '#8a8a8a',
+          marginLeft: '5%',
+          fontWeight: 'bold'
+        }
+      }
+      return (
+        <ListItem key={`${id}${name}`}
+          style={{backgroundColor: '#eaeaea'}}
+          primaryTogglesNestedList={true}
+          nestedItems={[
+            <div>
+              {nestedElement}
+              {editLock}
+            </div>
+          ]}
+        >
+          <span style={styles.title}> {name} section </span>
+          <span style={styles.hint}> click to expand... </span>
+        </ListItem>
+      );
+  }
+
+  const renderEditableAttribute = ({
+      id,
+      entityType,
+      attribute,
+      addAttributeField,
+      parent
+    }) => {
+
+    const { value, name, deleteButton, editLock } = attribute
+
+    parent = parent
+      ? `${parent}.${name}`
+      : attribute.name;
+
+    const baseArguments = { id, entityType, name, value, parent, deleteButton, editLock }
+    return helpers._isPrimitive(value)
+      ? getInlineEditField(baseArguments)
+      : getNestedField(Object.assign(baseArguments, { addAttributeField }))
+  }
+
+  const renderAttribute = ({id, entityType, attribute, addAttributeField, parent}) => {
+      const { name, value } = attribute
+      const nestedElement = helpers._isPrimitive(attribute.value)
+        ? helpers._abbreviate(value)
+        : renderAttributes({
+          id,
+          entityType,
+          attributes: value,
+          addAttributeField,
+          parent
+      });
+
+      return (
+        <div key={`${id}${name}`}>
+          <span style={{float: 'left'}}>{name}</span>: {nestedElement}
+        </div>
+      );
+  }
+
+  const renderAttributes = ({ id, entityType, attributes, addAttributeField, parent }) => {
+      if (!attributes) {
+        return
+      }
+      const styles= {
+        borderStyle: {
+          borderWidth: '1px',
+          borderColor: '#bcbcbc',
+          borderStyle: 'solid'
+        }
+      }
+
+      const toRender = attributes.map(attribute => {
+        const handlerFunction = attribute.editable
+          ? renderEditableAttribute
+          : renderAttribute
+
+        return <ListItem
+          disabled
+          id={`${attribute.name}`}
+          key={`${id}${attribute.name}`}>
+            {handlerFunction({id, entityType, attribute, addAttributeField, parent})}
+          </ListItem>
+      })
+
+      return (
+        <List style={styles.borderStyle}>
+          {toRender}
+          {addAttributeField(parent)}
+          {parent ?
+            <RaisedButton
+              backgroundColor='#c14f54'
+              style={{
+                padding: '5px'
+              }}
+              label='REMOVE SECTION'
+              labelStyle={{
+                fontWeight: 'bold',
+                color: '#FFF'
+              }}
+              fullWidth={true}
+              onClick={() => {
+                handleDelete({
+                  id: id,
+                  type:entityType,
+                  attribute: parent
+                })
+              }}
+            />
+          : null}
+        </List>
+      )
+  }
+
+  // TODO EDIT LOCK
+  const getInlineEditField = ({ id, entityType, name, parent, value, editLock }) => {
+    const field = <TextField
+      defaultValue={value}
+      style={{
+        float: 'right',
+        marginRight: '30px'
+      }}
+
+      onBlur={data => {
+        const payload = {
+          entityId: id,
+          entityType,
+          attributeType: parent,
+          attributeValue: data.target.value
+        }
+        props.dataChanged(payload)
+      }}
+    />
+
+    const removeButtonStyle = {
+      cursor: "pointer",
+      float: "right"
+    }
+
+    const removeIcon = <RemoveIcon
+      style={removeButtonStyle}
+      onClick={() => {
+        handleDelete({
+          id,
+          type:entityType,
+          attribute: parent
+        })
+      }}
+    />
+
+    return (
+      <ListItem key={`${id}${name}`}>
+        {removeIcon}
+        {name}:{field}
+        {editLock}
+      </ListItem>
+    )
+  }
+
   return (
     <Card
-      style={{marginBottom: '20px'}}>
+      style={{
+      }}>
       <CardHeader
         actAsExpander={props.actAsExpander}
         showExpandableButton={props.showExpandableButton}
@@ -113,7 +220,13 @@ const SecurityItem = (props) => {
       {props.passwordField}
       {props.groupField}
       <CardText expandable>
-        {renderAttributes(props.entity.id, props.entityType, props.attributes, props.addAttributeField, props.dataChanged)}
+        {renderAttributes({
+          id,
+          entityType,
+          attributes,
+          addAttributeField,
+          handleSectionDelete
+        })}
       </CardText>
     </Card>);
 };

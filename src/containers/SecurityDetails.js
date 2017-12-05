@@ -14,45 +14,40 @@ import {
 import {connect} from 'react-redux';
 import recursiveKeys from 'recursive-keys';
 import deepdiff from 'deep-diff';
-
+import { ListItem } from 'material-ui/List';
 import {FloatingActionButton} from 'material-ui';
 import {Link} from 'react-router';
-
-import ContentRemove from 'material-ui/svg-icons/content/remove';
-import ContentAdd from 'material-ui/svg-icons/content/add';
-import ContentSave from 'material-ui/svg-icons/content/save'
+import Done from 'material-ui/svg-icons/action/done'
+import AddIcon from 'material-ui/svg-icons/content/add-circle-outline'
+import TextField from 'material-ui/TextField';
 import ContentEdit from 'material-ui/svg-icons/editor/mode-edit'
-
 import SecurityItem from '../components/SecurityItem';
 
-const actions = ['write'];
+const ACTIONS = ['write'];
 
-const deleteButtonStyle = {
-  margin: 0,
-  top: 2,
-  right: 2,
-  position: 'absolute'
-};
-const addButtonStyle = {
-  margin: 0,
-  top: 2,
-  right: 2,
-  display: 'inline'
-};
-
-const passwordFieldStyle = {
-  position: 'absolute',
-  right: 50,
-  top: 10
-}
-
-const groupButtonStyle = {
-  position: 'absolute',
-  right: 600,
-  top: 10
+const styles = {
+  passwordFieldStyle: {
+    position: 'absolute',
+    right: 50,
+    top: 10
+  }, 
+  groupButtonStyle: {
+    position: 'absolute',
+    right: 600,
+    top: 10
+  }
 }
 
 class SecurityDetails extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      userName: props.entity.user_name,
+      entityId: props.entity.id,
+      authType: props.entity.auth_type,
+      entityType: props.entity.type
+    }
+  }
 
   isPrimitive(object) {
     return (object !== Object(object));
@@ -73,66 +68,82 @@ class SecurityDetails extends Component {
       && this.props.entityActionsPolicies.policies[attribute].write)
   }
 
-  addAttribute(id, type, inputName, inputValueName) {
-    if (this.props.input.input_name !== '') {
-      let inputValue = this.props.input.input_value !== '' ? this.props.input.input_value : {};
-      let params = {
-        entityId: id,
-        entityType: type,
-        attributeType: this.props.input.input_name,
-        attributeValue: inputValue
-      };
-      this.props.setEntityAttributes(params);
-      this.props.setInputName('');
-      this.refs[inputName].value = '';
-      this.props.setInputValue('');
-      this.refs[inputValueName].value = '';
-    }
-  }
-
   updatePasswordField() {
     return (
-      <div style={passwordFieldStyle}>
-        <input ref='old_password' type='password' placeholder='Old password' onBlur={event => {
-          this.props.oldPasswordInput(event.target.value)
-        }}/>
-
-        <input ref='new_password' type='password' placeholder='New Password' onBlur={event =>
-          this.props.newPasswordInput(event.target.value)}/>
-
-        <FloatingActionButton mini={true} style={addButtonStyle}
-                              label='Save'
-                              onClick={event => {
-                                event.stopPropagation();
-                                this.props.updatePassword(this.props.input.old_password, this.props.input.new_password);
-                                this.props.oldPasswordInput('');
-                                this.refs.old_password.value = '';
-                                this.props.newPasswordInput('');
-                                this.refs.new_password.value = '';
-                              }}>
-          <ContentSave/>
-        </FloatingActionButton>
+      <div style={styles.passwordFieldStyle}>
+        <Done
+          style={{
+            float: 'right',
+            marginRight:'20px',
+            cursor: 'pointer'
+          }} 
+          onClick={(event) => {
+            event.stopPropagation();
+            this.props.updatePassword(this.props.input.old_password, this.props.input.new_password);
+            this.props.oldPasswordInput('');
+            this.refs.old_password.value = '';
+            this.props.newPasswordInput('');
+            this.refs.new_password.value = '';
+          }}
+        />
+        <TextField
+          hintText={'Old Password'} 
+          ref='new_password'
+          style={{
+            width: '30%',
+            marginRight:'15px',
+            float: 'right'
+          }}
+          onBlur={(data) => {
+            this.props.newPasswordInput(data.target.value)
+          }}
+        />
+        <TextField
+          hintText={'Old Password'} 
+          ref='old_password'
+          style={{
+            width: '30%',
+            marginRight:'15px',
+            float: 'right'
+          }}
+          onBlur={(data) => {
+            this.props.oldPasswordInput(data.target.value)
+          }}
+        />
       </div>
     )
   }
 
   resetPasswordField() {
     return (
-      <div style={passwordFieldStyle}>
-        <input ref='new_password' placeholder='New Password' onBlur={event =>
-          this.props.newPasswordInput(event.target.value)}/>
+      <div style={styles.passwordFieldStyle}>
+        <TextField
+          hintText={'Old Password'} 
+          ref='new_password'
+          style={{
+            width: '30%',
+            marginRight:'15px',
+            float: 'right'
+          }}
+          onBlur={(data) => {
+            this.props.newPasswordInput(data.target.value)
+          }}
+        />
 
-        <FloatingActionButton mini={true} style={addButtonStyle}
-                              label='Save'
-                              onClick={event => {
-                                event.stopPropagation();
-                                this.props.resetPassword(this.props.entity.user_name,
-                                  this.props.entity.auth_type, this.props.input.new_password);
-                                this.props.newPasswordInput('');
-                                this.refs.new_password.value = '';
-                              }}>
-          <ContentSave/>
-        </FloatingActionButton>
+        <Done
+          style={{
+            float: 'right',
+            marginRight:'20px',
+            cursor: 'pointer'
+          }} 
+          onClick={(event) => {
+            event.stopPropagation();
+            this.props.resetPassword(this.props.entity.user_name,
+            this.props.entity.auth_type, this.props.input.new_password);
+            this.props.newPasswordInput('');
+            this.refs.new_password.value = '';
+          }}
+        />
       </div>
     )
   }
@@ -142,58 +153,84 @@ class SecurityDetails extends Component {
       if (this.canWrite('password')) {
         if (this.props.entity.id !== this.props.currentUser.id) {
           return this.resetPasswordField();
-        } else {
-          return this.updatePasswordField();
         }
+        return this.updatePasswordField();
       }
     }
   }
 
-  addAttributeField(id, type, parent) {
-    const inputNameField = parent + '_name';
-    const inputValueField = parent + '_value';
-    return (
-      <div>
-        <input ref={inputNameField} defaultValue={this.props.input.input_name} placeholder='New Attribute' onBlur={event => {
-          const inputName = parent ? parent + '.' + event.target.value : event.target.value.toString();
-          this.props.setInputName(inputName)
-        }}/>
-
-        <input ref={inputValueField} placeholder='Value' onBlur={event =>
-          this.props.setInputValue(event.target.value.toString())}/>
-
-        <FloatingActionButton mini={true} style={addButtonStyle}
-                              label='Add'
-                              onClick={event => {
-                                this.addAttribute(id, type, inputNameField, inputValueField)
-                              }}>
-          <ContentAdd/>
-        </FloatingActionButton>
-      </div>
-    )
+  addAttribute(id, type) {
+    if (this.props.input.input_name !== '') {
+      const inputValue = this.props.input.input_value !== '' ? this.props.input.input_value : {};
+      const params = {
+        entityId: id,
+        entityType: type.replace('/', ''),
+        attributeType: this.props.input.input_name,
+        attributeValue: inputValue
+      };
+      this.props.setEntityAttributes(params);
+      this.props.setInputName('');
+      this.props.setInputValue('');
+    }
   }
 
-  renderDeleteButton = (id, type, attribute) => {
+  addAttributeField(id, type, parent) {
+    const handleOnBlur = (event) => {
+      const inputName = parent
+        ? parent + '.' + event.target.value
+        : event.target.value.toString();
+      this.props.setInputName(inputName)
+    }
+
     return (
-      <FloatingActionButton mini={true} id={'delete_' + id + '_' + attribute}
-                            key={id + '_' + attribute}
-                            style={deleteButtonStyle}
-                            label='Delete'
-                            onClick={() => {
-                              this.props.deleteAttribute({id: id, type: type, attribute: attribute})
-                            }}>
-        <ContentRemove/>
-      </FloatingActionButton>
+      <ListItem 
+        primaryText = {
+          <div>
+            <TextField
+              defaultValue={this.props.input.input_name}
+              hintText='New Attribute'
+              style={{marginRight: '10%'}}
+              onBlur={event => {
+                handleOnBlur(event)
+              }}
+            />
+            <TextField
+              style={{margin: 'auto'}}
+              placeholder='Value'
+              onBlur={event =>
+                this.props.setInputValue(event.target.value.toString())
+              }
+            />
+          </div>
+        }
+        rightIcon={<span
+          style={{
+            float: 'right',
+            position: 'initial',
+            fontWeight: 'bold',
+            width: '10%',
+            color: '#008714'
+          }}
+          onClick={event => { this.addAttribute(id, type) }} 
+        > 
+          ADD NEW 
+        </span>}
+      />
     )
   }
 
   renderGroupEditButton = (id, type, groups) => {
     const groupNames = groups.map(group => {return group.group_name});
     return (
-      <div style={groupButtonStyle}>
+      <div style={styles.groupButtonStyle}>
         {'Groups: ' + groupNames + " "}
         <Link style={{"vertical-align": "sub"}} to={`/group/${id}/${type.replace('/','')}`}>
-          <FloatingActionButton mini={true} label='Group'><ContentEdit/></FloatingActionButton>
+          <FloatingActionButton 
+            mini={true} 
+            label='Group'
+          >
+            <ContentEdit/>
+          </FloatingActionButton>
         </Link>
       </div>
     )
@@ -239,11 +276,6 @@ class SecurityDetails extends Component {
           editable: this.isEditable(fieldProperties, attribute)
         };
 
-        //Add deleteButton if we can write to the attribute
-        if (attributeField.editable) {
-          attributeField.deleteButton = this.renderDeleteButton(this.props.entity.id, this.props.entityType.replace('/', ''), attribute);
-        }
-
         //Add addAttributeField if the attribute is a JSON object (or not a primitive)
         if (!this.isPrimitive(attributeField.value) && attributeField.editable) {
           attributeField.addAttributeField = this.addAttributeField(this.props.entity.id, this.props.entityType.replace('/', ''), attribute);
@@ -261,7 +293,7 @@ class SecurityDetails extends Component {
       const addedAttributes = difference.map(diff => {return diff.path.join('.')});
       if(addedAttributes.length > 0) {
         const attribute_names = recursiveKeys.dumpKeysRecursively(this.props.entity).concat(addedAttributes);
-        this.props.canExecuteActions(this.props.entity.id, this.props.entityType.replace('/', ''), attribute_names, actions);
+        this.props.canExecuteActions(this.props.entity.id, this.props.entityType.replace('/', ''), attribute_names, ACTIONS);
       }
     }
     return true;
@@ -269,7 +301,7 @@ class SecurityDetails extends Component {
 
   componentDidMount() {
     this.props.canExecuteActions(this.props.entity.id, this.props.entityType.replace('/', ''),
-      recursiveKeys.dumpKeysRecursively(this.props.entity), actions);
+      recursiveKeys.dumpKeysRecursively(this.props.entity), ACTIONS);
     this.props.setInputName('');
     this.props.setInputValue('');
     this.props.oldPasswordInput('');
@@ -287,12 +319,14 @@ class SecurityDetails extends Component {
         subtitle={subtitle}
         entity={entity}
         entityType={entityType.replace('/', '')}
-        addAttributeField={this.addAttributeField(entity.id, entityType)}
+        addAttributeField={(parent) => {
+          return this.addAttributeField(entity.id, entityType, parent)
+        }}
         attributes={this.renderDetails(entity, fieldProperties)}
         dataChanged={this.props.setEntityAttributes}
         passwordField={this.getPasswordField()}
         groupField={entity.groups ? this.renderGroupEditButton(entity.id, entityType, entity.groups) : null}
-        ui={fieldProperties}
+        handleDelete={this.props.deleteAttribute}
       />)
     }
   }
@@ -313,7 +347,7 @@ const
     return {
       setEntityAttributes: (params) => dispatch(setEntityData(params)),
       deleteAttribute: (params) => dispatch(deleteAttribute(params)),
-      canExecuteActions: (id, type, attributes, actions) => dispatch(canExecuteActions(id, type, attributes, actions)),
+      canExecuteActions: (id, type, attributes, ACTIONS) => dispatch(canExecuteActions(id, type, attributes, ACTIONS)),
       updatePassword: (oldPassword, newPassword) => dispatch(updatePassword(oldPassword, newPassword)),
       resetPassword: (username, authType, newPassword) => dispatch(resetPassword(username, authType, newPassword)),
       oldPasswordInput: (value) => dispatch(oldPasswordInput(value)),
