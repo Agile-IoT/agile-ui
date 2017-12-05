@@ -1,14 +1,14 @@
 import agileSDK from 'agile-sdk';
 
 const agile = agileSDK({
-  api: '/api/agile-core',
-  idm: '/api/agile-security',
-  data: '/api/agile-data'
+	api: '/api/agile-core',
+	idm: '/api/agile-security',
+	data: '/api/agile-data'
 });
 
 //This sets the token for the calls to the sdk and reloads the SDK object
 export const setToken = (newToken) => {
-  agile.tokenSet(newToken);
+	agile.tokenSet(newToken);
 }
 
 //****** UTILS ******//
@@ -272,7 +272,6 @@ export const updatePassword = (oldPassword, newPassword) => {
     dispatch(loading(true))
     agile.idm.user.updatePassword(oldPassword, newPassword)
       .then(entity => {
-        //dispatch(action('PASSWORD', entity));
         dispatch(message(`Password changed.`));
         dispatch(loading(false));
       }).catch(err => {
@@ -286,7 +285,6 @@ export const resetPassword = (username, authType, newPassword) => {
     dispatch(loading(true))
     agile.idm.user.resetPassword(username, authType, newPassword)
       .then(entity => {
-        // dispatch(action('PASSWORD', entity));
         dispatch(message(`Password for ${username} changed.`));
         dispatch(loading(false));
       }).catch(err => {
@@ -360,7 +358,7 @@ export const canExecuteActions = (id, type, attribute_names, actions) => {
     });
 
     attribute_names.push('actions.self'); //Add root object
-    if(attribute_names.indexOf('password') === -1 && type === 'user') {
+    if (!attribute_names.includes('password') && type === 'user') {
       attribute_names.push('password'); //Make sure that it is checked whether the current user can set the password
     }
     attribute_names.forEach(attribute => {
@@ -397,29 +395,27 @@ export const currentTab = (type) => {
 
 export const entityFetch = (type) => {
   return (dispatch) => {
-    dispatch(loading(true))
-    switch(type) {
-      case 'group':
-        agile.idm.group.get()
-          .then(entities => {
-            dispatch(action('ENTITIES', entities));
-            dispatch(loading(false));
-          })
-          .catch(err => {
-            errorHandle(err, dispatch)
-          });
-        break;
-      default:
-        agile.idm.entity.getByType(type)
-          .then(entities => {
-            dispatch(action('ENTITIES', entities));
-            dispatch(loading(false));
-          })
-          .catch(err => {
-            errorHandle(err, dispatch)
-          });
-    }
-  };
+		dispatch(loading(true))
+		if (type === 'group') {
+			agile.idm.group.get()
+			.then(entities => {
+				dispatch(action('ENTITIES', entities));
+				dispatch(loading(false));
+			})
+			.catch(err => {
+				errorHandle(err, dispatch)
+			})
+		} else {
+			agile.idm.entity.getByType(type)
+			.then(entities => {
+				dispatch(action('ENTITIES', entities));
+				dispatch(loading(false));
+			})
+			.catch(err => {
+				errorHandle(err, dispatch)
+			});
+		}
+	}
 }
 
 // fetch all groups
@@ -622,13 +618,13 @@ export const fetchLocks = () => {
       ]
     },
     isOwner: {
-      scopes: ["/client", "/device", "/gateway"],
+      scopes: ['/client', '/device', '/gateway'],
       arity: 1,
       descr: 'This lock allows us to ensure that the entity on which the action is being ' +
       'performed is owned by the entity performing the action on it. This ensures that users ' +
       'creating entities have the right to read or write some attributes according to our ' +
       'default security model.',
-      name: "owns"
+      name: 'owns'
     }
   }
   return (dispatch) => {

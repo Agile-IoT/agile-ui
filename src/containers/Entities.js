@@ -72,7 +72,7 @@ class Entities extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if(prevProps.currentTab !== this.props.currentTab) {
+    if(this.props.location.pathname !== prevProps.location.pathname) {
       this.props.entityFetch(this.props.params.type);
     }
   }
@@ -93,8 +93,7 @@ class Entities extends Component {
 const mapStateToProps = (state) => {
   return {
     entityList: state.entityList,
-    ui: state.schemas.ui,
-    currentTab: state.currentTab
+    ui: state.schemas.ui
   };
 };
 
