@@ -140,7 +140,11 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    streamsFetch: (deviceId) => dispatch(streamsFetch(deviceId))
+    streamsFetch: deviceId => dispatch(streamsFetch(deviceId)),
+    deviceSubscribe: (deviceId, componentId) => 
+      dispatch(deviceSubscribe(deviceId, componentId)),
+    deviceUnsubscribe: (deviceId, componentId) => 
+      dispatch(deviceUnsubscribe(deviceId, componentId))
   };
 };
 
