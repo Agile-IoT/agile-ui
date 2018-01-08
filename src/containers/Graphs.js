@@ -22,6 +22,9 @@ class Graphs extends Component {
   }
 
   componentDidMount() {
+    if(!this.state.streams) {
+      this.props.streamsFetch(this.props.params.deviceId)
+    }
 
     // TODO Refresh on the page
     if (this.props.params.deviceId && this.state.streams) {

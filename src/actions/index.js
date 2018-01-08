@@ -152,6 +152,7 @@ export const streamsFetch = (deviceId) => {
     dispatch(loading(true))
     agile.device.lastUpdate(deviceId)
     .then(streams => {
+      console.log(streams)
       dispatch(action('STREAMS', {deviceId, streams}));
       dispatch(loading(false));
     })
