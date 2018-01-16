@@ -15,6 +15,7 @@ class Graphs extends Component {
   constructor(props){
       super(props);
       this.state={
+        device: this.props.devices[this.props.params.deviceId],
         streams: this.props.streams[this.props.params.deviceId],
         graphs: [],
         synchronize: undefined
@@ -22,28 +23,36 @@ class Graphs extends Component {
   }
 
   componentDidMount() {
-    if(!this.state.streams) {
-      this.props.streamsFetch(this.props.params.deviceId)
-    }
+    this.subscribe()
 
-    // TODO Refresh on the page
-    if (this.props.params.deviceId && this.state.streams) {
-      this.state.streams.forEach((s) => {
-        this.props.deviceSubscribe(this.props.params.deviceId, s.id);
-      });
-    }
+    if(!this.state.device)
+      this.props.deviceFetch(this.props.params.deviceId)
+
+    if(!this.state.streams)
+      this.props.streamsFetch(this.props.params.deviceId)
 
     this.props.streamsFetch(this.props.params.deviceId)
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      streams: nextProps.streams[this.props.params.deviceId]
-    })
+    this.setState({streams: nextProps.streams[this.props.params.deviceId]})
+
+    if (!this.state.device)
+      this.setState({device: nextProps.devices[this.props.params.deviceId]})
 
     setTimeout(() => {
       this.props.streamsFetch(this.props.params.deviceId);
     }, 2000);
+  }
+
+  subscribe() {
+    const { device } = this.state
+
+    if (device && device.streams) {
+      device.streams.map(s => {
+        return this.props.deviceSubscribe(device.deviceId, s.id);
+      });
+    }
   }
 
   renderGraphs(streams) {
@@ -137,7 +146,8 @@ class Graphs extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    streams: state.streams
+    streams: state.streams,
+    devices: state.devices
   };
 };
 

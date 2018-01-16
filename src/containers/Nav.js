@@ -33,8 +33,15 @@ class Nav extends Component {
   }
 
   render() {
-    return (
-      <Tabs value={this.props.location.pathname}>
+    const tabMap = {
+      '/': '/',
+      '/devices': '/devices',
+      '/entity': '/entity',
+      '/graphs': '/graphs'
+    }
+
+    return(
+      <Tabs value={tabMap[this.props.location.pathname]}>
         <Tab label="Discover"
              value="/"
              onActive={this.handleActive.bind(this)}
