@@ -62,9 +62,9 @@ class Entities extends Component {
             meta={entity}
           />)
       });
-    } else {
-      return 'Entitylist is empty'
     }
+
+    return 'Entity list is empty'
   }
 
   componentWillMount() {
@@ -73,18 +73,22 @@ class Entities extends Component {
 
   componentDidUpdate(prevProps) {
     if(this.props.location.pathname !== prevProps.location.pathname) {
-      this.props.entityFetch(this.props.params.type);
+      this.props.entityFetch(this.props.params.type)
     }
   }
 
   render() {
-    const addnewExists = this.props.ui && this.props.ui['/' + this.props.params.type]
-      && Object.keys(this.props.ui['/' + this.props.params.type]).includes('addNew');
+    const addnewExists = this.props.ui &&
+      this.props.ui['/' + this.props.params.type] && 
+      Object.keys(this.props.ui['/' + this.props.params.type]).includes('addNew');
+
     return (
       <div>
         {this.renderItems()}
-        {(addnewExists && this.props.ui['/' + this.props.params.type].addNew) || !addnewExists ?
-          this.renderNewEntityButton() : undefined}
+        {(addnewExists && this.props.ui['/' + this.props.params.type].addNew) || !addnewExists 
+          ? this.renderNewEntityButton() 
+          : undefined
+        }
       </div>
     );
   }

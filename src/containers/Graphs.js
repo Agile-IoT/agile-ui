@@ -1,19 +1,18 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { Graph } from '../components/';
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import Checkbox from 'material-ui/Checkbox'
-import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
+import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar'
+import CircularProgress from 'material-ui/CircularProgress'
+import { Graph } from '../components/'
 import {
   streamsFetch ,
   deviceSubscribe,
   deviceUnsubscribe
-} from '../actions';
-import CircularProgress from 'material-ui/CircularProgress';
-
+} from '../actions'
 
 class Graphs extends Component {
   constructor(props){
-      super(props);
+      super(props)
       this.state={
         device: this.props.devices[this.props.params.deviceId],
         streams: this.props.streams[this.props.params.deviceId],
@@ -41,8 +40,8 @@ class Graphs extends Component {
       this.setState({device: nextProps.devices[this.props.params.deviceId]})
 
     setTimeout(() => {
-      this.props.streamsFetch(this.props.params.deviceId);
-    }, 2000);
+      this.props.streamsFetch(this.props.params.deviceId)
+    }, 2000)
   }
 
   subscribe() {
@@ -50,8 +49,8 @@ class Graphs extends Component {
 
     if (device && device.streams) {
       device.streams.map(s => {
-        return this.props.deviceSubscribe(device.deviceId, s.id);
-      });
+        return this.props.deviceSubscribe(device.deviceId, s.id)
+      })
     }
   }
 
@@ -116,13 +115,13 @@ class Graphs extends Component {
   componentWillUnmount() {
     if (this.props.params.deviceId && this.state.streams) {
       this.state.streams.forEach((s) => {
-        this.props.deviceUnsubscribe(this.props.params.deviceId, s.id);
-      });
+        this.props.deviceUnsubscribe(this.props.params.deviceId, s.id)
+      })
     }
   }
 
   render() {
-    const { streams, graphs } = this.state;
+    const { streams, graphs } = this.state
     return (
       <div>
         {
@@ -140,7 +139,7 @@ class Graphs extends Component {
             </div>
         }
         </div>
-    );
+    )
   }
 }
 
@@ -148,8 +147,8 @@ const mapStateToProps = (state) => {
   return {
     streams: state.streams,
     devices: state.devices
-  };
-};
+  }
+}
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -158,7 +157,7 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(deviceSubscribe(deviceId, componentId)),
     deviceUnsubscribe: (deviceId, componentId) => 
       dispatch(deviceUnsubscribe(deviceId, componentId))
-  };
-};
+  }
+}
 
-export default connect(mapStateToProps, mapDispatchToProps)(Graphs);
+export default connect(mapStateToProps, mapDispatchToProps)(Graphs)

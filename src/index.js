@@ -1,9 +1,9 @@
-import React from 'react';
-import { render } from 'react-dom';
-import { Router, Route, IndexRoute, browserHistory } from 'react-router';
-import { Provider } from 'react-redux';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import configureStore from './store';
+import React from 'react'
+import { render } from 'react-dom'
+import { Router, Route, IndexRoute, browserHistory } from 'react-router'
+import { Provider } from 'react-redux'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import configureStore from './store'
 import {
   App,
   Discover,
@@ -17,20 +17,13 @@ import {
   Device,
   Locks,
   Graphs
-} from './containers';
+} from './containers'
+import './styles/index.css'
+import injectTapEventPlugin from 'react-tap-event-plugin'
 
-// global styles
-import './styles/index.css';
+const store = configureStore()
 
-// material ui
-// Needed for onTouchTap
-// http://stackoverflow.com/a/34015469/988941
-import injectTapEventPlugin from 'react-tap-event-plugin';
-
-// redux store
-const store = configureStore();
-
-injectTapEventPlugin();
+injectTapEventPlugin()
 
 render(
   <Provider store={store}>
@@ -53,4 +46,4 @@ render(
     </MuiThemeProvider>
   </Provider>,
   document.getElementById('root')
-);
+)
