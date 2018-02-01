@@ -2,7 +2,8 @@ import React from 'react';
 import {
   Card,
   CardActions,
-  CardHeader
+  CardHeader,
+  CardText
 } from 'material-ui/Card';
 import Avatar from 'material-ui/Avatar';
 
@@ -32,6 +33,9 @@ const EntityItem = (props) => {
             >{props.title && props.title.charAt(0)}</Avatar>
         }
       />
+      <CardText>
+        {props.text}
+      </CardText>
       <CardActions>
         {props.actions}
       </CardActions>

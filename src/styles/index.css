@@ -121,3 +121,64 @@ code {
 .notEditable {
   display: inline;
 }
+
+.btn-group > .btn:first-child {
+  margin-left: 0;
+}
+
+.btn-group-vertical > .btn, .btn-group > .btn {
+  position: relative;
+  float: left;
+}
+.btn-group {
+  justify-content: flex-start !important;
+}
+
+.btn-danger {
+  color: #fff;
+  background-color: #d9534f;
+  border-color: #d43f3a;
+}
+
+.btn {
+  flex: 0 !important;
+  display: inline-block;
+  padding: 6px 12px;
+  margin-bottom: 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.42857143;
+  text-align: left;
+  white-space: nowrap;
+  vertical-align: middle;
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  background-image: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+
+.btn-info.focus, .btn-add, .btn-info:focus {
+  color: #fff;
+  background-color: #31b0d5;
+  border-color: #1b6d85;
+}
+.btn.focus, .btn:focus, .btn:hover {
+  color: #333;
+  text-decoration: none;
+}
+
+.array-item-move-up, .array-item-move-down {
+  display: none;
+}
+
+i.glyphicon { display: none; }
+.btn-add::after { content: 'Add'; }
+.array-item-move-up::after { content: 'Move Up'; }
+.array-item-move-down::after { content: 'Move Down'; }
+.array-item-remove::after { content: 'Remove'; }

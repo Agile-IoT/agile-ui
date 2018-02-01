@@ -78,7 +78,11 @@ export function entityList(state = [], action) {
     case 'ENTITIES':
       return action.data;
     case 'ENTITY_DELETE':
-      return state.filter(element => element.user_name !== action.data);
+      return state.filter(element => element.user_name ? element.user_name !== action.data : element.name !== action.data);
+    case 'GROUP_DELETE':
+      return state.filter(element => element.group_name !== action.data);
+    case 'ENTITY_ADDED_GROUP':
+    case 'ENTITY_REMOVED_GROUP':
     case 'ENTITY_ATTRIBUTE_SET':
       return state.map(entity => {
         if (entity.id === action.data.id && entity.type === action.data.type) {
@@ -86,6 +90,46 @@ export function entityList(state = [], action) {
         }
         return entity;
       });
+    default:
+      return state;
+  }
+}
+
+export function policies(state = {}, action) {
+  switch(action.type) {
+    case 'ENTITY_FIELD_LOCKS':
+      return action.data;
+    case 'POLICY_DELETE':
+      return action.data;
+    case 'POLICY_SET':
+      return action.data;
+    default:
+      return state;
+  }
+}
+
+export function lockFormats(state = {}, action) {
+  switch(action.type) {
+    case 'LOCK_FORMATS':
+      return action.data;
+    default:
+      return state;
+  }
+}
+
+export function form(state = [], action) {
+  switch(action.type) {
+    case 'FORM_SELECTED':
+      return action.data;
+    default:
+      return state;
+  }
+}
+
+export function groups(state = [], action) {
+  switch (action.type) {
+    case 'GROUPS':
+      return action.data;
     default:
       return state;
   }
@@ -99,6 +143,21 @@ export function input(state = {}, action) {
     case 'INPUT_VALUE':
       state.input_value = action.data;
       return state;
+    case 'INPUT_OLD_PASSWORD':
+      state.old_password = action.data;
+      return state;
+    case 'INPUT_NEW_PASSWORD':
+      state.new_password = action.data;
+      return state;
+    default:
+      return state;
+  }
+}
+
+export function schemas(state = {}, action) {
+  switch (action.type) {
+    case 'SCHEMA':
+      return action.data;
     default:
       return state;
   }

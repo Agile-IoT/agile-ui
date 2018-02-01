@@ -8,7 +8,7 @@ const agile = agileSDK({
 
 //This sets the token for the calls to the sdk and reloads the SDK object
 export const setToken = (newToken) => {
-  agile.tokenSet(newToken);
+	agile.tokenSet(newToken);
 }
 
 //****** UTILS ******//
@@ -152,6 +152,7 @@ export const streamsFetch = (deviceId) => {
     dispatch(loading(true))
     agile.device.lastUpdate(deviceId)
     .then(streams => {
+      console.log(streams)
       dispatch(action('STREAMS', {deviceId, streams}));
       dispatch(loading(false));
     })
@@ -180,6 +181,20 @@ export const devicesAndStreamsFetch = () => {
     });
   };
 }
+
+export const fetchEntitySchemas = () => {
+  return (dispatch) => {
+    dispatch(loading(true))
+    agile.idm.entity.getEntitiesSchema()
+      .then((schema) => {
+        dispatch(action('SCHEMA', schema));
+        dispatch(loading(false));
+      }).catch(err => {
+      errorHandle(err, dispatch)
+    });
+  }
+}
+
 
 export const devicesDelete = (deviceId) => {
   return (dispatch) => {
@@ -225,7 +240,6 @@ export const devicesCreate = (device, type) => {
   };
 }
 
-// fetch all curent user data
 export const fetchCurrentUser = () => {
   return (dispatch) => {
     dispatch(loading(true))
@@ -254,17 +268,29 @@ export const userFetch = (id) => {
   };
 }
 
-export const setPassword = (params) => {
+export const updatePassword = (oldPassword, newPassword) => {
   return (dispatch) => {
     dispatch(loading(true))
-    agile.idm.entity.setAttribute(params) // TODO set password through user in stack
+    agile.idm.user.updatePassword(oldPassword, newPassword)
       .then(entity => {
-        dispatch(action('ENTITY_ATTRIBUTE_SET', entity));
+        dispatch(message(`Password changed.`));
         dispatch(loading(false));
-      })
-      .catch(err => {
-        errorHandle(err, dispatch)
-      });
+      }).catch(err => {
+      errorHandle(err, dispatch)
+    });
+  };
+}
+
+export const resetPassword = (username, authType, newPassword) => {
+  return (dispatch) => {
+    dispatch(loading(true))
+    agile.idm.user.resetPassword(username, authType, newPassword)
+      .then(entity => {
+        dispatch(message(`Password for ${username} changed.`));
+        dispatch(loading(false));
+      }).catch(err => {
+      errorHandle(err, dispatch)
+    });
   };
 }
 
@@ -308,11 +334,23 @@ export const setInputValue = (value) => {
   }
 }
 
+export const oldPasswordInput = (value) => {
+  return (dispatch) => {
+    dispatch(action('INPUT_OLD_PASSWORD', value))
+  }
+}
+
+export const newPasswordInput = (value) => {
+  return (dispatch) => {
+    dispatch(action('INPUT_NEW_PASSWORD', value))
+  }
+}
+
 export const canExecuteActions = (id, type, attribute_names, actions) => {
   return (dispatch) => {
     dispatch(loading(true))
     var queryObject = [];
-    var actions_seen = [];
+    var actions_seen = [agile];
     actions_seen = actions.map(action => {
       if (actions_seen.indexOf(action) === -1) {
         return action;
@@ -321,6 +359,9 @@ export const canExecuteActions = (id, type, attribute_names, actions) => {
     });
 
     attribute_names.push('actions.self'); //Add root object
+    if (!attribute_names.includes('password') && type === 'user') {
+      attribute_names.push('password'); //Make sure that it is checked whether the current user can set the password
+    }
     attribute_names.forEach(attribute => {
       actions_seen.forEach(method => {
         queryObject.push({entityId: id, entityType: type.startsWith('/') ? type : '/' + type, method: method, field: attribute});
@@ -345,13 +386,75 @@ export const canExecuteActions = (id, type, attribute_names, actions) => {
   }
 }
 
-// fetch all users
-export const entityFetch = (type) => {
+export const currentTab = (type) => {
   return (dispatch) => {
     dispatch(loading(true))
-    agile.idm.entity.getByType(type)
-      .then(entities => {
-        dispatch(action('ENTITIES', entities));
+    dispatch(action('CURRENT_TAB', type));
+    dispatch(loading(false));
+  };
+}
+
+export const entityFetch = (type) => {
+  return (dispatch) => {
+		dispatch(loading(true))
+		if (type === 'group') {
+			agile.idm.group.get()
+			.then(entities => {
+				dispatch(action('ENTITIES', entities));
+				dispatch(loading(false));
+			})
+			.catch(err => {
+				errorHandle(err, dispatch)
+			})
+		} else {
+			agile.idm.entity.getByType(type)
+			.then(entities => {
+				dispatch(action('ENTITIES', entities));
+				dispatch(loading(false));
+			})
+			.catch(err => {
+				errorHandle(err, dispatch)
+			});
+		}
+	}
+}
+
+// fetch all groups
+export const groupsFetch = () => {
+  return (dispatch) => {
+    dispatch(loading(true))
+    agile.idm.group.get()
+      .then(groups => {
+        dispatch(action('GROUPS', groups));
+        dispatch(loading(false));
+      })
+      .catch(err => {
+        errorHandle(err, dispatch)
+      });
+  };
+}
+
+export const addToGroup = (owner, name, type, id) => {
+  return (dispatch) => {
+    dispatch(loading(true))
+    agile.idm.group.addEntity({owner: owner, name: name, entityType: type, entityId: id})
+      .then(entity => {
+        dispatch(action('ENTITY_ADDED_GROUP', entity));
+        dispatch(message(`User added to group ${name}.`));
+        dispatch(loading(false));
+      }).catch(err => {
+      errorHandle(err, dispatch)
+    });
+  };
+}
+
+export const removeFromGroup = (owner, name, type, id) => {
+  return (dispatch) => {
+    dispatch(loading(true))
+    agile.idm.group.removeEntity({owner: owner, name: name, entityType: type, entityId: id})
+      .then(entity => {
+        dispatch(action('ENTITY_REMOVED_GROUP', entity));
+        dispatch(message(`User removed from group ${name}.`));
         dispatch(loading(false));
       })
       .catch(err => {
@@ -366,7 +469,7 @@ export const usersDelete = (userName, auth_type) => {
     agile.idm.user.delete(userName, auth_type)
       .then(() => {
         dispatch(action('ENTITY_DELETE', userName));
-        dispatch(message(`User ${`userName`} deleted.`));
+        dispatch(message(`User ${userName} deleted.`));
         dispatch(loading(false));
       })
       .catch(err => {
@@ -375,18 +478,196 @@ export const usersDelete = (userName, auth_type) => {
   };
 }
 
-export const usersCreate = (user, type) => {
+export const groupDelete = (owner, name) => {
   return (dispatch) => {
     dispatch(loading(true))
-    agile.idm.user.create(user, type)
-      .then((newUser) => {
-        dispatch(action('USERS_CREATE', newUser));
+    agile.idm.group.delete(owner, name)
+      .then(() => {
+        dispatch(action('GROUP_DELETE', name));
+        dispatch(message(`Group ${name} deleted.`));
         dispatch(loading(false));
       })
       .catch(err => {
         errorHandle(err, dispatch)
       });
   };
+}
+
+export const entityDelete = (entityId, entityType) => {
+  return (dispatch) => {
+    dispatch(loading(true))
+    agile.idm.entity.delete(entityId, entityType)
+      .then(() => {
+        dispatch(action('ENTITY_DELETE', entityId));
+        dispatch(message(`Entity ${entityId} deleted.`));
+        dispatch(loading(false));
+      })
+      .catch(err => {
+        errorHandle(err, dispatch)
+      });
+  }
+}
+
+export const entityDeleteByType = (entity, type) => {
+  switch(type) {
+    case 'user':
+      return usersDelete(entity.user_name, entity.auth_type);
+    case 'group':
+      return groupDelete(entity.owner, entity.group_name);
+    default:
+      return entityDelete(entity.name, type)
+  }
+}
+
+export const usersCreate = (user, authType, options) => {
+  return (dispatch) => {
+    dispatch(loading(true))
+    agile.idm.user.create(user, authType, options)
+      .then((newUser) => {
+        dispatch(action('USERS_CREATE', newUser));
+        dispatch(message(`User ${user} created.`));
+        dispatch(loading(false));
+      })
+      .catch(err => {
+        errorHandle(err, dispatch)
+      });
+  };
+}
+
+export const groupCreate = (group_name) => {
+  return (dispatch) => {
+    dispatch(loading(true))
+    agile.idm.group.create(group_name)
+      .then((newGroup) => {
+        dispatch(action('GROUP_CREATE', newGroup));
+        dispatch(message(`Group ${group_name} created.`));
+        dispatch(loading(false));
+      })
+      .catch(err => {
+        errorHandle(err, dispatch)
+      });
+  };
+}
+
+export const entityCreate = (entity, type) => {
+  return (dispatch) => {
+    dispatch(loading(true))
+    agile.idm.entity.create(entity.id, type, entity).then(entity => {
+      dispatch(action('ENTITY_CREATE', entity));
+      dispatch(message(`Entity ${entity.name} created.`));
+      dispatch(loading(false));
+    }).catch(err => {
+      errorHandle(err, dispatch)
+    });
+  }
+}
+
+
+export const entityCreateByType = (data, type) => {
+  switch(type) {
+    case 'user':
+      return usersCreate(data.user_name, data.auth_type, data);
+    case 'group':
+      return groupCreate(data.group_name);
+    default:
+      return entityCreate(data, type);
+  }
+}
+
+export const fetchLocks = () => {
+  /*TODO Lock format does not exist
+  actionExecutedLessThan: {
+   arity: 2,
+   descr: 'This lock ensures that the user attempting an action or accessing ' +
+   'an attribute has not executed an action more than a certain number of times. This lock ' +
+   'uses the audit mechanisms, which log security critical actions',
+   name: 'action execute less than',
+   args: [
+     'action',
+     'count'
+   ]
+ },
+ timePeriodLock: {
+   arity: 2,
+   descr: 'This lock evaluates to true when the current time lies within an ' +
+   'interval between a starting and end time of the day.',
+   name: 'Time interval',
+   args: [
+     'startTime',
+     'endTime'
+     ]
+ },*/
+  const locks = {
+    hasType: {
+      arity: 1,
+      descr: 'This lock validates that an entity has a particular type. This ensures, for ' +
+      'example, that the action performing or on which the action is being performed is of ' +
+      'type "user"',
+      name: 'has type',
+      args: [
+        'type'
+      ]
+    },
+    attrEq: {
+      scopes: ['/device', '/client', '/gateway'],
+      arity: 2,
+      descr: 'This lock is open iff the entity to which this lock is applied to is tagged with the specified attibute which was defined in the specified group and whose value is equal to the specified value.',
+      name: 'attr is eq',
+      args: [
+        'attr',
+        'value'
+      ]
+    },
+    isOwner: {
+      scopes: ['/client', '/device', '/gateway'],
+      arity: 1,
+      descr: 'This lock allows us to ensure that the entity on which the action is being ' +
+      'performed is owned by the entity performing the action on it. This ensures that users ' +
+      'creating entities have the right to read or write some attributes according to our ' +
+      'default security model.',
+      name: 'owns'
+    }
+  }
+  return (dispatch) => {
+    dispatch(loading(true));
+    dispatch(action('LOCK_FORMATS', locks));
+    dispatch(loading(false));
+  }
+}
+
+export const fetchEntityLocks = (entity_id, entity_type, field) => {
+  return (dispatch) => {
+    dispatch(loading(true));
+    agile.policies.pap.get({entityId: entity_id, entityType: entity_type, field: field}).then(locks => {
+      dispatch(action('ENTITY_FIELD_LOCKS', locks.result));
+      dispatch(loading(false));
+    });
+  }
+}
+
+export const setLock = (params) => {
+  return (dispatch) => {
+    dispatch(loading(true));
+    agile.policies.pap.set(params).then(result => {
+      dispatch(action('POLICY_SET', result.result));
+      dispatch(message(`Successfully set policy of ${params.entityId} for '${params.field}'.`));
+      dispatch(loading(false));
+    })
+  }
+}
+
+export const deleteLock = (params) => {
+  return (dispatch) => {
+    dispatch(loading(true));
+    agile.policies.pap.delete(params).then(result => {
+      dispatch(action('POLICY_DELETE', result.result));
+      dispatch(loading(false));
+    })
+  }
+}
+
+export const formSelected = (formNames) => {
+  return (dispatch) => {dispatch(action('FORM_SELECTED', formNames))}
 }
 
 // fetch all available protocols

@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { isEmpty } from 'underscore';
-import { FlatButton } from 'material-ui';
-import { DeviceSummary, Stream } from '../components';
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { isEmpty } from 'underscore'
+import { FlatButton } from 'material-ui'
+import { DeviceSummary, Stream } from '../components'
 import { LocalStorageSettings, CloudUploadSettings } from './'
-import SecurityDetails from './SecurityDetails';
+import SecurityDetails from './SecurityDetails'
 
 import {
   deviceFetch,
@@ -15,12 +15,7 @@ import {
   setEntityData,
   deleteAttribute,
   entityFetch
-} from '../actions';
-
-const hiddenAndDisabledAttributes = {
-  notEditable: ['id', 'owner', 'type'],
-  hidden: ['password']
-};
+} from '../actions'
 
 class Device extends Component {
   componentWillMount() {
@@ -28,7 +23,7 @@ class Device extends Component {
   }
 
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
       device: this.props.devices[this.props.params.deviceId],
@@ -52,8 +47,8 @@ class Device extends Component {
 
     if (device && device.streams) {
       device.streams.map(s => {
-        return this.props.deviceSubscribe(device.deviceId, s.id);
-      });
+        return this.props.deviceSubscribe(device.deviceId, s.id)
+      })
     }
   }
 
@@ -62,13 +57,13 @@ class Device extends Component {
 
     if (device && device.streams) {
       device.streams.map(s => {
-        return this.props.deviceUnsubscribe(device.deviceId, s.id);
-      });
+        return this.props.deviceUnsubscribe(device.deviceId, s.id)
+      })
     }
   }
 
   componentWillUnmount() {
-    this.unsubscribe(this.state.device);
+    this.unsubscribe(this.state.device)
   }
 
   componentWillReceiveProps(nextProps) {
@@ -79,8 +74,8 @@ class Device extends Component {
 
     // Poll for new readings
     setTimeout(() => {
-      this.props.streamsFetch(this.props.params.deviceId);
-    }, 7000);
+      this.props.streamsFetch(this.props.params.deviceId)
+    }, 7000)
   }
 
   renderActions(device) {
@@ -103,16 +98,23 @@ class Device extends Component {
 
   getEntity() {
     for (var i in this.props.entityList) { //Get the right entity from the entity list
-      var e = this.props.entityList[i];
+      var e = this.props.entityList[i]
       if (e.id === this.props.params.deviceId && e.type.replace('/', '') === 'device' ? e : undefined)
-        return e;
+        return e
     }
   }
 
   render() {
-    var entity = this.getEntity();
-    const { device, streams } = this.state;
+    const { device, streams } = this.state
+
     if (!isEmpty(device)) {
+      const entity = this.getEntity()
+      const deviceSchema = this.props.schemas.ui && this.props.schemas.ui['/device']
+
+      const fieldProperties = deviceSchema && deviceSchema.attributes 
+        ? deviceSchema.attributes 
+        : {}
+
       return (
         <div>
           <DeviceSummary
@@ -135,13 +137,13 @@ class Device extends Component {
                 subtitle={''}
                 entity={entity}
                 entityType={'device'}
-                fieldProperties={hiddenAndDisabledAttributes}
+                fieldProperties={fieldProperties}
               />
             : null
           }
           {this.renderStreams(streams)}
         </div>
-      );
+      )
     }
     return <div></div>
   }
@@ -153,9 +155,10 @@ const mapStateToProps = (state) => {
     streams: state.streams,
     locStorPolicies: state.localStoragePolicies,
     actions: state.entityPolicies,
-    entityList: state.entityList
-  };
-};
+    entityList: state.entityList,
+    schemas: state.schemas
+  }
+}
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -167,7 +170,7 @@ const mapDispatchToProps = (dispatch) => {
     setEntityAttributes: (params) => dispatch(setEntityData(params)),
     deleteAttribute: (params) => dispatch(deleteAttribute(params)),
     entityFetch: (params) => dispatch(entityFetch(params))
-  };
-};
+  }
+}
 
-export default connect(mapStateToProps, mapDispatchToProps)(Device);
+export default connect(mapStateToProps, mapDispatchToProps)(Device)
