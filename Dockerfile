@@ -8,9 +8,9 @@
 # Contributors:
 #     Create-Net / FBK - initial API and implementation
 #-------------------------------------------------------------------------------
-ARG BASEIMAGE_BUILD=resin/raspberry-pi3-node:7.8.0-20170426
+FROM resin/raspberry-pi3-node:7.8.0-20170426
 
-FROM $BASEIMAGE_BUILD
+ARG BASEIMAGE_BUILD=resin/raspberry-pi3-node:7.8.0-20170426
 
 # Defines our working directory in container
 WORKDIR /home

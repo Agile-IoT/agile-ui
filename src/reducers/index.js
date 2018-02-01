@@ -30,7 +30,8 @@ import {
   streams,
   localStorage,
   cloudUpload,
-  records
+  records,
+  recommendations
 } from './entities';
 
 export default combineReducers({
@@ -54,5 +55,6 @@ export default combineReducers({
     streams,
     localStorage,
     cloudUpload,
-    records
+    records,
+    recommendations
 });

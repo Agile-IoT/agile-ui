@@ -63,7 +63,12 @@ class Nav extends Component {
         >
         </Tab>
         <Tab label="User profile"
-             value={"/entity/" + this.props.currentUser.id + "/user"}
+             value={`/entity/${this.props.currentUser.id}/user`}
+             onActive={this.handleActive.bind(this)}
+        >
+        </Tab>
+        <Tab label="Recommender"
+             value={"/recommender"}
              onActive={this.handleActive.bind(this)}
         >
         </Tab>

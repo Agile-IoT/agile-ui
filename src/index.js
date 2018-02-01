@@ -26,7 +26,8 @@ import {
   GroupMembers,
   Device,
   Locks,
-  Graphs
+  Graphs,
+  Recommender
 } from './containers'
 import './styles/index.css'
 import injectTapEventPlugin from 'react-tap-event-plugin'
@@ -51,6 +52,7 @@ render(
           <Route path="group/:group_name" component={GroupMembers} />
           <Route path="locks/:id/:type" component={Locks} />
           <Route path="lock/add/:id/:type/:field/:op" component={AddLock} />
+          <Route path="recommender" component={Recommender} />
         </Route>
       </Router>
     </MuiThemeProvider>

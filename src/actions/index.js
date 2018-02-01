@@ -396,6 +396,20 @@ export const canExecuteActions = (id, type, attribute_names, actions) => {
   }
 }
 
+export const recommendationsFetch = () => {
+  return (dispatch) => {
+    setTimeout(() => {
+      dispatch(action('RECOMMENDATIONS', [{
+        title: 'Seeedstudio-Gas-Sensor-Socket',
+        href: 'https://www.amazon.com/Seeedstudio-Gas-Sensor-Socket/dp/B01C5RTCF4'
+      }, {
+        title: 'Seeedstudio-Grove-Gas-Sensor-MQ3',
+        href: 'https://www.amazon.com/Seeedstudio-Grove-Gas-Sensor-MQ3/dp/B01C5RNWW8'
+      }]))
+    }, 5000)
+  }
+}
+
 export const currentTab = (type) => {
   return (dispatch) => {
     dispatch(loading(true))

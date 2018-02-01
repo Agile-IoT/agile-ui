@@ -12,12 +12,12 @@ import React from 'react';
 import { Toolbar, ToolbarGroup } from 'material-ui/Toolbar';
 
 const GenericListItem = (props) => {
-  const styles= {
+  const styles = props.style ? props.style : {
     bar: {
       backgroundColor: 'white' 
     },
 
-    leftEl: {
+    rightEl: {
       margin: '0px',
       padding: '0px',
       width: '20%'
@@ -25,10 +25,11 @@ const GenericListItem = (props) => {
   }
   return (
     <Toolbar style={styles.bar}>
-      <ToolbarGroup key='first' firstChild={true}>
+      <ToolbarGroup key='first' firstChild={true} style={styles.leftEl}>
         {props.leftEl}
       </ToolbarGroup>
-    <ToolbarGroup key='last' lastChild={true} style={styles.leftEl}>
+
+      <ToolbarGroup key='last' lastChild={true} style={styles.rightEl}>
         {props.rightEl}
       </ToolbarGroup>
     </Toolbar>
