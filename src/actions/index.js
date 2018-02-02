@@ -29,6 +29,7 @@ const action = (type, data) => {
 const DEVICE_TYPE = 'device';
 
 export const loading = bool => {
+  console.log('called')
   return {
     type: 'LOADING',
     data: bool
@@ -398,7 +399,11 @@ export const canExecuteActions = (id, type, attribute_names, actions) => {
 
 export const recommendationsFetch = () => {
   return (dispatch) => {
+    dispatch(loading(true))
     setTimeout(() => {
+      dispatch(loading(false))
+      //
+      // TODO actual API call
       dispatch(action('RECOMMENDATIONS', [{
         title: 'Seeedstudio-Gas-Sensor-Socket',
         href: 'https://www.amazon.com/Seeedstudio-Gas-Sensor-Socket/dp/B01C5RTCF4'

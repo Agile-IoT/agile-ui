@@ -11,6 +11,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
+import CircularProgress from 'material-ui/CircularProgress'
 import IconButton from 'material-ui/IconButton'
 import InfoIcon from 'material-ui/svg-icons/action/info-outline.js'
 import ShoppingCart from 'material-ui/svg-icons/action/shopping-cart.js'
@@ -88,17 +89,20 @@ class Recommender extends Component {
   }
   
   render() {
-    return (
-      <div>
-        {this.renderRecommendations()}
+    return (<div>
+      {this.props.loading 
+      ? <div className='loadingScreen'>
+        <CircularProgress size={250} thickness={10}/>
       </div>
-    )
+      : this.renderRecommendations()
+    }</div>)
   }
 }
 
 const mapStateToProps = (state) => {
   return {
-    recommendations: state.recommendations
+    recommendations: state.recommendations,
+    loading: state.loading
   }
 }
 

@@ -144,7 +144,7 @@ class Graphs extends Component {
           ? <div className='graphs'>
               {this.renderGraphs(streams)}
             </div>
-          : <div id='loadingScreen'>
+          : <div className='loadingScreen'>
               <CircularProgress size={250} thickness={10}/>
             </div>
         }
