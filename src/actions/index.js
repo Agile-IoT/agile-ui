@@ -399,19 +399,20 @@ export const canExecuteActions = (id, type, attribute_names, actions) => {
 
 export const recommendationsFetch = () => {
   return (dispatch) => {
+    // TODO AGILE SDK
     dispatch(loading(true))
-    setTimeout(() => {
+
+    const protocol = document.location.protocol || 'http:'
+    const host = document.location.hostname
+    const apiEndpoint = `${protocol}//${host}:8090/recommenderdockerservice`
+
+    window.fetch(`${apiEndpoint}/getDeviceRecommendation`).then(result => {
       dispatch(loading(false))
-      //
-      // TODO actual API call
-      dispatch(action('RECOMMENDATIONS', [{
-        title: 'Seeedstudio-Gas-Sensor-Socket',
-        href: 'https://www.amazon.com/Seeedstudio-Gas-Sensor-Socket/dp/B01C5RTCF4'
-      }, {
-        title: 'Seeedstudio-Grove-Gas-Sensor-MQ3',
-        href: 'https://www.amazon.com/Seeedstudio-Grove-Gas-Sensor-MQ3/dp/B01C5RNWW8'
-      }]))
-    }, 5000)
+      dispatch('RECOMMENDATIONS', result.deviceList)
+    }).catch(err => {
+      dispatch(loading(false))
+		  errorHandle(err, dispatch)
+    })
   }
 }
 

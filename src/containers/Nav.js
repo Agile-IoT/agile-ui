@@ -47,7 +47,8 @@ class Nav extends Component {
       '/': '/',
       '/devices': '/devices',
       '/entity': '/entity',
-      '/graphs': '/graphs'
+      '/graphs': '/graphs',
+      '/recommender': '/recommender'
     }
 
     return(
