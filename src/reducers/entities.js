@@ -276,3 +276,12 @@ export function streams(state = [], action) {
       return state;
   }
 }
+
+export function recommendations(state = [], action) {
+  switch (action.type) {
+    case 'RECOMMENDATIONS':
+      return action.data
+    default:
+      return state;
+  }
+}

@@ -27,6 +27,7 @@ import Locks from './Locks';
 import AddEntity from './AddEntity';
 import AddLock from './AddLock';
 import Nav from './Nav';
+import Recommender from './Recommender';
 
 export {
   App,
@@ -47,5 +48,6 @@ export {
   Entity,
   Locks,
   SecurityDetails,
-  Nav
+  Nav,
+  Recommender
  }

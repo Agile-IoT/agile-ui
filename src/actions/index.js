@@ -29,6 +29,7 @@ const action = (type, data) => {
 const DEVICE_TYPE = 'device';
 
 export const loading = bool => {
+  console.log('called')
   return {
     type: 'LOADING',
     data: bool
@@ -393,6 +394,25 @@ export const canExecuteActions = (id, type, attribute_names, actions) => {
         dispatch(action('ENTITY_POLICIES', result_list));
         dispatch(loading(false))
       })
+  }
+}
+
+export const recommendationsFetch = () => {
+  return (dispatch) => {
+    // TODO AGILE SDK
+    dispatch(loading(true))
+
+    const protocol = document.location.protocol || 'http:'
+    const host = document.location.hostname
+    const apiEndpoint = `${protocol}//${host}:8090/recommenderdockerservice`
+
+    window.fetch(`${apiEndpoint}/getDeviceRecommendation`).then(result => {
+      dispatch(loading(false))
+      dispatch('RECOMMENDATIONS', result.deviceList)
+    }).catch(err => {
+      dispatch(loading(false))
+		  errorHandle(err, dispatch)
+    })
   }
 }
 
