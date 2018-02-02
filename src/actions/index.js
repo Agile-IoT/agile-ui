@@ -408,7 +408,7 @@ export const recommendationsFetch = () => {
 
     window.fetch(`${apiEndpoint}/getDeviceRecommendation`).then(result => {
       dispatch(loading(false))
-      dispatch('RECOMMENDATIONS', result.deviceList)
+      dispatch(action('RECOMMENDATIONS', result.deviceList))
     }).catch(err => {
       dispatch(loading(false))
 		  errorHandle(err, dispatch)
