@@ -4,6 +4,11 @@
 # are made available under the terms of the Eclipse Public License v1.0
 # which accompanies this distribution, and is available at
 # http://www.eclipse.org/legal/epl-v10.html
+
+## v2.1.0 - 2018-02-02
+
+* Implementation of recommender UI elements based on mock API calls. [Exulansis]
+
 # 
 # Contributors:
 #     Resin.io, FBK, Jolocom - initial API and implementation
