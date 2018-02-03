@@ -25,7 +25,6 @@ const CloudUploadSettingsSummary = (props) => {
     width: '100%'
   }
 
-  console.log(props)
   return(
     <Card>
       <CardHeader

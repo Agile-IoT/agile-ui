@@ -29,7 +29,6 @@ const action = (type, data) => {
 const DEVICE_TYPE = 'device';
 
 export const loading = bool => {
-  console.log('called')
   return {
     type: 'LOADING',
     data: bool
@@ -163,7 +162,6 @@ export const streamsFetch = (deviceId) => {
     dispatch(loading(true))
     agile.device.lastUpdate(deviceId)
     .then(streams => {
-      console.log(streams)
       dispatch(action('STREAMS', {deviceId, streams}));
       dispatch(loading(false));
     })
@@ -245,8 +243,7 @@ export const devicesCreate = (device, type) => {
         dispatch(loading(false));
       })
       .catch(err => {
-        console.log('entity seems to be there already...');
-        dispatch(loading(false));
+        errorHandle({err: 'entity already exists'}, dispatch)
       });
   };
 }
