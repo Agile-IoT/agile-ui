@@ -8,20 +8,24 @@
  *Contributors:
  *    Resin.io, FBK, Jolocom - initial API and implementation
  ******************************************************************************/
-import React from 'react';
-import SelectField from 'material-ui/SelectField';
-import DatePicker from 'material-ui/DatePicker';
-import MenuItem from 'material-ui/MenuItem';
-import { Card, CardHeader, CardText, } from 'material-ui/Card';
-import { List } from 'material-ui/List';
-import { FlatButton } from 'material-ui';
-import { GenericListItem } from '../components';
+import React from 'react'
+import SelectField from 'material-ui/SelectField'
 
+import DateTimePicker from 'material-ui-datetimepicker'
+import DatePickerDialog from 'material-ui/DatePicker/DatePickerDialog'
+import TimePickerDialog from 'material-ui/TimePicker/TimePickerDialog'
+import MenuItem from 'material-ui/MenuItem'
+import { Card, CardHeader, CardText, } from 'material-ui/Card'
+import { List } from 'material-ui/List'
+import { FlatButton } from 'material-ui'
+
+import { GenericListItem } from '../components'
 const CloudUploadSettingsSummary = (props) => {
   const fullwidth = {
     width: '100%'
   }
 
+  console.log(props)
   return(
     <Card>
       <CardHeader
@@ -63,11 +67,11 @@ const CloudUploadSettingsSummary = (props) => {
           <GenericListItem
             leftEl='Start Date'
             rightEl={
-              <DatePicker 
+              <DateTimePicker
+                DatePicker={DatePickerDialog}
+                TimePicker={TimePickerDialog}
                 hintText="From"
                 textFieldStyle={fullwidth}
-                autoOk
-                mode="landscape" 
                 shouldDisableDate={shouldDisableDate}
                 value={props.startDate}
                 onChange={props.handleStartDateChange}
@@ -78,11 +82,11 @@ const CloudUploadSettingsSummary = (props) => {
           <GenericListItem
             leftEl='End Date'
             rightEl={
-              <DatePicker 
+              <DateTimePicker
+                DatePicker={DatePickerDialog}
+                TimePicker={TimePickerDialog}
                 hintText="Untill"
                 textFieldStyle={fullwidth}
-                autoOk
-                mode="landscape" 
                 shouldDisableDate={shouldDisableDate}
                 value={props.endDate}
                 onChange={props.handleEndDateChange}

@@ -17,20 +17,20 @@ class CloudUploadSettings extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      deviceId: props.device.deviceId,
-      streams: props.device.streams,
-      selectedComponent: props.device.streams[0].id,
       storageProviders: ['Provider A', 'Provider B', 'Provider C'],
       selectedProvider: 'Provider A',
       startDate: new Date(),
-      endDate: new Date()
+      endDate: new Date(),
+      streams: props.device.streams,
+      deviceId: props.device.deviceId,
+      selectedComponent: props.device.streams[0].id
     }
   }
 
   handleComponentChange = (event, key, value) => this.setState({selectedComponent: value})
   handleProviderChange = (event, key, value) => this.setState({selectedProvider: value})
-  handleStartDateChange = (event, date) => this.setState({startDate: date})
-  handleEndDateChange = (event, date) => this.setState({endDate: date})
+  handleStartDateChange = (date) => this.setState({startDate: new Date(date)})
+  handleEndDateChange = (date) => this.setState({endDate: new Date(date)})
   handleButtonClick = () => {
     this.props.cloudUploadData(
       this.state.deviceId,
