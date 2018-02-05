@@ -605,64 +605,17 @@ export const entityCreateByType = (data, type) => {
 }
 
 export const fetchLocks = () => {
-  /*TODO Lock format does not exist
-  actionExecutedLessThan: {
-   arity: 2,
-   descr: 'This lock ensures that the user attempting an action or accessing ' +
-   'an attribute has not executed an action more than a certain number of times. This lock ' +
-   'uses the audit mechanisms, which log security critical actions',
-   name: 'action execute less than',
-   args: [
-     'action',
-     'count'
-   ]
- },
- timePeriodLock: {
-   arity: 2,
-   descr: 'This lock evaluates to true when the current time lies within an ' +
-   'interval between a starting and end time of the day.',
-   name: 'Time interval',
-   args: [
-     'startTime',
-     'endTime'
-     ]
- },*/
-  const locks = {
-    hasType: {
-      arity: 1,
-      descr: 'This lock validates that an entity has a particular type. This ensures, for ' +
-      'example, that the action performing or on which the action is being performed is of ' +
-      'type "user"',
-      name: 'has type',
-      args: [
-        'type'
-      ]
-    },
-    attrEq: {
-      scopes: ['/device', '/client', '/gateway'],
-      arity: 2,
-      descr: 'This lock is open iff the entity to which this lock is applied to is tagged with the specified attibute which was defined in the specified group and whose value is equal to the specified value.',
-      name: 'attr is eq',
-      args: [
-        'attr',
-        'value'
-      ]
-    },
-    isOwner: {
-      scopes: ['/client', '/device', '/gateway'],
-      arity: 1,
-      descr: 'This lock allows us to ensure that the entity on which the action is being ' +
-      'performed is owned by the entity performing the action on it. This ensures that users ' +
-      'creating entities have the right to read or write some attributes according to our ' +
-      'default security model.',
-      name: 'owns'
-    }
-  }
-  return (dispatch) => {
-    dispatch(loading(true));
-    dispatch(action('LOCK_FORMATS', locks));
-    dispatch(loading(false));
-  }
+	return (dispatch) => {
+		dispatch(loading(true))
+		agile.idm.entity.getEntitiesSchema()
+		.then((schemas) => {
+			dispatch(action('LOCK_FORMATS', schemas.ui["/entity"].locks));
+			dispatch(loading(false));
+		}).catch(err => {
+			errorHandle(err, dispatch)
+		});
+	}
+
 }
 
 export const fetchEntityLocks = (entity_id, entity_type, field) => {
