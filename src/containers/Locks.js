@@ -54,13 +54,15 @@ class Locks extends Component {
 
 	addNewPolicy(ref, field, id, type) {
 		var newLockName = this.refs[ref].input.value
-		this.props.setLock({
-			entityId: id,
-			entityType: type,
-			field: field + "." + newLockName,
-			policy: []
-		})
-		this.refs[ref].input.value = '';
+    if(newLockName && newLockName !== '') {
+			this.props.setLock({
+				entityId: id,
+				entityType: type,
+				field: field + "." + newLockName,
+				policy: []
+			})
+			this.refs[ref].input.value = '';
+		}
 	}
 
 	renderAddPolicyButton(field) {
@@ -68,21 +70,28 @@ class Locks extends Component {
 
 		return (
 			<GenericListItem
-				leftEl='New sub policy name'
+        style={{rightEl: {padding: '20px'}, leftEl: {padding: '20px'}}}
+				leftEl='New sub policy'
 				rightEl={
 				  <div>
             <TextField
 							ref={`addPolicy_${id}_${type}_${field}`}
               hintText='Name of new policy'/>
-            <FloatingActionButton
-            mini={true}
-            id={`add_${id}_${field}`}
-            key={`${id}_${field}`}
-            label='Add'
-            style={deleteButtonStyle}
-            onClick={() => {this.addNewPolicy(`addPolicy_${id}_${type}_${field}`, field, id, type)}}>
-             <ContentAdd/>
-            </FloatingActionButton>
+              <span
+						  id={`add_${id}_${field}`}
+						  key={`${id}_${field}`}
+							style={{
+								float: 'right',
+								position: 'initial',
+								fontWeight: 'bold',
+								width: '10%',
+								color: '#008714',
+                padding: '8px'
+							}}
+							onClick={event => {this.addNewPolicy(`addPolicy_${id}_${type}_${field}`, field, id, type) }}
+						>
+            ADD NEW
+            </span>
           </div>
 				}
 			/>
