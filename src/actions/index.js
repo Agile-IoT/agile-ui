@@ -609,7 +609,7 @@ export const fetchLocks = () => {
 		dispatch(loading(true))
 		agile.idm.entity.getEntitiesSchema()
 		.then((schemas) => {
-			dispatch(action('LOCK_FORMATS', schemas.ui["/entity"].locks));
+			dispatch(action('LOCK_FORMATS', schemas.ui.locks));
 			dispatch(loading(false));
 		}).catch(err => {
 			errorHandle(err, dispatch)
