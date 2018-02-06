@@ -52,51 +52,53 @@ class Locks extends Component {
     )
   }
 
-	addNewPolicy(ref, field, id, type) {
-		var newLockName = this.refs[ref].input.value
-    if(newLockName && newLockName !== '') {
-			this.props.setLock({
-				entityId: id,
-				entityType: type,
-				field: field + "." + newLockName,
-				policy: []
-			})
-			this.refs[ref].input.value = '';
-		}
-	}
+  addNewPolicy(ref, field, id, type) {
+    var newLockName = this.refs[ref].input.value
+    if (newLockName && newLockName !== '') {
+      this.props.setLock({
+        entityId: id,
+        entityType: type,
+        field: field + "." + newLockName,
+        policy: []
+      })
+      this.refs[ref].input.value = '';
+    }
+  }
 
-	renderAddPolicyButton(field) {
-		const {id, type} = this.props.params
+  renderAddPolicyButton(field) {
+    const {id, type} = this.props.params
 
-		return (
-			<GenericListItem
+    return (
+      <GenericListItem
         style={{rightEl: {padding: '20px'}, leftEl: {padding: '20px'}}}
-				leftEl='New sub policy'
-				rightEl={
-				  <div>
+        leftEl='New sub policy'
+        rightEl={
+          <div>
             <TextField
-							ref={`addPolicy_${id}_${type}_${field}`}
+              ref={`addPolicy_${id}_${type}_${field}`}
               hintText='Name of new policy'/>
-              <span
-						  id={`add_${id}_${field}`}
-						  key={`${id}_${field}`}
-							style={{
-								float: 'right',
-								position: 'initial',
-								fontWeight: 'bold',
-								width: '10%',
-								color: '#008714',
+            <span
+              id={`add_${id}_${field}`}
+              key={`${id}_${field}`}
+              style={{
+                float: 'right',
+                position: 'initial',
+                fontWeight: 'bold',
+                width: '10%',
+                color: '#008714',
                 padding: '8px'
-							}}
-							onClick={event => {this.addNewPolicy(`addPolicy_${id}_${type}_${field}`, field, id, type) }}
-						>
+              }}
+              onClick={event => {
+                this.addNewPolicy(`addPolicy_${id}_${type}_${field}`, field, id, type)
+              }}
+            >
             ADD NEW
             </span>
           </div>
-				}
-			/>
-		)
-	}
+        }
+      />
+    )
+  }
 
   renderDeleteButton(field) {
     const {id, type} = this.props.params

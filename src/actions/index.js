@@ -605,17 +605,16 @@ export const entityCreateByType = (data, type) => {
 }
 
 export const fetchLocks = () => {
-	return (dispatch) => {
-		dispatch(loading(true))
-		agile.idm.entity.getEntitiesSchema()
-		.then((schemas) => {
-			dispatch(action('LOCK_FORMATS', schemas.ui.locks));
-			dispatch(loading(false));
-		}).catch(err => {
-			errorHandle(err, dispatch)
-		});
-	}
-
+  return (dispatch) => {
+    dispatch(loading(true))
+    agile.idm.entity.getEntitiesSchema()
+    .then((schemas) => {
+      dispatch(action('LOCK_FORMATS', schemas.ui.locks));
+      dispatch(loading(false));
+    }).catch(err => {
+      errorHandle(err, dispatch)
+    });
+  }
 }
 
 export const fetchEntityLocks = (entity_id, entity_type, field) => {
