@@ -195,7 +195,6 @@ class Locks extends Component {
   renderButtons() {
     const result= {}
     const {policies} = this.props
-		console.log(policies);
     for (let policy in policies) {
       result[policy] = policies[policy]
       result[policy].buttons = [
