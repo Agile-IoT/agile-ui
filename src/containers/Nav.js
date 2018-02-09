@@ -25,12 +25,12 @@ class Nav extends Component {
   }
 
   getTabs() {
-    if (this.props.schemas.schema) {
+    if (this.props.schemas.schema && this.props.schemas.ui && this.props.schemas.ui.entities) {
       return this.props.schemas.schema.filter(schema => {
-        const ui = this.props.schemas.ui && this.props.schemas.ui[schema.id] ? this.props.schemas.ui[schema.id] : {};
+        const ui = this.props.schemas.ui.entities[schema.id] ? this.props.schemas.ui.entities[schema.id] : {};
         return !ui.hidden;
       }).map(schema => {
-        const ui = this.props.schemas.ui && this.props.schemas.ui[schema.id] ? this.props.schemas.ui[schema.id] : {};
+        const ui = this.props.schemas.ui.entities[schema.id] ? this.props.schemas.ui.entities[schema.id] : {};
         return (
           <Tab key={schema.id}
                label={ui.name ? ui.name : schema.id}

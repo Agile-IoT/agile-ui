@@ -12,9 +12,11 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {Link} from 'react-router'
 import {FloatingActionButton, FlatButton} from 'material-ui'
+import TextField from 'material-ui/TextField'
 import ContentRemove from 'material-ui/svg-icons/content/remove'
+import ContentAdd from 'material-ui/svg-icons/content/add'
 import {fetchEntityLocks, deleteLock, setLock} from '../actions'
-import {LockItem} from '../components'
+import {LockItem, GenericListItem} from '../components'
 
 const deleteButtonStyle = {
   margin: 0,
@@ -28,8 +30,8 @@ class Locks extends Component {
     const {id, type} =this.props.params
 
     return (
-      <Link 
-        key={`addread_${field}`} 
+      <Link
+        key={`addwrite_${field}`}
         to={`/lock/add/${id}/${type}/${field}/write`}
       >
         <FlatButton label={`Add write lock`}/>
@@ -41,12 +43,60 @@ class Locks extends Component {
     const {id, type} = this.props.params
 
     return (
-      <Link 
-        key={`addwrite_${field}`} 
+      <Link
+        key={`addread_${field}`}
         to={`/lock/add/${id}/${type}/${field}/read`}
       >
         <FlatButton label={`Add read lock`}/>
       </Link>
+    )
+  }
+
+  addNewPolicy(ref, field, id, type) {
+    var newLockName = this.refs[ref].input.value
+    if (newLockName && newLockName !== '') {
+      this.props.setLock({
+        entityId: id,
+        entityType: type,
+        field: field + "." + newLockName,
+        policy: []
+      })
+      this.refs[ref].input.value = '';
+    }
+  }
+
+  renderAddPolicyButton(field) {
+    const {id, type} = this.props.params
+
+    return (
+      <GenericListItem
+        style={{rightEl: {padding: '20px'}, leftEl: {padding: '20px'}}}
+        leftEl='New sub policy'
+        rightEl={
+          <div>
+            <TextField
+              ref={`addPolicy_${id}_${type}_${field}`}
+              hintText='Name of new policy'/>
+            <span
+              id={`add_${id}_${field}`}
+              key={`${id}_${field}`}
+              style={{
+                float: 'right',
+                position: 'initial',
+                fontWeight: 'bold',
+                width: '10%',
+                color: '#008714',
+                padding: '8px'
+              }}
+              onClick={event => {
+                this.addNewPolicy(`addPolicy_${id}_${type}_${field}`, field, id, type)
+              }}
+            >
+            ADD NEW
+            </span>
+          </div>
+        }
+      />
     )
   }
 
@@ -71,7 +121,7 @@ class Locks extends Component {
   renderBlockDeleteButton(field, i) {
     const {id, type} = this.props.params
     return (
-      <FloatingActionButton 
+      <FloatingActionButton
         mini={true}
         id={`delete_${id}_${field}_${i}`}
         key={`${id}_${field}_${i}`}
@@ -104,7 +154,7 @@ class Locks extends Component {
   renderLockDeleteButton(field, i, j) {
     const {id, type} = this.props.params
     return (
-      <FloatingActionButton 
+      <FloatingActionButton
         mini={true}
         id={`delete_${id}_${field}_${i}_{j}`}
         key={`${id}_${field}_${i}_${j}`}
@@ -150,7 +200,8 @@ class Locks extends Component {
       result[policy].buttons = [
         this.renderDeleteButton(policy),
         this.renderAddWriteLockButton(policy),
-        this.renderAddReadLockButton(policy)
+        this.renderAddReadLockButton(policy),
+        this.renderAddPolicyButton(policy)
       ]
       result[policy].flows.forEach(this.deleteButtons.bind(this, policy))
     }
