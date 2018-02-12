@@ -14,7 +14,6 @@ import {Link} from 'react-router'
 import {FloatingActionButton, FlatButton} from 'material-ui'
 import TextField from 'material-ui/TextField'
 import ContentRemove from 'material-ui/svg-icons/content/remove'
-import ContentAdd from 'material-ui/svg-icons/content/add'
 import {fetchEntityLocks, deleteLock, setLock} from '../actions'
 import {LockItem, GenericListItem} from '../components'
 
