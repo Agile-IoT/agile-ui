@@ -9,7 +9,6 @@
  *    Resin.io, FBK, Jolocom - initial API and implementation
  ******************************************************************************/
 import React from 'react';
-import Divider from 'material-ui/Divider';
 import { RaisedButton } from 'material-ui';
 import { Card, CardText, CardHeader } from 'material-ui/Card';
 import { List, ListItem } from 'material-ui/List';

@@ -17,8 +17,8 @@ class Entity extends Component {
 
   renderEntity(entity) {
     const { schemas } = this.props
-    const fieldProperties = schemas.ui && schemas.ui[entity.type]
-      ? schemas.ui[entity.type].attributes
+    const fieldProperties = schemas.ui.entities && schemas.ui.entities[entity.type]
+      ? schemas.ui.entities[entity.type].attributes
       : {}
 
     return (<SecurityDetails
