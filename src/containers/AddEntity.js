@@ -40,7 +40,7 @@ class AddEntity extends Component {
     const idKeyPresent = Object.keys(schema.properties)
       .find(p => p.toLowerCase === 'id')
 
-    if(idKeyPresent) {
+    if(!idKeyPresent) {
       schema.properties.id = {type: 'string'}
       schema.required.push('id')
     }

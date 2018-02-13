@@ -545,7 +545,7 @@ export const entityDeleteByType = (entity, type) => {
     case 'group':
       return groupDelete(entity.owner, entity.group_name);
     default:
-      return entityDelete(entity.name, type)
+      return entityDelete(entity.id, type)
   }
 }
 
