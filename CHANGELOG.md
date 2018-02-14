@@ -5,6 +5,10 @@
 # which accompanies this distribution, and is available at
 # http://www.eclipse.org/legal/epl-v10.html
 
+## v2.1.2 - 2018-02-14
+
+* Bumping version number [Csaba Kiraly]
+
 ## v2.1.1 - 2018-02-02
 
 * Fix to dispatch correct action. [Exulansis]
