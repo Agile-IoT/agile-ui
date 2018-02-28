@@ -29,7 +29,6 @@ const action = (type, data) => {
 const DEVICE_TYPE = 'device';
 
 export const loading = bool => {
-  console.log('called')
   return {
     type: 'LOADING',
     data: bool
@@ -163,7 +162,6 @@ export const streamsFetch = (deviceId) => {
     dispatch(loading(true))
     agile.device.lastUpdate(deviceId)
     .then(streams => {
-      console.log(streams)
       dispatch(action('STREAMS', {deviceId, streams}));
       dispatch(loading(false));
     })
@@ -399,19 +397,20 @@ export const canExecuteActions = (id, type, attribute_names, actions) => {
 
 export const recommendationsFetch = () => {
   return (dispatch) => {
-    // TODO AGILE SDK
     dispatch(loading(true))
 
     const protocol = document.location.protocol || 'http:'
     const host = document.location.hostname
     const apiEndpoint = `${protocol}//${host}:8090/recommenderdockerservice`
 
-    window.fetch(`${apiEndpoint}/getDeviceRecommendation`).then(result => {
+    window.fetch(`${apiEndpoint}/getDeviceRecommendation`)
+    .then(r => r.json())
+    .then(data => {
       dispatch(loading(false))
-      dispatch(action('RECOMMENDATIONS', result.deviceList))
+      dispatch(action('RECOMMENDATIONS', data.deviceList))
     }).catch(err => {
       dispatch(loading(false))
-		  errorHandle(err, dispatch)
+      errorHandle(err, dispatch)
     })
   }
 }
