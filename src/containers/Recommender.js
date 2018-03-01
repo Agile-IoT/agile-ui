@@ -70,7 +70,7 @@ class Recommender extends Component {
 
   generateBuyButton(record) {
     return ( 
-      <IconButton href={record.href}>
+      <IconButton onClick={() => window.open(record.href)}>
         <ShoppingCart />
       </IconButton>
     )
