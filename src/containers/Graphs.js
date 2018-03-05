@@ -87,6 +87,7 @@ class Graphs extends Component {
   }
 
   renderSettings() {
+    const {graphs} = this.state
     return <Toolbar>
       <ToolbarGroup>
         <ToolbarTitle text='Settings' />
@@ -98,16 +99,19 @@ class Graphs extends Component {
          <ToolbarTitle text='Synchronize' />
         </ToolbarGroup>
         <ToolbarGroup>
-         <Checkbox onCheck = {() => this.toggleSinchronize()} />
+         <Checkbox
+          onCheck = {() => this.toggleSynchronize()}
+          disabled = {graphs && graphs.length < 2}
+        />
         </ToolbarGroup>
       </ToolbarGroup>
      </Toolbar>
   }
 
-  toggleSinchronize() {
+  toggleSynchronize() {
     const { graphs, synchronize } = this.state
 
-    if ((graphs && graphs.length === 0) || !graphs) {
+    if ((graphs && graphs.length < 2) || !graphs) {
       return
     }
 

@@ -204,7 +204,6 @@ export const fetchEntitySchemas = () => {
   }
 }
 
-
 export const devicesDelete = (deviceId) => {
   return (dispatch) => {
     dispatch(loading(true))
@@ -396,19 +395,20 @@ export const canExecuteActions = (id, type, attribute_names, actions) => {
 
 export const recommendationsFetch = () => {
   return (dispatch) => {
-    // TODO AGILE SDK
     dispatch(loading(true))
 
     const protocol = document.location.protocol || 'http:'
     const host = document.location.hostname
     const apiEndpoint = `${protocol}//${host}:8090/recommenderdockerservice`
 
-    window.fetch(`${apiEndpoint}/getDeviceRecommendation`).then(result => {
+    window.fetch(`${apiEndpoint}/getDeviceRecommendation`)
+    .then(r => r.json())
+    .then(data => {
       dispatch(loading(false))
-      dispatch(action('RECOMMENDATIONS', result.deviceList))
+      dispatch(action('RECOMMENDATIONS', data.deviceList))
     }).catch(err => {
       dispatch(loading(false))
-		  errorHandle(err, dispatch)
+      errorHandle(err, dispatch)
     })
   }
 }
@@ -542,7 +542,7 @@ export const entityDeleteByType = (entity, type) => {
     case 'group':
       return groupDelete(entity.owner, entity.group_name);
     default:
-      return entityDelete(entity.name, type)
+      return entityDelete(entity.id, type)
   }
 }
 
@@ -602,63 +602,15 @@ export const entityCreateByType = (data, type) => {
 }
 
 export const fetchLocks = () => {
-  /*TODO Lock format does not exist
-  actionExecutedLessThan: {
-   arity: 2,
-   descr: 'This lock ensures that the user attempting an action or accessing ' +
-   'an attribute has not executed an action more than a certain number of times. This lock ' +
-   'uses the audit mechanisms, which log security critical actions',
-   name: 'action execute less than',
-   args: [
-     'action',
-     'count'
-   ]
- },
- timePeriodLock: {
-   arity: 2,
-   descr: 'This lock evaluates to true when the current time lies within an ' +
-   'interval between a starting and end time of the day.',
-   name: 'Time interval',
-   args: [
-     'startTime',
-     'endTime'
-     ]
- },*/
-  const locks = {
-    hasType: {
-      arity: 1,
-      descr: 'This lock validates that an entity has a particular type. This ensures, for ' +
-      'example, that the action performing or on which the action is being performed is of ' +
-      'type "user"',
-      name: 'has type',
-      args: [
-        'type'
-      ]
-    },
-    attrEq: {
-      scopes: ['/device', '/client', '/gateway'],
-      arity: 2,
-      descr: 'This lock is open iff the entity to which this lock is applied to is tagged with the specified attibute which was defined in the specified group and whose value is equal to the specified value.',
-      name: 'attr is eq',
-      args: [
-        'attr',
-        'value'
-      ]
-    },
-    isOwner: {
-      scopes: ['/client', '/device', '/gateway'],
-      arity: 1,
-      descr: 'This lock allows us to ensure that the entity on which the action is being ' +
-      'performed is owned by the entity performing the action on it. This ensures that users ' +
-      'creating entities have the right to read or write some attributes according to our ' +
-      'default security model.',
-      name: 'owns'
-    }
-  }
   return (dispatch) => {
-    dispatch(loading(true));
-    dispatch(action('LOCK_FORMATS', locks));
-    dispatch(loading(false));
+    dispatch(loading(true))
+    agile.idm.entity.getEntitiesSchema()
+    .then((schemas) => {
+      dispatch(action('LOCK_FORMATS', schemas.ui.locks));
+      dispatch(loading(false));
+    }).catch(err => {
+      errorHandle(err, dispatch)
+    });
   }
 }
 
@@ -753,7 +705,6 @@ export const discoveryToggle = () => {
   }
 }
 
-// TODO EXPIREMENTAL
 export const locStorPolicyAdd = (deviceID, componentID, interval, retention) => {
   return (dispatch, currentState) => {
     dispatch(loading(true))
@@ -776,32 +727,29 @@ export const locStorPolicyAdd = (deviceID, componentID, interval, retention) => 
 export const locStorPolicyDelete = (deviceID, componentID) => {
   return (dispatch, currentState) => {
     dispatch(loading(true))
-    agile.data.subscription.get().then(subscriptions => {
-      const matching = subscriptions
-        .find(sub => sub.deviceID === deviceID && sub.componentID === componentID)
-
-      if (!matching)
-        errorHandle({msg: 'Could not remove subscription'}, dispatch)
-
-      agile.data.subscription.delete(matching._id).then(() => {
-        dispatch(loading(false))
-        dispatch(message('Subscription deleted.'));
-        dispatch(locStorPoliciesFetch(deviceID))
-      }).catch(err => {
-        errorHandle(err, dispatch)
+    const query = `deviceID=${deviceID}&componentID=${componentID}`
+    agile.data.subscription.get(query).then(subscriptions => {
+      subscriptions.forEach(subscription => {
+        agile.data.subscription.delete(subscription._id).then(() => {
+          dispatch(loading(false))
+          dispatch(message('Subscription deleted.'));
+          dispatch(locStorPoliciesFetch(deviceID))
+        }).catch(err => {
+          errorHandle(err, dispatch)
+        })
       })
     })
   }
 }
 
-// TODO Policies per device ID / Component ID do not work atm.
 export const locStorPoliciesFetch = (deviceID) => {
   return (dispatch, currentState) => {
     dispatch(loading(true))
-    agile.data.subscription.get()
+    const query = `deviceID=${deviceID}`
+    agile.data.subscription.get(query)
     .then(policies => {
-      dispatch(loading(false))
       dispatch(action('POLICIES', policies));
+      dispatch(loading(false))
     })
     .catch(err => {
       errorHandle(err, dispatch)
@@ -811,15 +759,11 @@ export const locStorPoliciesFetch = (deviceID) => {
 
 export const recordsFetch = (deviceId, componentId) => {
   return(dispatch) => {
-    const query = `where={
-      "deviceID": "${deviceId}",
-      "componentID": "${componentId}"
-    }`
-
+    const query = `deviceID=${deviceId}&componentID=${componentId}`
     dispatch(loading(true))
     agile.data.record.get(query).then(records => {
-      dispatch(loading(false))
       dispatch(action('DEVICE_RECORDS', {deviceId, records}))
+      dispatch(loading(false))
     }).catch(err => {
       err.message = `Connecting to Agile Data : ${err.message}`
       errorHandle(err, dispatch)

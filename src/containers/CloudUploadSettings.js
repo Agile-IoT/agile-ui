@@ -17,8 +17,8 @@ class CloudUploadSettings extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      storageProviders: ['Provider A', 'Provider B', 'Provider C'],
-      selectedProvider: 'Provider A',
+      storageProviders: ['OwnCloud', 'Dropbox'],
+      selectedProvider: 'OwnCloud',
       startDate: new Date(),
       endDate: new Date(),
       streams: props.device.streams,

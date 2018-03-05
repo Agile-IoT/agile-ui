@@ -28,7 +28,6 @@ import { ListItem } from 'material-ui/List';
 import {FloatingActionButton} from 'material-ui';
 import {Link} from 'react-router';
 import Done from 'material-ui/svg-icons/action/done'
-import AddIcon from 'material-ui/svg-icons/content/add-circle-outline'
 import TextField from 'material-ui/TextField';
 import ContentEdit from 'material-ui/svg-icons/editor/mode-edit'
 import SecurityItem from '../components/SecurityItem';
@@ -97,7 +96,7 @@ class SecurityDetails extends Component {
           }}
         />
         <TextField
-          hintText={'Old Password'} 
+          hintText={'New Password'}
           ref='new_password'
           style={{
             width: '30%',
@@ -281,7 +280,7 @@ class SecurityDetails extends Component {
         }
 
         let attributeField = {
-          name: k,
+          name: fieldProperties[k] && fieldProperties[k].name ? fieldProperties[k].name : k,
           value: this.isPrimitive(entity[k]) ? entity[k] : this.renderDetails(entity[k], fieldProperties, attribute),
           editable: this.isEditable(fieldProperties, attribute)
         };

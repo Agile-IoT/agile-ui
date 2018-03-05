@@ -5,6 +5,22 @@
 # which accompanies this distribution, and is available at
 # http://www.eclipse.org/legal/epl-v10.html
 
+## v2.1.4 - 2018-03-01
+
+* Fix recommender rendering. [Exulansis]
+
+## v2.1.3 - 2018-02-14
+
+* Dockerfile: fixing issues with x86_64 baseimage [Csaba Kiraly]
+
+## v2.1.2 - 2018-02-14
+
+* Bumping version number [Csaba Kiraly]
+
+## v2.1.1 - 2018-02-02
+
+* Fix to dispatch correct action. [Exulansis]
+
 ## v2.1.0 - 2018-02-02
 
 * Implementation of recommender UI elements based on mock API calls. [Exulansis]

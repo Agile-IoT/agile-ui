@@ -40,8 +40,9 @@ class LocalStorageSettings extends Component {
   handleRetentionChange = (event, value) => this.setState({retention: value})
   handleComponentChange = (event, key, value) => this.setState({selectedComponent: value})
   handleButtonClick = () => {
-    const existing =
-      this.props.localStorage.find(pol => pol.componentID === this.state.selectedComponent)
+    const existing = this.props.localStorage.find(pol =>
+      pol.componentID === this.state.selectedComponent
+    )
 
     if (!existing)
       this.props.locStorPolicyAdd(
