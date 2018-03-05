@@ -5,6 +5,10 @@
 # which accompanies this distribution, and is available at
 # http://www.eclipse.org/legal/epl-v10.html
 
+## v2.2.0 - 2018-03-05
+
+* Displaying measurement units, refactor to support the new SDK interface. [Exulansis]
+
 ## v2.1.4 - 2018-03-01
 
 * Fix recommender rendering. [Exulansis]

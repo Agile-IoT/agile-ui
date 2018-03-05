@@ -1,6 +1,6 @@
 {
   "name": "Agile-ui",
-  "version": "2.1.4",
+  "version": "2.2.0",
   "description": "Agile IoT device manager UI",
   "repository": "https://github.com/Agile-IoT/agile-ui",
   "devDependencies": {
