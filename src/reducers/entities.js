@@ -257,7 +257,10 @@ export function records(state = {}, action) {
       const { deviceId } = action.data
       return {
         ...state,
-        [deviceId]: action.data.records
+        [deviceId]: action.data.records.map(rec => [
+          new Date(rec.lastUpdate),
+          parseInt(rec.value)
+        ])
       }
     default:
       return state

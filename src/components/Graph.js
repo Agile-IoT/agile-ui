@@ -53,10 +53,9 @@ class Graph extends Component {
       agileDataRecords.length
     ) {
       this.setState({recordsAdded: true})
-      toAdd = formatData(agileDataRecords, componentId)
+      toAdd = agileDataRecords
     }
 
-    // Append the latest, realTime data to the graph
     if (nextProps.streams[deviceId]) {
       const realTimeRecord = this.props.streams[deviceId]
         .find(str => str.componentID === componentId)
@@ -96,6 +95,7 @@ class Graph extends Component {
     if (this.state.g) {
       this.state.g.updateOptions( {'file': this.state.data} );
     } else {
+      const {unit} = this.props.streams[this.props.deviceId][0]
       const g = new window.Dygraph(
         document.getElementById(`graphdiv${this.props.componentId}`),
         this.state.data,
@@ -106,6 +106,7 @@ class Graph extends Component {
           strokeWidth: 1.5,
           color: '#00BCD4',
           labels: ['Time', this.props.componentId],
+          axes: { y: { valueFormatter: (v) => `${v} ${unit}` } },
           animatedZooms: true,
           stackedGraphNaNFill: 'inside'
         }
@@ -114,29 +115,6 @@ class Graph extends Component {
       this.setState({ g: g })
     }
   }
-}
-
-// This is here because the api call to retrieve data per componentID is not
-// yet working
-const _tempSortFunc = (data, componentId) => {
-  const relevant = []
-  data.forEach(r => {
-    if (r.componentID === componentId)
-      relevant.push([new Date(r.lastUpdate), parseInt(r.value)])
-  })
-
-  return relevant
-}
-
-const formatData = (data, compId) => {
-  var graphData = _tempSortFunc(data, compId)
-  /*
-  data.forEach(r => {
-    graphData.push([new Date(r.lastUpdate), parseInt(r.value)])
-  })
-  */
-
-  return graphData
 }
 
 const mapStateToProps = (state) => {
