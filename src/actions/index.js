@@ -204,7 +204,6 @@ export const fetchEntitySchemas = () => {
   }
 }
 
-
 export const devicesDelete = (deviceId) => {
   return (dispatch) => {
     dispatch(loading(true))
@@ -707,7 +706,6 @@ export const discoveryToggle = () => {
   }
 }
 
-// TODO EXPIREMENTAL
 export const locStorPolicyAdd = (deviceID, componentID, interval, retention) => {
   return (dispatch, currentState) => {
     dispatch(loading(true))
@@ -730,32 +728,29 @@ export const locStorPolicyAdd = (deviceID, componentID, interval, retention) => 
 export const locStorPolicyDelete = (deviceID, componentID) => {
   return (dispatch, currentState) => {
     dispatch(loading(true))
-    agile.data.subscription.get().then(subscriptions => {
-      const matching = subscriptions
-        .find(sub => sub.deviceID === deviceID && sub.componentID === componentID)
-
-      if (!matching)
-        errorHandle({msg: 'Could not remove subscription'}, dispatch)
-
-      agile.data.subscription.delete(matching._id).then(() => {
-        dispatch(loading(false))
-        dispatch(message('Subscription deleted.'));
-        dispatch(locStorPoliciesFetch(deviceID))
-      }).catch(err => {
-        errorHandle(err, dispatch)
+    const query = `deviceID=${deviceID}&componentID=${componentID}`
+    agile.data.subscription.get(query).then(subscriptions => {
+      subscriptions.forEach(subscription => {
+        agile.data.subscription.delete(subscription._id).then(() => {
+          dispatch(loading(false))
+          dispatch(message('Subscription deleted.'));
+          dispatch(locStorPoliciesFetch(deviceID))
+        }).catch(err => {
+          errorHandle(err, dispatch)
+        })
       })
     })
   }
 }
 
-// TODO Policies per device ID / Component ID do not work atm.
 export const locStorPoliciesFetch = (deviceID) => {
   return (dispatch, currentState) => {
     dispatch(loading(true))
-    agile.data.subscription.get()
+    const query = `deviceID=${deviceID}`
+    agile.data.subscription.get(query)
     .then(policies => {
-      dispatch(loading(false))
       dispatch(action('POLICIES', policies));
+      dispatch(loading(false))
     })
     .catch(err => {
       errorHandle(err, dispatch)
@@ -765,15 +760,11 @@ export const locStorPoliciesFetch = (deviceID) => {
 
 export const recordsFetch = (deviceId, componentId) => {
   return(dispatch) => {
-    const query = `where={
-      "deviceID": "${deviceId}",
-      "componentID": "${componentId}"
-    }`
-
+    const query = `deviceID=${deviceId}&componentID=${componentId}`
     dispatch(loading(true))
     agile.data.record.get(query).then(records => {
-      dispatch(loading(false))
       dispatch(action('DEVICE_RECORDS', {deviceId, records}))
+      dispatch(loading(false))
     }).catch(err => {
       err.message = `Connecting to Agile Data : ${err.message}`
       errorHandle(err, dispatch)
