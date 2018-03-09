@@ -115,7 +115,7 @@ export const deviceSubscribe = (deviceId, componentId) => {
   return (dispatch) => {
     dispatch(loading(true))
     agile.device.subscribe(deviceId, componentId)
-    .then(devices => {
+    .then(stream => {
       dispatch(loading(false));
     })
     .catch(err => {
@@ -772,28 +772,14 @@ export const recordsFetch = (deviceId, componentId) => {
 }
 
 export const cloudUploadData = (deviceID, componentID, startDate, endDate, provider) => {
-  // TODO Workaround, will go away once we provide the user with a way to select precise time.
-  const query = `where={"deviceID": "${deviceID}", "componentID": "${componentID}"}`
-  startDate.setHours(0, 0)
-  endDate.setHours(23, 59)
+  /* NO SUPPORT ON AGILE DATA AND SDK YET.
   return (dispatch) => {
     dispatch(loading(true))
-    agile.data.record.get(query)
-    .then(entries => {
-      // TODO this is a workaround, ideally should be able to query the DB directly.
-      const relevant = entries.filter(entry => {
-        let entryDate = new Date(entry.time)
-        const tooEarly = entryDate < startDate
-        const tooLate = entryDate > endDate
-        return !tooEarly && !tooLate
-      })
-
-      return relevant
-    }).then(data => {
+    agile.data.cloud.upload(query).then(res => {
       dispatch(loading(false))
-      alert(`${data.length} entries are ready for upload to ${provider}`)
     }).catch(err => {
       errorHandle(err, dispatch)
     })
   }
+  */
 }

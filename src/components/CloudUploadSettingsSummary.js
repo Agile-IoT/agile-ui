@@ -67,12 +67,13 @@ const CloudUploadSettingsSummary = (props) => {
             leftEl='Start Date'
             rightEl={
               <DateTimePicker
+                format="hh:mm A DD MMM"
+                showCurrentDateByDefault={true}
                 DatePicker={DatePickerDialog}
                 TimePicker={TimePickerDialog}
                 hintText="From"
                 textFieldStyle={fullwidth}
                 shouldDisableDate={shouldDisableDate}
-                value={props.startDate}
                 onChange={props.handleStartDateChange}
               />
             }
@@ -82,12 +83,13 @@ const CloudUploadSettingsSummary = (props) => {
             leftEl='End Date'
             rightEl={
               <DateTimePicker
+                format="hh:mm A DD MMM"
+                showCurrentDateByDefault={true}
                 DatePicker={DatePickerDialog}
                 TimePicker={TimePickerDialog}
                 hintText="Untill"
                 textFieldStyle={fullwidth}
                 shouldDisableDate={shouldDisableDate}
-                value={props.endDate}
                 onChange={props.handleEndDateChange}
               />
             }
