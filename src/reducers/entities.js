@@ -11,7 +11,7 @@
 import sortBy from 'lodash/sortBy';
 import omit from 'lodash/omit';
 
-export function devices(state = {}, action) {
+export function devices(state = {loading: false}, action) {
   switch (action.type) {
     case 'DEVICE':
       return {
@@ -27,7 +27,6 @@ export function devices(state = {}, action) {
         ...state,
         [action.data.deviceId] : action.data
       }
-
     default:
       return state;
   }
@@ -200,10 +199,29 @@ export function messages(state = [], action) {
   }
 }
 
-export function loading(state = false, action) {
+const defLoadingState = {
+  generic: false,
+  devices: false,
+  entity: false
+}
+
+export function loading(state = defLoadingState, action) {
   switch (action.type) {
+    case 'ENTITY_LOADING':
+      return {
+        ...state,
+        entity: action.data
+      }
+    case 'DEVICES_LOADING':
+      return {
+        ...state,
+        devices: action.data
+      }
     case 'LOADING':
-      return action.data;
+      return {
+        ...state,
+        generic: action.data
+      }
     default:
       return state;
   }

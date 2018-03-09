@@ -14,9 +14,9 @@ import LinearProgress from 'material-ui/LinearProgress';
 import { redA400 } from 'material-ui/styles/colors';
 
 const LoadingBar = (props) => {
-  const { loading } = props
+  const { generic } = props.loading
   return (
-    loading ? <LinearProgress style={{position: 'absolute', top: 0, height: '2px'}} color={redA400} mode="indeterminate" /> : <div></div>
+    generic ? <LinearProgress style={{position: 'absolute', top: 0, height: '2px'}} color={redA400} mode="indeterminate" /> : <div></div>
   )
 };
 

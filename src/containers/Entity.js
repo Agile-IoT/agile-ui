@@ -12,6 +12,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {entityFetch} from '../actions'
 import {SecurityDetails} from './'
+import CircularProgress from 'material-ui/CircularProgress'
 
 class Entity extends Component {
 
@@ -38,11 +39,32 @@ class Entity extends Component {
   }
 
   render() {
+    const styles = {
+      noDataDiv: {
+        height: '100%',
+        width: '100%',
+        textAlign: 'center',
+        paddingTop: '30%'
+      },
+      noDataText: {
+        fontWeight: 'bold',
+        fontSize: '1.2em',
+        color: '#9E9E9E'
+      }
+    }
     const {id, type} = this.props.params
 
     const relevantEntity = this.props.entityList.find(entity =>
       entity.id === id && entity.type.replace('/', '') === type
     )
+
+    if (this.props.loading.entity) {
+      return (
+        <div className='loadingScreen'>
+          <CircularProgress size={250} thickness={10}/>
+        </div>
+      )
+    }
 
     if (relevantEntity) {
       return (
@@ -50,14 +72,20 @@ class Entity extends Component {
       )
     }
 
-    return (<div> No Entity data was found </div>)
+
+    return (<div style={styles.noDataDiv}>
+      <span style={styles.noDataText}>
+        No entity data found
+      </span>
+    </div>)
   }
 }
 
 const mapStateToProps = state => {
   return {
     entityList: state.entityList,
-    schemas: state.schemas
+    schemas: state.schemas,
+    loading: state.loading
   }
 }
 

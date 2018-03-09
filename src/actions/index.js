@@ -28,6 +28,21 @@ const action = (type, data) => {
 
 const DEVICE_TYPE = 'device';
 
+export const entityLoading = bool => {
+  return {
+    type: 'ENTITY_LOADING',
+    data: bool
+  };
+}
+
+
+export const devicesLoading = bool => {
+  return {
+    type: 'DEVICES_LOADING',
+    data: bool
+  };
+}
+
 export const loading = bool => {
   return {
     type: 'LOADING',
@@ -80,11 +95,9 @@ export const setLocComponentId = (componentId) => {
 // fetch all unregistered devices
 export const devicesDiscover = () => {
   return (dispatch) => {
-    dispatch(loading(true))
     agile.protocolManager.devices()
     .then(devices => {
       dispatch(action('DEVICES_DISCOVER', devices));
-      dispatch(loading(false));
     })
     .catch(err => {
       errorHandle(err, dispatch)
@@ -94,7 +107,6 @@ export const devicesDiscover = () => {
 
 export const deviceTypesFetch = (deviceOverview) => {
   return (dispatch) => {
-    dispatch(loading(true))
     agile.deviceManager.typeof(deviceOverview)
     .then(deviceTypes => {
       dispatch(
@@ -103,7 +115,6 @@ export const deviceTypesFetch = (deviceOverview) => {
           types: deviceTypes
         })
       );
-      dispatch(loading(false));
     })
     .catch(err => {
       errorHandle(err, dispatch)
@@ -168,11 +179,11 @@ export const deviceFetch = (deviceId) => {
 
 export const streamsFetch = (deviceId) => {
   return (dispatch) => {
-    dispatch(loading(true))
+    // dispatch(loading(true))
     agile.device.lastUpdate(deviceId)
     .then(streams => {
       dispatch(action('STREAMS', {deviceId, streams}));
-      dispatch(loading(false));
+      // dispatch(loading(false));
     })
     .catch(err => {
       errorHandle(err, dispatch)
@@ -183,16 +194,16 @@ export const streamsFetch = (deviceId) => {
 // fetch all registered devices and their streams
 export const devicesAndStreamsFetch = () => {
   return (dispatch) => {
-    dispatch(loading(true))
+    dispatch(devicesLoading(true))
     agile.deviceManager.get()
     .then(devices => {
       if (devices) {
         const deviceMap = {}
         devices.forEach(d => deviceMap[d.deviceId] = d)
-        dispatch(action('DEVICES', deviceMap));
-        devices.forEach(d => dispatch(streamsFetch(d.deviceId)));
+        dispatch(action('DEVICES', deviceMap))
+        devices.forEach(d => dispatch(streamsFetch(d.deviceId)))
       }
-      dispatch(loading(false))
+      dispatch(devicesLoading(false))
     })
     .catch(err => {
       errorHandle(err, dispatch)
@@ -432,12 +443,12 @@ export const currentTab = (type) => {
 
 export const entityFetch = (type) => {
   return (dispatch) => {
-		dispatch(loading(true))
+		dispatch(entityLoading(true))
 		if (type === 'group') {
 			agile.idm.group.get()
 			.then(entities => {
 				dispatch(action('ENTITIES', entities));
-				dispatch(loading(false));
+				dispatch(entityLoading(false));
 			})
 			.catch(err => {
 				errorHandle(err, dispatch)
@@ -446,7 +457,7 @@ export const entityFetch = (type) => {
 			agile.idm.entity.getByType(type)
 			.then(entities => {
 				dispatch(action('ENTITIES', entities));
-				dispatch(loading(false));
+				dispatch(entityLoading(false));
 			})
 			.catch(err => {
 				errorHandle(err, dispatch)

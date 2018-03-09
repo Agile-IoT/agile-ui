@@ -14,6 +14,7 @@ import { FlatButton } from 'material-ui';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import { devicesAndStreamsFetch, devicesDelete } from '../actions';
+import CircularProgress from 'material-ui/CircularProgress'
 
 class Devices extends Component {
   renderActions(device) {
@@ -57,6 +58,14 @@ class Devices extends Component {
   }
 
   render() {
+    if (this.props.loading.devices) {
+      return (
+        <div className='loadingScreen'>
+          <CircularProgress size={250} thickness={10}/>
+        </div>
+      )
+    }
+
     return (
       <div className="devices">
         {this.renderItems(this.props.devices)}
@@ -67,6 +76,7 @@ class Devices extends Component {
 
 const mapStateToProps = (state) => {
   return {
+    loading: state.loading,
     devices: state.devices
   };
 };

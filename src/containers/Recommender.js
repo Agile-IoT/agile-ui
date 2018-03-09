@@ -90,7 +90,7 @@ class Recommender extends Component {
   
   render() {
     return (<div>
-      {this.props.loading 
+      {this.props.loading.generic
       ? <div className='loadingScreen'>
         <CircularProgress size={250} thickness={10}/>
       </div>
