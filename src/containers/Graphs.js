@@ -16,51 +16,29 @@ import CircularProgress from 'material-ui/CircularProgress'
 import { Graph } from '../components/'
 import {
   streamsFetch ,
-  deviceSubscribe,
-  deviceUnsubscribe
 } from '../actions'
 
 class Graphs extends Component {
   constructor(props){
       super(props)
-      this.state={
-        device: this.props.devices[this.props.params.deviceId],
-        streams: this.props.streams[this.props.params.deviceId],
+
+      this.state = {
         graphs: [],
         synchronize: undefined
       }
   }
 
   componentDidMount() {
-    this.subscribe()
+    const {deviceId} = this.props.params
+    const device = this.props.devices[deviceId]
+    const streams = this.props.streams[deviceId]
 
-    if(!this.state.device)
-      this.props.deviceFetch(this.props.params.deviceId)
+    if(!device) {
+      this.props.deviceFetch(deviceId)
+    }
 
-    if(!this.state.streams)
-      this.props.streamsFetch(this.props.params.deviceId)
-
-    this.props.streamsFetch(this.props.params.deviceId)
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.setState({streams: nextProps.streams[this.props.params.deviceId]})
-
-    if (!this.state.device)
-      this.setState({device: nextProps.devices[this.props.params.deviceId]})
-
-    setTimeout(() => {
-      this.props.streamsFetch(this.props.params.deviceId)
-    }, 2000)
-  }
-
-  subscribe() {
-    const { device } = this.state
-
-    if (device && device.streams) {
-      device.streams.map(s => {
-        return this.props.deviceSubscribe(device.deviceId, s.id)
-      })
+    if(!streams) {
+      this.props.streamsFetch(deviceId)
     }
   }
 
@@ -109,7 +87,7 @@ class Graphs extends Component {
   }
 
   toggleSynchronize() {
-    const { graphs, synchronize } = this.state
+    const {graphs, synchronize} = this.state
 
     if ((graphs && graphs.length < 2) || !graphs) {
       return
@@ -126,16 +104,10 @@ class Graphs extends Component {
     }
   }
 
-  componentWillUnmount() {
-    if (this.props.params.deviceId && this.state.streams) {
-      this.state.streams.forEach((s) => {
-        this.props.deviceUnsubscribe(this.props.params.deviceId, s.id)
-      })
-    }
-  }
-
   render() {
-    const { streams, graphs } = this.state
+    const streams = this.props.streams[this.props.params.deviceId]
+    const {graphs} = this.state
+
     return (
       <div>
         {
@@ -167,10 +139,6 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     streamsFetch: deviceId => dispatch(streamsFetch(deviceId)),
-    deviceSubscribe: (deviceId, componentId) => 
-      dispatch(deviceSubscribe(deviceId, componentId)),
-    deviceUnsubscribe: (deviceId, componentId) => 
-      dispatch(deviceUnsubscribe(deviceId, componentId))
   }
 }
 

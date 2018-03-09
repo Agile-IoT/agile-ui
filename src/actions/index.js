@@ -116,7 +116,16 @@ export const deviceSubscribe = (deviceId, componentId) => {
     dispatch(loading(true))
     agile.device.subscribe(deviceId, componentId)
     .then(stream => {
-      dispatch(loading(false));
+      stream.onopen = dispatch(loading(false))
+      stream.onerror = errorHandle
+
+      stream.onmessage = e => {
+        if (typeof e.data === 'string') {
+          const record = JSON.parse(e.data)
+          dispatch(action('STREAMS_UPDATE', {record}))
+          dispatch(loading(false))
+        }
+      }
     })
     .catch(err => {
       errorHandle(err, dispatch)
