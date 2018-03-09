@@ -278,7 +278,6 @@ export function streams(state = {}, action) {
 
     case 'STREAMS_UPDATE':
       const {record} = action.data
-      console.log(state)
       return {
         ...state,
         [record.deviceID]: state[record.deviceID].map(entry =>
