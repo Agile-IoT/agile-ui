@@ -14,6 +14,7 @@ import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import { connect } from 'react-redux';
 import differenceBy from 'lodash/differenceBy'
+import CircularProgress from 'material-ui/CircularProgress'
 
 import { devicesDiscover, devicesCreate, deviceTypesFetch } from '../actions';
 
@@ -98,6 +99,15 @@ class Discover extends Component {
   }
 
   render() {
+    const {discovery, devices} = this.props
+    if (devices.length === 0 && discovery) {
+      return (
+        <div className='loadingScreen'>
+          <CircularProgress size={250} thickness={10}/>
+        </div>
+      )
+    }
+
     return (
       <div className='discover'>
         {this.renderItems(this.props.devices)}
@@ -108,6 +118,7 @@ class Discover extends Component {
 
 const mapStateToProps = (state) => {
   return {
+    discovery: state.discovery,
     devices: state.devicesDiscover,
     deviceTypes: state.deviceTypes
   };

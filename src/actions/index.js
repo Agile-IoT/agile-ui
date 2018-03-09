@@ -690,6 +690,19 @@ export const discoveryStatus = () => {
   }
 }
 
+export const startDiscovery = () => {
+  return (dispatch) => {
+    dispatch(loading(true))
+    agile.protocolManager.discovery.start()
+    .then(() => {
+      dispatch(action('DISCOVERY', true))
+      dispatch(loading(false))
+    }).catch(err => {
+      errorHandle(err, dispatch)
+    })
+  }
+}
+
 export const discoveryToggle = () => {
   return (dispatch, currentState) => {
     if (currentState().discovery) {
