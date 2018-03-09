@@ -63,7 +63,7 @@ class Device extends Component {
   }
 
   unsubscribe() {
-    const { device } = this.state
+    const {device} = this.state
 
     if (device && device.streams) {
       device.streams.map(s => {
@@ -81,11 +81,6 @@ class Device extends Component {
 
     if (!this.state.device)
       this.setState({device: nextProps.devices[this.props.params.deviceId]})
-
-    // Poll for new readings
-    setTimeout(() => {
-      this.props.streamsFetch(this.props.params.deviceId)
-    }, 7000)
   }
 
   renderActions(device) {
@@ -109,8 +104,9 @@ class Device extends Component {
   getEntity() {
     for (var i in this.props.entityList) { //Get the right entity from the entity list
       var e = this.props.entityList[i]
-      if (e.id === this.props.params.deviceId && e.type.replace('/', '') === 'device' ? e : undefined)
+      if (e.id === this.props.params.deviceId && e.type.replace('/', '') === 'device' ? e : undefined) {
         return e
+      }
     }
   }
 

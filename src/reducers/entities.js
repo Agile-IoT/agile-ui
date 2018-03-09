@@ -267,7 +267,7 @@ export function records(state = {}, action) {
   }
 }
 
-export function streams(state = [], action) {
+export function streams(state = {}, action) {
   switch (action.type) {
     case 'STREAMS':
       const { deviceId } = action.data
@@ -275,8 +275,17 @@ export function streams(state = [], action) {
         ...state,
         [deviceId]: sortBy(action.data.streams, 'componentID')
       }
+
+    case 'STREAMS_UPDATE':
+      const {record} = action.data
+      return {
+        ...state,
+        [record.deviceID]: state[record.deviceID].map(entry =>
+          entry.componentID === record.componentID ? record : entry)
+      }
+
     default:
-      return state;
+      return state
   }
 }
 

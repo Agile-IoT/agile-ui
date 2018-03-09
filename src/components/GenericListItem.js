@@ -20,7 +20,7 @@ const GenericListItem = (props) => {
     rightEl: {
       margin: '0px',
       padding: '0px',
-      width: '20%'
+      width: '40%'
     }
   }
   return (
