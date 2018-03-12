@@ -64,9 +64,14 @@ class CloudUploadSettings extends Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    cloudUploadData: (deviceId, componentId, startDate, endDate, provider) =>
-      dispatch(cloudUploadData(deviceId, componentId, startDate, endDate, provider))
+    cloudUploadData: (deviceId, componentId, startTime, endTime, provider) =>
+      dispatch(cloudUploadData(deviceId, componentId, startTime, endTime, provider))
   };
 };
 
-export default connect(mapDispatchToProps)(CloudUploadSettings);
+const mapStateToProps = (state) => {
+  return {};
+};
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(CloudUploadSettings);

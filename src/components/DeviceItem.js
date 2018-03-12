@@ -9,6 +9,7 @@
  *    Resin.io, FBK, Jolocom - initial API and implementation
  ******************************************************************************/
 import React from 'react';
+import Divider from 'material-ui/Divider';
 import {
   Card,
   CardActions,
@@ -31,18 +32,39 @@ const computeColor = (status) => {
 }
 
 const DeviceItem = (props) => {
+  const styles = {
+    card: {
+      marginBottom: '20px'
+    },
+    title: {
+      fontSize: '1.2rem'
+    },
+    subtitle: {
+      fontSize: '1rem'
+    },
+    divider: {
+      marginRight: '16px',
+      marginLeft: '16px',
+      height: '1px',
+      backgroundColor: '#e0e0e0'
+    }
+  }
+
+  const title = (<span style={styles.title}> {props.title} </span>)
+  const subtitle = (<span style={styles.subtitle}> {props.subtitle} </span>)
+
   return (
-    <Card
-      style={{marginBottom: '20px'}}>
+    <Card style={styles.card}>
       <CardHeader
-        title={props.title}
-        subtitle={props.subtitle}
+        title={title}
+        subtitle={subtitle}
         avatar={
-          <Avatar
-            backgroundColor={computeColor(props.status)}
-            >{props.title && props.title.charAt(0)}</Avatar>
+          <Avatar backgroundColor={computeColor(props.status)}>
+            {props.title && props.title.charAt(0)}
+          </Avatar>
         }
       />
+      <Divider style={styles.divider}/>
       <CardActions>
         {props.actions}
       </CardActions>

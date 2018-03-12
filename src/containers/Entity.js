@@ -48,7 +48,7 @@ class Entity extends Component {
       },
       noDataText: {
         fontWeight: 'bold',
-        fontSize: '1.2em',
+        fontSize: '1.2rem',
         color: '#9E9E9E'
       }
     }

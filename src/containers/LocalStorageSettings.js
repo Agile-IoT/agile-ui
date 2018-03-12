@@ -16,12 +16,14 @@ import {
   locStorPolicyAdd,
   locStorPolicyDelete,
   locStorPoliciesFetch,
-  streamsFetch
+  recordsFetch,
+  recordsDelete,
 } from '../actions';
 
 class LocalStorageSettings extends Component {
   constructor(props) {
     super(props)
+    this.pollPending = false
     this.state = {
       deviceId: props.device.deviceId,
       streams: props.device.streams,
@@ -32,45 +34,65 @@ class LocalStorageSettings extends Component {
   }
 
   componentDidMount() {
-    this.props.streamsFetch(this.props.device.deviceId)
-    this.props.locStorPoliciesFetch(this.props.device.deviceId);
+    this.state.streams.forEach(st =>
+      this.props.recordsFetch(this.props.device.deviceId, st.id)
+    )
+
+    this.props.locStorPoliciesFetch(this.props.device.deviceId)
   }
 
   handleIntervalChange = (event, value) => this.setState({interval: value})
   handleRetentionChange = (event, value) => this.setState({retention: value})
   handleComponentChange = (event, key, value) => this.setState({selectedComponent: value})
   handleButtonClick = () => {
-    const existing = this.props.localStorage.find(pol =>
-      pol.componentID === this.state.selectedComponent
+    this.props.locStorPolicyAdd(
+      this.state.deviceId,
+      this.state.selectedComponent,
+      this.state.interval,
+      this.state.retention
     )
+  }
 
-    if (!existing)
-      this.props.locStorPolicyAdd(
-        this.state.deviceId,
-        this.state.selectedComponent,
-        this.state.interval,
-        this.state.retention
-      )
+  componentWillUpdate() {
+    if (this.pollPending) {
+      return
+    }
+
+    this.pollPending = true
+    setTimeout(() => {
+      this.state.streams.forEach(st => {
+        this.props.recordsFetch(this.props.device.deviceId, st.id)
+      })
+      this.pollPending = false
+    }, 7000)
   }
 
   render() {
     const { localStorage, locStorPolicyDelete } = this.props;
+    let existing = false
+
+    if (localStorage[this.state.deviceId]) {
+      existing = localStorage[this.state.deviceId].find(pol =>
+        pol.componentID === this.state.selectedComponent
+      )
+    }
+
     return (
       <LocStorSettingsSummary
         deviceId={this.state.deviceId}
         streams={this.state.streams}
         interval={this.state.interval}
         retention={this.state.retention}
-
+        policyExists={existing}
+        records={this.props.records}
         selectedComponent={this.state.selectedComponent}
-
         handleIntervalChange={this.handleIntervalChange}
         handleComponentChange={this.handleComponentChange}
         handleRetentionChange={this.handleRetentionChange}
         handleButtonClick={this.handleButtonClick}
-
-        localStorage={localStorage}
+        localStorage={localStorage[this.state.deviceId]}
         locStorPolicyDelete={locStorPolicyDelete}
+        recordsDelete={this.props.recordsDelete}
       />
     );
   }
@@ -78,17 +100,20 @@ class LocalStorageSettings extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    localStorage: state.localStorage
+    localStorage: state.localStorage,
+    records: state.records,
+    streams: state.streams
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    streamsFetch: (deviceId) => dispatch(streamsFetch(deviceId)),
     locStorPolicyAdd: (deviceId, componentId, interval, retention) =>
       dispatch(locStorPolicyAdd(deviceId, componentId, interval, retention)),
     locStorPolicyDelete: (deviceId, componentId) => dispatch(locStorPolicyDelete(deviceId, componentId)),
     locStorPoliciesFetch: (deviceId, componentId) => dispatch(locStorPoliciesFetch(deviceId, componentId)),
+    recordsDelete: (deviceId, componentId) => dispatch(recordsDelete(deviceId, componentId)),
+    recordsFetch: (deviceId, componentId) => dispatch(recordsFetch(deviceId, componentId))
   };
 };
 

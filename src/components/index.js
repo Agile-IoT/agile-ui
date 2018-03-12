@@ -21,6 +21,7 @@ import CloudUploadSettingsSummary from './CloudUploadSettingsSummary';
 import LocalStoragePolicies from './LocalStoragePolicies';
 import GenericListItem from './GenericListItem';
 import Graph from './Graph';
+import LocalDataOverview from './LocalDataOverview';
 
 export {
   DeviceSummary,
@@ -35,5 +36,6 @@ export {
   EntityItem,
   SecurityItem,
   LockItem,
-  Form
+  Form,
+  LocalDataOverview
 }

@@ -18,29 +18,63 @@ import MenuItem from 'material-ui/MenuItem'
 import { Card, CardHeader, CardText, } from 'material-ui/Card'
 import { List } from 'material-ui/List'
 import { FlatButton } from 'material-ui'
+import Subheader from 'material-ui/Subheader';
 
 import { GenericListItem } from '../components'
 const CloudUploadSettingsSummary = (props) => {
-  const fullwidth = {
-    width: '100%'
+  const styles = {
+    fullwidth: {
+      textAlign: 'right',
+      width: '100%'
+    },
+    button: {
+      fontSize: '1rem',
+      fontWeight: 'bold'
+    },
+    title: {
+      fontSize: '1rem'
+    },
+    listItems: {
+      bar: {
+        backgroundColor: '#f1f1f1' 
+      },
+      rightEl: {
+        margin: '0px',
+        padding: '0px',
+      },
+      leftEl: {
+        fontSize: '1rem'
+      }
+    },
+    subheader : {
+      marginLeft: '0.5rem',
+      padding: '0px',
+      fontWeight: 'bold',
+      fontSize: '1.2rem',
+      color: '#000'
+    },
   }
 
+  const styledTitle = (<span style={styles.title}> EXPORT LOCAL DATA </span>)
   return(
     <Card>
       <CardHeader
-        title={'Upload to cloud'}
+        title={styledTitle}
         actAsExpander
         showExpandableButton
       />
 
-      <CardText expandable>
+      <CardText style={{backgroundColor: '#f1f1f1'}} expandable>
+        <Subheader style={styles.subheader}> Export to cloud provider </Subheader>
         <List>
           <GenericListItem
+            style={styles.listItems}
             leftEl='Storage Provider'
             rightEl={
               <SelectField
                 value={props.selectedProvider}
                 onChange={props.handleProviderChange}
+                style={{textAlign: 'right'}}
               >
                 {props.storageProviders.map(provider => {
                   return <MenuItem 
@@ -53,17 +87,20 @@ const CloudUploadSettingsSummary = (props) => {
           />
 
           <GenericListItem
+            style={styles.listItems}
             leftEl='Component Id'
             rightEl={
               <SelectField
                 value={props.selectedComponent}
                 onChange={props.handleComponentChange}
+                style={{textAlign: 'right'}}
               >
               {formatStreams(props.streams)}
             </SelectField>}
           />
 
           <GenericListItem
+            style={styles.listItems}
             leftEl='Start Date'
             rightEl={
               <DateTimePicker
@@ -72,31 +109,37 @@ const CloudUploadSettingsSummary = (props) => {
                 DatePicker={DatePickerDialog}
                 TimePicker={TimePickerDialog}
                 hintText="From"
-                textFieldStyle={fullwidth}
-                shouldDisableDate={shouldDisableDate}
+                inputStyle={styles.fullwidth}
                 onChange={props.handleStartDateChange}
               />
             }
           />
 
           <GenericListItem
+            style={styles.listItems}
             leftEl='End Date'
             rightEl={
               <DateTimePicker
+                style={{textAlign: 'right'}}
                 format="hh:mm A DD MMM"
                 showCurrentDateByDefault={true}
                 DatePicker={DatePickerDialog}
                 TimePicker={TimePickerDialog}
                 hintText="Untill"
-                textFieldStyle={fullwidth}
-                shouldDisableDate={shouldDisableDate}
+                inputStyle={styles.fullwidth}
                 onChange={props.handleEndDateChange}
               />
             }
           />
 
           <FlatButton
-            style={fullwidth}
+            style={Object.assign({}, styles.fullwidth, {
+              textAlign: 'center',
+              marginTop: '2rem'
+            })}
+            labelStyle={styles.button}
+            backgroundColor={'rgba(34, 187, 60, 0.5)'}
+            hoverColor={'rgba(34, 187, 60, 0.5)'}
             label='Upload'
             onClick={props.handleButtonClick}
           />
@@ -104,17 +147,6 @@ const CloudUploadSettingsSummary = (props) => {
       </CardText>
     </Card>
   ) 
-}
-
-// TODO Retention period from Agile data.
-const shouldDisableDate = (date) => {
-  const retentionPeriod = 3
-  const msInDay = 1000 * 3600 * 24
-
-  const now = new Date()
-  const inFuture = date > now
-  const tooFarBack = Math.floor((now - date) / msInDay) > retentionPeriod 
-  return inFuture || tooFarBack
 }
 
 const formatStreams = (streams) => {

@@ -11,6 +11,9 @@
 import React from 'react';
 import isEmpty from 'lodash/isEmpty';
 import { List, ListItem } from 'material-ui/List';
+import ArrowBack from 'material-ui/svg-icons/navigation/arrow-back.js'
+import { browserHistory } from 'react-router'
+import IconButton from 'material-ui/IconButton'
 
 import {
   Card,
@@ -18,22 +21,6 @@ import {
   CardHeader,
   CardText,
 } from 'material-ui/Card';
-
-import Avatar from 'material-ui/Avatar';
-
-import {
-  redA400,
-  greenA700,
-} from 'material-ui/styles/colors';
-
-const colorCode = {
-  AVAILABLE: greenA700,
-  UNAVAILBLE: redA400
-}
-
-const computeColor = (status) => {
-  return colorCode[status]
-}
 
 const renderMeta = (meta, id) => {
   if (meta) {
@@ -50,18 +37,25 @@ const renderMeta = (meta, id) => {
 
 class Device extends React.Component {
   render() {
+    const styles = {
+      title: {fontSize: '1.2rem'},
+      subtitle: {fontSize: '1rem'}
+    }
+
+    const title = (<span style={styles.title}> {this.props.title} </span>)
+    const subtitle = (<span style={styles.subtitle}> {this.props.subtitle} </span>)
     return (
       <Card>
         <CardHeader
-          title={this.props.title}
-          subtitle={this.props.subtitle}
+          title={title}
+          subtitle={subtitle}
           actAsExpander={this.props.actAsExpander}
           showExpandableButton={this.props.showExpandableButton}
           avatar={
-            <Avatar
-              backgroundColor={computeColor(this.props.status)}
-              >{this.props.title && this.props.title.charAt(0)}
-            </Avatar>}
+            <IconButton iconStyle={{transform: 'scale(1.6)'}}onClick={() => {browserHistory.goBack()}}>
+              <ArrowBack color={'black'}/>
+            </IconButton>
+          }
         />
         <CardText expandable>
           <List>

@@ -35,6 +35,9 @@ import SecurityItem from '../components/SecurityItem';
 const ACTIONS = ['write'];
 
 const styles = {
+  title: {
+    fontSize: '1rem'
+  },
   passwordFieldStyle: {
     position: 'absolute',
     right: 50,
@@ -319,12 +322,13 @@ class SecurityDetails extends Component {
 
   render() {
     const {entity, entityType, title, subtitle, fieldProperties, entityActionsPolicies} = this.props;
+    const styledTitle = (<span style={styles.title}>{title}</span>)
     if (entity && entityActionsPolicies) {
       return (<SecurityItem
         expandable
         showExpandableButton
         key={entity.id + '_' + entityType}
-        title={title}
+        title={styledTitle}
         subtitle={subtitle}
         entity={entity}
         entityType={entityType.replace('/', '')}

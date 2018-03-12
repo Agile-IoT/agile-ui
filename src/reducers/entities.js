@@ -69,16 +69,13 @@ export function entityPolicies(state = {}, action) {
 
 export function localStorage(state = {}, action) {
   switch (action.type) {
-    case 'LOC_DEVICE_ID':
-      return Object.assign({}, state, {deviceId: action.data})
-    case 'LOC_COMPOENT_ID':
-      return Object.assign({}, state, {componentId: action.data})
-    case 'INTERVAL':
-      return Object.assign({}, state, {interval: action.data})
     case 'POLICIES':
-      return action.data;
+      return {
+        ...state,
+        [action.data.deviceID]: action.data.policies
+      }
     default:
-      return state;
+      return state
   }
 }
 
@@ -202,7 +199,8 @@ export function messages(state = [], action) {
 const defLoadingState = {
   generic: false,
   devices: false,
-  entity: false
+  entity: false,
+  recommender: false
 }
 
 export function loading(state = defLoadingState, action) {
@@ -216,6 +214,11 @@ export function loading(state = defLoadingState, action) {
       return {
         ...state,
         devices: action.data
+      }
+    case 'RECOMMENDER_LOADING':
+      return {
+        ...state,
+        recommender: action.data
       }
     case 'LOADING':
       return {
@@ -272,13 +275,18 @@ export function deviceTypes(state = {}, action) {
 export function records(state = {}, action) {
   switch (action.type) {
     case 'DEVICE_RECORDS':
-      const { deviceId } = action.data
+      const { deviceId, componentId } = action.data
+      const records = {
+        ...state[deviceId],
+        [componentId]: action.data.records.map(rec => [
+          new Date(rec.lastUpdate),
+          parseInt(rec.value, 10)
+        ])
+      }
+
       return {
         ...state,
-        [deviceId]: action.data.records.map(rec => [
-          new Date(rec.lastUpdate),
-          parseInt(rec.value)
-        ])
+        [deviceId]: records
       }
     default:
       return state
@@ -296,10 +304,15 @@ export function streams(state = {}, action) {
 
     case 'STREAMS_UPDATE':
       const {record} = action.data
+      const {deviceID, componentID} = record
+
+      const result = !state[deviceID].length
+        ? [record]
+        : state[deviceID].map(e => e.componentID === componentID ? record : e)
+
       return {
         ...state,
-        [record.deviceID]: state[record.deviceID].map(entry =>
-          entry.componentID === record.componentID ? record : entry)
+        [deviceID]: result
       }
 
     default:

@@ -18,16 +18,20 @@ import CircularProgress from 'material-ui/CircularProgress'
 
 class Devices extends Component {
   renderActions(device) {
+    const styles = {
+      label: {fontSize: '1rem'},
+      container: {marginTop: '5px', marginBottom:'5px'}
+    }
     return (
-      <div className='devices'>
-        <FlatButton label='Disconnect' onClick={() => {
+      <div className='devices' style={styles.container}>
+        <FlatButton labelStyle={styles.label} label='Disconnect' onClick={() => {
           this.props.devicesDelete(device.deviceId)}
         } />
         <Link to={`/graphs/${device.deviceId}`}>
-          <FlatButton label='View Data' />
+          <FlatButton labelStyle={styles.label} label='View Data' />
         </Link>
         <Link to={`/devices/${device.deviceId}`}>
-          <FlatButton label='Configure' />
+          <FlatButton labelStyle={styles.label} label='Manage Device Data' />
         </Link>
       </div>
     )
