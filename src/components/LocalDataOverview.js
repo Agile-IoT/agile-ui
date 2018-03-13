@@ -12,12 +12,14 @@ import React from 'react';
 import Divider from 'material-ui/Divider';
 import Subheader from 'material-ui/Subheader';
 import { List } from 'material-ui/List';
-import NavigationClose from 'material-ui/svg-icons/navigation/close';
 import { Toolbar, ToolbarGroup } from 'material-ui/Toolbar';
+import IconMenu from 'material-ui/IconMenu';
+import MenuItem from 'material-ui/MenuItem';
+import IconButton from 'material-ui/IconButton';
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import { Link } from 'react-router';
 
-const LocalStoragePolicies = (props) => {
-  const { policies, handleRemoval } = props
-
+const LocalDataOverview = (props) => {
   const styles= {
     span: {
       fontWeight: 'bold'
@@ -42,10 +44,6 @@ const LocalStoragePolicies = (props) => {
       fontSize: '1.2rem',
       color: '#000'
     },
-    removeButton: {
-      color: '#c14f54',
-      cursor: 'pointer'
-    },
     noPoltext: {
       fontWeight: 'bold',
       color: '#929292',
@@ -54,32 +52,54 @@ const LocalStoragePolicies = (props) => {
     }
   }
 
+  const {
+    deviceId,
+    recordsDelete,
+    records
+  } = props
+
+  const relevant = records[deviceId]
+  const componentIds = Object.keys(relevant)
+
+  const nonEmpty = componentIds.find(id => relevant[id].length > 0)
   return (
     <List>
-      <Subheader style={styles.subheader}> Local storage policies </Subheader>
+      <Subheader style={styles.subheader}> Locally stored data </Subheader>
       {
-        policies.length === 0 
-        ? <Toolbar style={styles.bar}> 
-            <ToolbarGroup>
-              <span style={styles.noPoltext}>No policies found, try to add a new policy first.</span>
-          </ToolbarGroup>
-        </Toolbar>
-        : policies.map(pol => {
+        nonEmpty
+        ? componentIds.map(id => {
           return <Toolbar style={styles.bar}>
             <ToolbarGroup>
-              Data from component <span style={styles.span}>{pol.componentID}</span> is fetched and stored every <span style={styles.span}>{pol.interval}</span> ms.
+              <span style={styles.span}>{relevant[id].length}</span> records stored locally, from component <span style={styles.span}>{id}</span>. 
             </ ToolbarGroup>
             <ToolbarGroup>
-              <NavigationClose style={styles.removeButton} onClick={
-                () => handleRemoval(pol.deviceID, pol.componentID)
-              }/>
+              <IconMenu
+                iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}
+                anchorOrigin={{horizontal: 'left', vertical: 'top'}}
+                targetOrigin={{horizontal: 'left', vertical: 'top'}}
+              >
+                <Link to={`/graphs/${deviceId}`}>
+                  <MenuItem primaryText='View' />
+                </Link>
+                <MenuItem primaryText='Remove' 
+                  onClick={() => {
+                    recordsDelete(deviceId, id)
+                  }}
+                />
+              </IconMenu>
             </ToolbarGroup>
           </Toolbar>
         })
+        : <Toolbar style={styles.bar}>
+            <ToolbarGroup>
+              <span style={styles.noPoltext}>No local data found, try to add a new policy first.</span>
+            </ToolbarGroup>
+        </Toolbar>
+
       }
       <Divider style={styles.divider}/>
     </List>
   )
 }
 
-export default LocalStoragePolicies
+export default LocalDataOverview

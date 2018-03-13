@@ -2,7 +2,7 @@ const path = require('path');
 const express = require('express');
 const bearerToken = require('express-bearer-token');
 const proxy = require('http-proxy-middleware');
-const SDK = require('agile-sdk');
+const SDK = require('agile-sdk-test-version');
 const compression = require('compression');
 
 const app = express();

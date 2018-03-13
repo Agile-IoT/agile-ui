@@ -84,11 +84,20 @@ class Device extends Component {
   }
 
   renderActions(device) {
+    const styles = {
+      label: {fontSize: '1rem', fontWeight: 'bold'},
+      button: {width: '100%', textAligh: 'center'}
+    }
+
     return (
       <div>
-        <FlatButton label='Disconnect' onClick={() => {
-          this.props.devicesDelete(device.deviceId)
-        }} />
+        <FlatButton
+          backgroundColor={'#ff7878'}
+          style={styles.button}
+          labelStyle={styles.label}
+          label='Disconnect'
+          onClick={() => { this.props.devicesDelete(device.deviceId) }}
+        />
       </div>
     )
   }
@@ -129,7 +138,6 @@ class Device extends Component {
             title={device.name}
             subtitle={device.deviceId}
             status={device.status}
-            actions={this.renderActions(device)}
             meta={device}
           />
           <LocalStorageSettings device={device}/>
@@ -139,7 +147,7 @@ class Device extends Component {
             ? <SecurityDetails
                 expandable
                 showExpandableButton
-                title={'Security'}
+                title={'SECURITY'}
                 subtitle={''}
                 entity={entity}
                 entityType={'device'}
@@ -148,6 +156,7 @@ class Device extends Component {
             : null
           }
           {this.renderStreams(streams)}
+          {this.renderActions(device)}
         </div>
       )
     }

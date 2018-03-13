@@ -10,11 +10,19 @@
  ******************************************************************************/
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { discoveryToggle, drawerToggle, protocolsFetch, discoveryStatus } from '../actions';
+import {
+  startDiscovery,
+  discoveryToggle,
+  drawerToggle,
+  protocolsFetch,
+  discoveryStatus
+} from '../actions';
+
 import { SettingsMenu } from '../components';
 
 class Settings extends Component {
   componentDidMount() {
+    this.props.startDiscovery()
     this.props.protocolsFetch()
     this.props.discoveryStatus()
   }
@@ -39,6 +47,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    startDiscovery: () => dispatch(startDiscovery()),
     drawerToggle: (bool) => dispatch(drawerToggle(bool)),
     discoveryToggle: (bool) => dispatch(discoveryToggle(bool)),
     protocolsFetch: () => dispatch(protocolsFetch()),

@@ -8,7 +8,7 @@
  *Contributors:
  *    Resin.io, FBK, Jolocom - initial API and implementation
  ******************************************************************************/
-import agileSDK from 'agile-sdk';
+import agileSDK from 'agile-sdk-test-version';
 
 const agile = agileSDK({
   api: '/agile-core',
@@ -27,6 +27,28 @@ const action = (type, data) => {
 }
 
 const DEVICE_TYPE = 'device';
+
+export const entityLoading = bool => {
+  return {
+    type: 'ENTITY_LOADING',
+    data: bool
+  };
+}
+
+export const recommenderLoading = bool => {
+  return {
+    type: 'RECOMMENDER_LOADING',
+    data: bool
+  };
+}
+
+
+export const devicesLoading = bool => {
+  return {
+    type: 'DEVICES_LOADING',
+    data: bool
+  };
+}
 
 export const loading = bool => {
   return {
@@ -80,11 +102,9 @@ export const setLocComponentId = (componentId) => {
 // fetch all unregistered devices
 export const devicesDiscover = () => {
   return (dispatch) => {
-    dispatch(loading(true))
     agile.protocolManager.devices()
     .then(devices => {
       dispatch(action('DEVICES_DISCOVER', devices));
-      dispatch(loading(false));
     })
     .catch(err => {
       errorHandle(err, dispatch)
@@ -94,7 +114,6 @@ export const devicesDiscover = () => {
 
 export const deviceTypesFetch = (deviceOverview) => {
   return (dispatch) => {
-    dispatch(loading(true))
     agile.deviceManager.typeof(deviceOverview)
     .then(deviceTypes => {
       dispatch(
@@ -103,7 +122,6 @@ export const deviceTypesFetch = (deviceOverview) => {
           types: deviceTypes
         })
       );
-      dispatch(loading(false));
     })
     .catch(err => {
       errorHandle(err, dispatch)
@@ -168,11 +186,11 @@ export const deviceFetch = (deviceId) => {
 
 export const streamsFetch = (deviceId) => {
   return (dispatch) => {
-    dispatch(loading(true))
+    // dispatch(loading(true))
     agile.device.lastUpdate(deviceId)
     .then(streams => {
       dispatch(action('STREAMS', {deviceId, streams}));
-      dispatch(loading(false));
+      // dispatch(loading(false));
     })
     .catch(err => {
       errorHandle(err, dispatch)
@@ -183,16 +201,16 @@ export const streamsFetch = (deviceId) => {
 // fetch all registered devices and their streams
 export const devicesAndStreamsFetch = () => {
   return (dispatch) => {
-    dispatch(loading(true))
+    dispatch(devicesLoading(true))
     agile.deviceManager.get()
     .then(devices => {
       if (devices) {
         const deviceMap = {}
         devices.forEach(d => deviceMap[d.deviceId] = d)
-        dispatch(action('DEVICES', deviceMap));
-        devices.forEach(d => dispatch(streamsFetch(d.deviceId)));
+        dispatch(action('DEVICES', deviceMap))
+        devices.forEach(d => dispatch(streamsFetch(d.deviceId)))
       }
-      dispatch(loading(false))
+      dispatch(devicesLoading(false))
     })
     .catch(err => {
       errorHandle(err, dispatch)
@@ -404,7 +422,7 @@ export const canExecuteActions = (id, type, attribute_names, actions) => {
 
 export const recommendationsFetch = () => {
   return (dispatch) => {
-    dispatch(loading(true))
+    dispatch(recommenderLoading(true))
 
     const protocol = document.location.protocol || 'http:'
     const host = document.location.hostname
@@ -413,10 +431,10 @@ export const recommendationsFetch = () => {
     window.fetch(`${apiEndpoint}/getDeviceRecommendation`)
     .then(r => r.json())
     .then(data => {
-      dispatch(loading(false))
       dispatch(action('RECOMMENDATIONS', data.deviceList))
+      dispatch(recommenderLoading(false))
     }).catch(err => {
-      dispatch(loading(false))
+      dispatch(recommenderLoading(false))
       errorHandle(err, dispatch)
     })
   }
@@ -432,12 +450,12 @@ export const currentTab = (type) => {
 
 export const entityFetch = (type) => {
   return (dispatch) => {
-		dispatch(loading(true))
+		dispatch(entityLoading(true))
 		if (type === 'group') {
 			agile.idm.group.get()
 			.then(entities => {
 				dispatch(action('ENTITIES', entities));
-				dispatch(loading(false));
+				dispatch(entityLoading(false));
 			})
 			.catch(err => {
 				errorHandle(err, dispatch)
@@ -446,7 +464,7 @@ export const entityFetch = (type) => {
 			agile.idm.entity.getByType(type)
 			.then(entities => {
 				dispatch(action('ENTITIES', entities));
-				dispatch(loading(false));
+				dispatch(entityLoading(false));
 			})
 			.catch(err => {
 				errorHandle(err, dispatch)
@@ -690,6 +708,19 @@ export const discoveryStatus = () => {
   }
 }
 
+export const startDiscovery = () => {
+  return (dispatch) => {
+    dispatch(loading(true))
+    agile.protocolManager.discovery.start()
+    .then(() => {
+      dispatch(action('DISCOVERY', true))
+      dispatch(loading(false))
+    }).catch(err => {
+      errorHandle(err, dispatch)
+    })
+  }
+}
+
 export const discoveryToggle = () => {
   return (dispatch, currentState) => {
     if (currentState().discovery) {
@@ -717,6 +748,10 @@ export const discoveryToggle = () => {
 export const locStorPolicyAdd = (deviceID, componentID, interval, retention) => {
   return (dispatch, currentState) => {
     dispatch(loading(true))
+
+    interval = interval ? interval : 3000
+    retention = retention ? retention : 7
+
     agile.data.subscription.create({
       deviceID,
       componentID,
@@ -757,7 +792,7 @@ export const locStorPoliciesFetch = (deviceID) => {
     const query = `deviceID=${deviceID}`
     agile.data.subscription.get(query)
     .then(policies => {
-      dispatch(action('POLICIES', policies));
+      dispatch(action('POLICIES', {deviceID, policies}));
       dispatch(loading(false))
     })
     .catch(err => {
@@ -766,12 +801,18 @@ export const locStorPoliciesFetch = (deviceID) => {
   }
 }
 
+// TODO Enforce min args
 export const recordsFetch = (deviceId, componentId) => {
   return(dispatch) => {
-    const query = `deviceID=${deviceId}&componentID=${componentId}`
+    let query = `deviceID=${deviceId}`
+
+    if (componentId) {
+      query += `&componentID=${componentId}`
+    }
+
     dispatch(loading(true))
     agile.data.record.get(query).then(records => {
-      dispatch(action('DEVICE_RECORDS', {deviceId, records}))
+      dispatch(action('DEVICE_RECORDS', {deviceId, componentId, records}))
       dispatch(loading(false))
     }).catch(err => {
       err.message = `Connecting to Agile Data : ${err.message}`
@@ -780,15 +821,28 @@ export const recordsFetch = (deviceId, componentId) => {
   }
 }
 
-export const cloudUploadData = (deviceID, componentID, startDate, endDate, provider) => {
-  /* NO SUPPORT ON AGILE DATA AND SDK YET.
+export const recordsDelete = (deviceId, componentId) => {
   return (dispatch) => {
     dispatch(loading(true))
-    agile.data.cloud.upload(query).then(res => {
+    const query = `deviceID=${deviceId}&componentID=${componentId}`
+    agile.data.record.delete(query)
+    .then(res => {
+      dispatch(recordsFetch(deviceId, componentId))
       dispatch(loading(false))
     }).catch(err => {
       errorHandle(err, dispatch)
     })
   }
-  */
+}
+
+export const cloudUploadData = (deviceId, componentId, startTime, endTime, provider) => {
+  return(dispatch) => {
+    const startStamp = (new Date(startTime)).toISOString()
+    const endStamp = (new Date(endTime)).toISOString()
+
+    const query = `deviceID=${deviceId}&componentID=${componentId}&between=${startStamp}|${endStamp}`
+    agile.data.record.get(query).then(res => {
+      dispatch(message(`${res.length} records are ready for upload.`));
+    })
+  }
 }

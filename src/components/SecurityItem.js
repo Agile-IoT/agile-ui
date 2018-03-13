@@ -53,7 +53,7 @@ const SecurityItem = (props) => {
       const styles = {
         title: {
           fontWeight: 'bold',
-          fontSize: '1.3em'
+          fontSize: '1.2rem'
         },
         hint: {
           color: '#8a8a8a',
@@ -148,14 +148,13 @@ const SecurityItem = (props) => {
           {addAttributeField(parent)}
           {parent ?
             <RaisedButton
-              backgroundColor='#c14f54'
+              backgroundColor='#ff7878'
               style={{
                 padding: '5px'
               }}
               label='REMOVE SECTION'
               labelStyle={{
-                fontWeight: 'bold',
-                color: '#FFF'
+                fontWeight: 'bold'
               }}
               fullWidth={true}
               onClick={() => {
@@ -217,11 +216,9 @@ const SecurityItem = (props) => {
   }
 
   return (
-    <Card
-      style={{
-      }}>
+    <Card style={{ }}>
       <CardHeader
-        actAsExpander={props.actAsExpander}
+        actAsExpander
         showExpandableButton={props.showExpandableButton}
         title={props.title}
         subtitle={props.subtitle}

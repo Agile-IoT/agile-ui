@@ -14,14 +14,16 @@ import Checkbox from 'material-ui/Checkbox'
 import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar'
 import CircularProgress from 'material-ui/CircularProgress'
 import { Graph } from '../components/'
+import { browserHistory } from 'react-router'
+import IconButton from 'material-ui/IconButton'
+import ArrowBack from 'material-ui/svg-icons/navigation/arrow-back.js'
 import {
-  streamsFetch ,
+  deviceFetch
 } from '../actions'
 
 class Graphs extends Component {
   constructor(props){
       super(props)
-
       this.state = {
         graphs: [],
         synchronize: undefined
@@ -31,23 +33,18 @@ class Graphs extends Component {
   componentDidMount() {
     const {deviceId} = this.props.params
     const device = this.props.devices[deviceId]
-    const streams = this.props.streams[deviceId]
 
     if(!device) {
       this.props.deviceFetch(deviceId)
-    }
-
-    if(!streams) {
-      this.props.streamsFetch(deviceId)
     }
   }
 
   renderGraphs(streams) {
     return streams.map(st => {
      return <Graph
-       key={st.componentID}
+       key={st.id}
        deviceId={this.props.params.deviceId}
-       componentId={st.componentID}
+       componentId={st.id}
        graphsArray={this.state.graphs}
      />
    })
@@ -55,6 +52,12 @@ class Graphs extends Component {
 
   renderNoDataMessage() {
     return <Toolbar>
+      <ToolbarGroup >
+        <IconButton iconStyle={{transform: 'scale(1.6)'}}onClick={() => {browserHistory.goBack()}}>
+          <ArrowBack color={'black'}/>
+        </IconButton>
+        <ToolbarSeparator / >
+      </ToolbarGroup>
       <ToolbarGroup >
         <ToolbarTitle text='No incoming or local data available' />
       </ToolbarGroup>
@@ -67,11 +70,12 @@ class Graphs extends Component {
   renderSettings() {
     const {graphs} = this.state
     return <Toolbar>
-      <ToolbarGroup>
-        <ToolbarTitle text='Settings' />
+      <ToolbarGroup >
+        <IconButton iconStyle={{transform: 'scale(1.6)'}}onClick={() => {browserHistory.goBack()}}>
+          <ArrowBack color={'black'}/>
+        </IconButton>
         <ToolbarSeparator / >
       </ToolbarGroup>
-
       <ToolbarGroup>
         <ToolbarGroup>
          <ToolbarTitle text='Synchronize' />
@@ -105,8 +109,8 @@ class Graphs extends Component {
   }
 
   render() {
-    const streams = this.props.streams[this.props.params.deviceId]
     const {graphs} = this.state
+    const streams = this.props.devices[this.props.params.deviceId].streams
 
     return (
       <div>
@@ -138,7 +142,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    streamsFetch: deviceId => dispatch(streamsFetch(deviceId)),
+    deviceFetch: deviceId => dispatch(deviceFetch(deviceId)),
   }
 }
 

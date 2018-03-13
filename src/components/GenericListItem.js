@@ -16,11 +16,9 @@ const GenericListItem = (props) => {
     bar: {
       backgroundColor: 'white' 
     },
-
     rightEl: {
       margin: '0px',
-      padding: '0px',
-      width: '40%'
+      padding: '0px'
     }
   }
   return (

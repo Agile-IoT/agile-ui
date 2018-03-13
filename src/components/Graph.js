@@ -45,7 +45,7 @@ class Graph extends Component {
     let toAdd = this.state.data.concat()
 
     const { deviceId, componentId } = this.props
-    const agileDataRecords = nextProps.records[deviceId]
+    const agileDataRecords = nextProps.records[deviceId] && nextProps.records[deviceId][componentId]
 
     if (
       !this.state.recordsAdded &&
@@ -57,11 +57,13 @@ class Graph extends Component {
     }
 
     if (nextProps.streams[deviceId]) {
-      const realTimeRecord = this.props.streams[deviceId]
+      const realTimeRecord = nextProps.streams[deviceId]
         .find(str => str.componentID === componentId)
 
-      const {lastUpdate, value} = realTimeRecord
-      toAdd.push([new Date(lastUpdate), parseInt(value)])
+      if (realTimeRecord) {
+        const {lastUpdate, value} = realTimeRecord
+        toAdd.push([new Date(lastUpdate), parseInt(value, 10)])
+      }
     }
 
     this.setState({data: toAdd})
@@ -111,6 +113,7 @@ class Graph extends Component {
           stackedGraphNaNFill: 'inside'
         }
       );
+
       this.props.graphsArray.push(g)
       this.setState({ g: g })
     }

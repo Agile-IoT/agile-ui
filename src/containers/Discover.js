@@ -14,8 +14,14 @@ import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import { connect } from 'react-redux';
 import differenceBy from 'lodash/differenceBy'
+import CircularProgress from 'material-ui/CircularProgress'
 
-import { devicesDiscover, devicesCreate, deviceTypesFetch } from '../actions';
+import { 
+  devicesAndStreamsFetch,
+  devicesDiscover,
+  devicesCreate,
+  deviceTypesFetch
+} from '../actions';
 
 class Discover extends Component {
 
@@ -39,7 +45,7 @@ class Discover extends Component {
 
   renderActions(device, deviceTypes) {
     return (
-      <div>
+      <div style={{padding: '0px', margin:'0px', paddingLeft: '8px'}}>
         <SelectField
           floatingLabelText="Register"
           value={null}
@@ -55,8 +61,16 @@ class Discover extends Component {
   }
 
   renderItems(devices) {
+    const addresses = Object.keys(this.props.registeredDevices).map(key =>
+      this.props.registeredDevices[key].address
+    )
+
     if (devices) {
       return devices.map((device, i) => {
+        if (addresses.indexOf(device.id) !== -1) {
+          return null
+        }
+
         return(
           <DeviceItem
             key={i}
@@ -78,7 +92,8 @@ class Discover extends Component {
   }
 
   componentDidMount() {
-    this.props.devicesDiscover();
+    this.props.devicesAndStreamsFetch()
+    this.props.devicesDiscover()
 
     this.poller = setInterval(() => {
       this.props.devicesDiscover();
@@ -98,6 +113,15 @@ class Discover extends Component {
   }
 
   render() {
+    const {discovery, devices} = this.props
+    if (devices.length === 0 && discovery) {
+      return (
+        <div className='loadingScreen'>
+          <CircularProgress size={250} thickness={10}/>
+        </div>
+      )
+    }
+
     return (
       <div className='discover'>
         {this.renderItems(this.props.devices)}
@@ -108,13 +132,16 @@ class Discover extends Component {
 
 const mapStateToProps = (state) => {
   return {
+    discovery: state.discovery,
     devices: state.devicesDiscover,
+    registeredDevices: state.devices,
     deviceTypes: state.deviceTypes
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    devicesAndStreamsFetch: () => dispatch(devicesAndStreamsFetch()),
     devicesDiscover: () => dispatch(devicesDiscover()),
     devicesCreate: (device, type) => dispatch(devicesCreate(device, type)),
     deviceTypesFetch: (device) => dispatch(deviceTypesFetch(device))

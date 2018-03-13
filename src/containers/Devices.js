@@ -14,19 +14,24 @@ import { FlatButton } from 'material-ui';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import { devicesAndStreamsFetch, devicesDelete } from '../actions';
+import CircularProgress from 'material-ui/CircularProgress'
 
 class Devices extends Component {
   renderActions(device) {
+    const styles = {
+      label: {fontSize: '1rem'},
+      container: {marginTop: '5px', marginBottom:'5px'}
+    }
     return (
-      <div className='devices'>
-        <FlatButton label='Disconnect' onClick={() => {
+      <div className='devices' style={styles.container}>
+        <FlatButton labelStyle={styles.label} label='Disconnect' onClick={() => {
           this.props.devicesDelete(device.deviceId)}
         } />
         <Link to={`/graphs/${device.deviceId}`}>
-          <FlatButton label='View Data' />
+          <FlatButton labelStyle={styles.label} label='View Data' />
         </Link>
         <Link to={`/devices/${device.deviceId}`}>
-          <FlatButton label='Configure' />
+          <FlatButton labelStyle={styles.label} label='Manage Device Data' />
         </Link>
       </div>
     )
@@ -57,6 +62,14 @@ class Devices extends Component {
   }
 
   render() {
+    if (this.props.loading.devices) {
+      return (
+        <div className='loadingScreen'>
+          <CircularProgress size={250} thickness={10}/>
+        </div>
+      )
+    }
+
     return (
       <div className="devices">
         {this.renderItems(this.props.devices)}
@@ -67,6 +80,7 @@ class Devices extends Component {
 
 const mapStateToProps = (state) => {
   return {
+    loading: state.loading,
     devices: state.devices
   };
 };
