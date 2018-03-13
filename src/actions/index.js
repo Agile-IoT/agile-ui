@@ -150,6 +150,7 @@ export const devicesDiscover = () => {
       dispatch(action('DEVICES_DISCOVER', devices));
     })
     .catch(err => {
+      dispatch(action('DEVICES_DISCOVER', []))
       errorHandle(err, dispatch)
     });
   };
@@ -256,7 +257,8 @@ export const devicesAndStreamsFetch = () => {
       dispatch(devicesLoading(false))
     })
     .catch(err => {
-      errorHandle(err, dispatch)
+      dispatch(devicesLoading(false))
+      dispatch(message(err.message));
     });
   };
 }
@@ -486,6 +488,7 @@ export const recommendationsFetch = () => {
       dispatch(action('RECOMMENDATIONS', data.deviceList))
       dispatch(recommenderLoading(false))
     }).catch(err => {
+      dispatch(action('RECOMMENDATIONS', []))
       dispatch(recommenderLoading(false))
       errorHandle(err, dispatch)
     })

@@ -28,6 +28,15 @@ class Recommender extends Component {
 
   getStyles() {
     return {
+      noDataContainer: {
+        width: '100%',
+        textAlign: 'center'
+      },
+      noDataMsg: {
+        fontWeight: 'bold',
+        color: '#929292',
+        fontSize: '1.2rem'
+      },
       tooltip: {
         fontSize: '16px'
       },
@@ -80,7 +89,11 @@ class Recommender extends Component {
 
   renderRecommendations() {
     const styles = this.getStyles()
-
+    if (this.props.recommendations.length === 0) {
+      return (<div style={styles.noDataContainer}> 
+        <span style={styles.noDataMsg}>No recommendations available </span>
+      </div>)
+    }
     return this.props.recommendations.map(rec =>
       <GenericListItem 
         leftEl={this.generateSummary(rec)}

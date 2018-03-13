@@ -40,7 +40,17 @@ class Devices extends Component {
   }
 
   renderItems(devices) {
+    console.log(devices)
     if (devices) {
+      if (!Object.keys(devices).length) {
+        return (<div style={{width: '100%', textAlign: 'center'}}> 
+          <span style={{fontWeight: 'bold', color: '#929292', fontSize: '1.2rem'}}>
+            No devices paired
+          </span>
+        </div>)
+
+      }
+
       return Object.keys(devices).map((deviceId, i) => {
         const device = devices[deviceId]
 

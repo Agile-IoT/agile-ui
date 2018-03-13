@@ -18,7 +18,7 @@ import { connect } from 'react-redux';
 import differenceBy from 'lodash/differenceBy'
 import CircularProgress from 'material-ui/CircularProgress'
 
-import { 
+import {
   devicesAndStreamsFetch,
   devicesDiscover,
   devicesCreate,
@@ -66,8 +66,7 @@ class Discover extends Component {
     const addresses = Object.keys(this.props.registeredDevices).map(key =>
       this.props.registeredDevices[key].address
     )
-
-    if (devices) {
+    if (devices.length) {
       return devices.map((device, i) => {
         if (addresses.indexOf(device.id) !== -1) {
           return null
@@ -84,6 +83,12 @@ class Discover extends Component {
           />)
       })
     }
+
+    return (<div style={{width: '100%', textAlign: 'center'}}>
+      <span style={{fontWeight: 'bold', color: '#929292', fontSize: '1.2rem'}}>
+        No new devices available
+      </span>
+    </div>)
   }
 
   updateDeviceTypes(devices) {

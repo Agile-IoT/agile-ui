@@ -13,7 +13,7 @@
 import sortBy from 'lodash/sortBy';
 import omit from 'lodash/omit';
 
-export function devices(state = {loading: false}, action) {
+export function devices(state = {}, action) {
   switch (action.type) {
     case 'DEVICE':
       return {
