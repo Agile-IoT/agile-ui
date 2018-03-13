@@ -5,6 +5,11 @@
 # which accompanies this distribution, and is available at
 # http://www.eclipse.org/legal/epl-v10.html
 
+## v2.3.0 - 2018-03-13
+
+* Loading screens, slight UI improvements, quality of life changes to device discovery. [Exulansis]
+* Discover devices on launch. Included loading screen during discovery. [Exulansis]
+
 ## v2.2.0 - 2018-03-05
 
 * Displaying measurement units, refactor to support the new SDK interface. [Exulansis]
