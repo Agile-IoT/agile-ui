@@ -9,7 +9,7 @@
     "versionist": "git://github.com/resin-io/versionist.git#agile",
     "versionist-plugins": "^1.3.1"
   },
-  "license": "MIT",
+  "license": "EPL-2.0",
   "dependencies": {
     "agile-sdk-test-version": "1.3.1",
     "compression": "1.7.1",
