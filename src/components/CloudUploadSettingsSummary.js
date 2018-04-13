@@ -66,6 +66,7 @@ const CloudUploadSettingsSummary = (props) => {
         showExpandableButton
       />
 
+      { !props.storageProviders.length ? null :
       <CardText style={{backgroundColor: '#f1f1f1'}} expandable>
         <Subheader style={styles.subheader}> Export to cloud provider </Subheader>
         <List>
@@ -78,11 +79,11 @@ const CloudUploadSettingsSummary = (props) => {
                 onChange={props.handleProviderChange}
                 style={{textAlign: 'right'}}
               >
-                {props.storageProviders.map(provider => {
-                  return <MenuItem 
-                    key= {provider} 
-                    value={provider} 
-                    primaryText={provider}
+                {props.storageProviders.map(p => {
+                  return <MenuItem
+                    key= {p.endpoint}
+                    value={p.endpoint}
+                    primaryText={p.displayName}
                   />
                 })}
               </SelectField>}
@@ -147,6 +148,7 @@ const CloudUploadSettingsSummary = (props) => {
           />
         </List>
       </CardText>
+      }
     </Card>
   ) 
 }

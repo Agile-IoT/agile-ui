@@ -33,7 +33,8 @@ import {
   localStorage,
   cloudUpload,
   records,
-  recommendations
+  recommendations,
+  cloudProviders
 } from './entities';
 
 export default combineReducers({
@@ -58,5 +59,6 @@ export default combineReducers({
     localStorage,
     cloudUpload,
     records,
-    recommendations
+    recommendations,
+    cloudProviders
 });

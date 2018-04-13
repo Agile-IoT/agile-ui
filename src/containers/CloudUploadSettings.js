@@ -13,20 +13,23 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { CloudUploadSettingsSummary } from '../components'
-import { cloudUploadData } from '../actions';
+import { cloudUploadData, fetchCloudProviders } from '../actions';
 
 class CloudUploadSettings extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      storageProviders: ['OwnCloud', 'Dropbox'],
-      selectedProvider: 'OwnCloud',
+      selectedProvider: 'owncloud',
       startDate: new Date(),
       endDate: new Date(),
       streams: props.device.streams,
       deviceId: props.device.deviceId,
       selectedComponent: props.device.streams[0].id
     }
+  }
+
+  componentDidMount() {
+    this.props.fetchCloudProviders()
   }
 
   handleComponentChange = (event, key, value) => this.setState({selectedComponent: value})
@@ -53,7 +56,7 @@ class CloudUploadSettings extends Component {
 
         selectedComponent={this.state.selectedComponent}
         selectedProvider={this.state.selectedProvider}
-        storageProviders={this.state.storageProviders}
+        storageProviders={this.props.cloudProviders}
         handleComponentChange={this.handleComponentChange}
         handleProviderChange={this.handleProviderChange}
         handleStartDateChange={this.handleStartDateChange}
@@ -66,13 +69,16 @@ class CloudUploadSettings extends Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    fetchCloudProviders: () => dispatch(fetchCloudProviders()),
     cloudUploadData: (deviceId, componentId, startTime, endTime, provider) =>
       dispatch(cloudUploadData(deviceId, componentId, startTime, endTime, provider))
   };
 };
 
 const mapStateToProps = (state) => {
-  return {};
+  return {
+    cloudProviders: state.cloudProviders
+  };
 };
 
 

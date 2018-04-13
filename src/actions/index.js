@@ -99,6 +99,32 @@ export const setLocComponentId = (componentId) => {
 
 // Cloud upload related
 
+export const cloudUploadData = (deviceId, componentId, startTime, endTime, provider) => {
+  return(dispatch) => {
+    const startStamp = (new Date(startTime)).toISOString()
+    const endStamp = (new Date(endTime)).toISOString()
+
+    const query = `deviceID=${deviceId}&componentID=${componentId}&between=${startStamp}|${endStamp}`
+    agile.data.record.get(query).then(res => {
+      dispatch(message(`${res.length} records are ready for upload.`));
+    })
+  }
+}
+
+// TODO LOADING
+export const fetchCloudProviders = () => {
+  return(dispatch) => {
+    window.fetch(`/agile-data/api/clouds`)
+    .then(response => response.json())
+    .then(clouds => {
+      dispatch(action('CLOUD_PROVIDERS', clouds.clouds))
+    })
+    .catch(err => {
+      errorHandle(err, dispatch)
+    })
+  }
+}
+
 //
 //****** ASYNC *****//
 // fetch all unregistered devices
@@ -833,18 +859,6 @@ export const recordsDelete = (deviceId, componentId) => {
       dispatch(loading(false))
     }).catch(err => {
       errorHandle(err, dispatch)
-    })
-  }
-}
-
-export const cloudUploadData = (deviceId, componentId, startTime, endTime, provider) => {
-  return(dispatch) => {
-    const startStamp = (new Date(startTime)).toISOString()
-    const endStamp = (new Date(endTime)).toISOString()
-
-    const query = `deviceID=${deviceId}&componentID=${componentId}&between=${startStamp}|${endStamp}`
-    agile.data.record.get(query).then(res => {
-      dispatch(message(`${res.length} records are ready for upload.`));
     })
   }
 }
