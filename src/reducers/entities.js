@@ -54,7 +54,7 @@ export function cloudUpload(state = {}, action) {
 export function cloudProviders(state = [], action) {
   switch (action.type) {
     case 'CLOUD_PROVIDERS':
-      return action.data.filter(pr => pr.implemented)
+      return action.data
     default:
       return state;
   }
