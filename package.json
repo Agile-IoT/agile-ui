@@ -11,7 +11,7 @@
   },
   "license": "EPL-2.0",
   "dependencies": {
-    "agile-sdk-test-version": "1.3.1",
+    "agile-sdk-test-version": "1.4.0",
     "compression": "1.7.1",
     "deep-diff": "^0.3.8",
     "express": "4.16.2",

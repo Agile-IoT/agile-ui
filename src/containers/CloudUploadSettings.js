@@ -13,34 +13,58 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { CloudUploadSettingsSummary } from '../components'
-import { cloudUploadData } from '../actions';
+import { cloudUploadData, fetchCloudProviders } from '../actions';
 
 class CloudUploadSettings extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      storageProviders: ['OwnCloud', 'Dropbox'],
-      selectedProvider: 'OwnCloud',
+      selectedProvider: 'owncloud',
       startDate: new Date(),
       endDate: new Date(),
       streams: props.device.streams,
       deviceId: props.device.deviceId,
-      selectedComponent: props.device.streams[0].id
+      selectedComponent: props.device.streams[0].id,
+      dynamicFields: {}
     }
   }
 
+  componentDidMount() {
+    this.props.fetchCloudProviders()
+  }
+
+  handleDynamicFieldsChange = (fieldName, value) => {
+    const newDynamicFields = Object.assign({}, this.state.dynamicFields, {
+      [fieldName]: value
+    })
+    this.setState({
+      dynamicFields: newDynamicFields
+    })
+  }
+
   handleComponentChange = (event, key, value) => this.setState({selectedComponent: value})
-  handleProviderChange = (event, key, value) => this.setState({selectedProvider: value})
+  handleProviderChange = (event, key, value) => this.setState({
+    selectedProvider: value,
+    dynamicFields: {}
+  })
   handleStartDateChange = (date) => this.setState({startDate: new Date(date)})
   handleEndDateChange = (date) => this.setState({endDate: new Date(date)})
   handleButtonClick = () => {
-    this.props.cloudUploadData(
-      this.state.deviceId,
-      this.state.selectedComponent,
-      this.state.startDate,
-      this.state.endDate,
-      this.state.selectedProvider
-    )
+
+    const {
+      deviceId,
+      selectedComponent,
+      startDate,
+      endDate,
+      selectedProvider,
+      dynamicFields
+    } = this.state
+
+    this.props.cloudUploadData({
+      selectedProvider,
+      data: { deviceId, componentId: selectedComponent, startDate, endDate },
+      customArgs: dynamicFields
+    })
   }
 
   render() {
@@ -53,11 +77,13 @@ class CloudUploadSettings extends Component {
 
         selectedComponent={this.state.selectedComponent}
         selectedProvider={this.state.selectedProvider}
-        storageProviders={this.state.storageProviders}
+        storageProviders={this.props.cloudProviders}
+        dynamicFieldValues={this.state.dynamicFields}
         handleComponentChange={this.handleComponentChange}
         handleProviderChange={this.handleProviderChange}
         handleStartDateChange={this.handleStartDateChange}
         handleEndDateChange={this.handleEndDateChange}
+        handleDynamicFieldsChange={this.handleDynamicFieldsChange}
         handleButtonClick={this.handleButtonClick}
       />
     );
@@ -66,13 +92,16 @@ class CloudUploadSettings extends Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    cloudUploadData: (deviceId, componentId, startTime, endTime, provider) =>
-      dispatch(cloudUploadData(deviceId, componentId, startTime, endTime, provider))
+    fetchCloudProviders: () => dispatch(fetchCloudProviders()),
+    cloudUploadData: (options) =>
+      dispatch(cloudUploadData(options))
   };
 };
 
 const mapStateToProps = (state) => {
-  return {};
+  return {
+    cloudProviders: state.cloudProviders
+  };
 };
 
 

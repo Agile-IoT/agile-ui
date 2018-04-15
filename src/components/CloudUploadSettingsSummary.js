@@ -17,10 +17,13 @@ import DateTimePicker from 'material-ui-datetimepicker'
 import DatePickerDialog from 'material-ui/DatePicker/DatePickerDialog'
 import TimePickerDialog from 'material-ui/TimePicker/TimePickerDialog'
 import MenuItem from 'material-ui/MenuItem'
+import TextField from 'material-ui/TextField'
 import { Card, CardHeader, CardText, } from 'material-ui/Card'
 import { List } from 'material-ui/List'
 import { FlatButton } from 'material-ui'
 import Subheader from 'material-ui/Subheader';
+import InfoIcon from 'material-ui/svg-icons/action/info-outline.js'
+import IconButton from 'material-ui/IconButton'
 
 import { GenericListItem } from '../components'
 const CloudUploadSettingsSummary = (props) => {
@@ -29,7 +32,7 @@ const CloudUploadSettingsSummary = (props) => {
       textAlign: 'right',
       width: '100%'
     },
-    button: {
+    buttonLabel: {
       fontSize: '1rem',
       fontWeight: 'bold'
     },
@@ -55,106 +58,166 @@ const CloudUploadSettingsSummary = (props) => {
       fontSize: '1.2rem',
       color: '#000'
     },
+    card : {
+      backgroundColor: '#f1f1f1'
+    },
+    button : {
+      textAlign: 'center',
+      marginTop: '2rem',
+      width: '100%'
+    }
   }
 
-  const styledTitle = (<span style={styles.title}> EXPORT LOCAL DATA </span>)
+  const {storageProviders} = props
+
+  if (!storageProviders.length) {
+    return null
+  }
+
+  const {title, card, subheader, button, buttonLabel} = styles
+  const selectedProvider = props.storageProviders
+    .find(pr => pr.cloudName === props.selectedProvider)
+
+  const missingData = selectedProvider.requiredFields.some(f => !props.dynamicFieldValues[f.name])
+
   return(
     <Card>
       <CardHeader
-        title={styledTitle}
+        title={ <span style={title}> EXPORT LOCAL DATA </span> }
         actAsExpander
         showExpandableButton
       />
 
-      <CardText style={{backgroundColor: '#f1f1f1'}} expandable>
-        <Subheader style={styles.subheader}> Export to cloud provider </Subheader>
+      <CardText style={card} expandable>
+        <Subheader style={subheader}> Export to cloud provider </Subheader>
         <List>
-          <GenericListItem
-            style={styles.listItems}
-            leftEl='Storage Provider'
-            rightEl={
-              <SelectField
-                value={props.selectedProvider}
-                onChange={props.handleProviderChange}
-                style={{textAlign: 'right'}}
-              >
-                {props.storageProviders.map(provider => {
-                  return <MenuItem 
-                    key= {provider} 
-                    value={provider} 
-                    primaryText={provider}
-                  />
-                })}
-              </SelectField>}
-          />
 
-          <GenericListItem
-            style={styles.listItems}
-            leftEl='Component Id'
-            rightEl={
-              <SelectField
-                value={props.selectedComponent}
-                onChange={props.handleComponentChange}
-                style={{textAlign: 'right'}}
-              >
-              {formatStreams(props.streams)}
-            </SelectField>}
-          />
-
-          <GenericListItem
-            style={styles.listItems}
-            leftEl='Start Date'
-            rightEl={
-              <DateTimePicker
-                format="hh:mm A DD MMM"
-                showCurrentDateByDefault={true}
-                DatePicker={DatePickerDialog}
-                TimePicker={TimePickerDialog}
-                hintText="From"
-                inputStyle={styles.fullwidth}
-                onChange={props.handleStartDateChange}
-              />
-            }
-          />
-
-          <GenericListItem
-            style={styles.listItems}
-            leftEl='End Date'
-            rightEl={
-              <DateTimePicker
-                style={{textAlign: 'right'}}
-                format="hh:mm A DD MMM"
-                showCurrentDateByDefault={true}
-                DatePicker={DatePickerDialog}
-                TimePicker={TimePickerDialog}
-                hintText="Untill"
-                inputStyle={styles.fullwidth}
-                onChange={props.handleEndDateChange}
-              />
-            }
-          />
+          {renderProviderSelection(props, styles)}
+          {renderCommonFields(props, styles)}
+          {renderRequestedArguments(props, styles)}
 
           <FlatButton
-            style={Object.assign({}, styles.fullwidth, {
-              textAlign: 'center',
-              marginTop: '2rem'
-            })}
-            labelStyle={styles.button}
+            style={button}
+            labelStyle={buttonLabel}
             backgroundColor={'rgba(34, 187, 60, 0.5)'}
-            hoverColor={'rgba(34, 187, 60, 0.5)'}
             label='Upload'
+            disabled={missingData}
             onClick={props.handleButtonClick}
           />
+
         </List>
       </CardText>
     </Card>
   ) 
 }
 
-const formatStreams = (streams) => {
-  return streams.map(s => {
-    return <MenuItem value={s.id} primaryText={s.id} />
-  })
+const renderProviderSelection = (props, styles) => {
+  return <GenericListItem
+    style={styles.listItems}
+    leftEl='Storage Provider'
+    rightEl={
+      <SelectField
+        value={props.selectedProvider}
+        onChange={props.handleProviderChange}
+        style={{textAlign: 'right'}}
+      >
+        {props.storageProviders.map(p => {
+          return <MenuItem
+            key= {p.cloudName}
+            value={p.cloudName}
+            primaryText={p.displayName}
+          />
+        })}
+      </SelectField>
+    }
+  />
+}
+
+const renderCommonFields = (props, styles) => {
+  return [<GenericListItem
+    style={styles.listItems}
+    leftEl='Component Id'
+    rightEl={
+      <SelectField
+        value={props.selectedComponent}
+        onChange={props.handleComponentChange}
+        style={{textAlign: 'right'}}
+      >
+      {props.streams.map(s => 
+        <MenuItem value={s.id} primaryText={s.id} />)
+      }
+      </SelectField>
+    }
+  />,
+
+  <GenericListItem
+    style={styles.listItems}
+    leftEl='Start Date'
+    rightEl={
+      <DateTimePicker
+        format="hh:mm A DD MMM"
+        showCurrentDateByDefault={true}
+        DatePicker={DatePickerDialog}
+        TimePicker={TimePickerDialog}
+        hintText="From"
+        inputStyle={styles.fullwidth}
+        onChange={props.handleStartDateChange}
+      />
+    }
+  />,
+
+  <GenericListItem
+    style={styles.listItems}
+    leftEl='End Date'
+    rightEl={
+      <DateTimePicker
+        style={{textAlign: 'right'}}
+        format="hh:mm A DD MMM"
+        showCurrentDateByDefault={true}
+        DatePicker={DatePickerDialog}
+        TimePicker={TimePickerDialog}
+        hintText="Untill"
+        inputStyle={styles.fullwidth}
+        onChange={props.handleEndDateChange}
+      />
+    }
+  />]
+}
+
+const renderRequestedArguments = (props, styles) => {
+  const selected = props.storageProviders
+    .find(pr => pr.cloudName === props.selectedProvider)
+  const {requiredFields} = selected
+
+  const renderedFields = requiredFields.map(f => 
+    <GenericListItem
+      style={styles.listItems}
+      leftEl={f.displayName}
+      rightEl={
+        <div>
+        <TextField
+          style={{textAlign: 'right'}}
+          inputStyle={styles.fullwidth}
+          value={props.dynamicFieldValues[f.name]}
+          onChange={(e, value) => {
+            props.handleDynamicFieldsChange(f.name, value)
+          }}
+        />
+          <IconButton 
+            tooltip={f.description}
+            tooltipPosition="bottom-left"
+            tooltipStyles={{fontSize: '16px'}}
+          >
+            <InfoIcon /> 
+          </IconButton>
+        </div>
+      }
+    />
+  )
+
+  return [
+    <Subheader style={styles.subheader}> Provider specific configuration </Subheader>,
+    ...renderedFields]
 }
 
 export default CloudUploadSettingsSummary
