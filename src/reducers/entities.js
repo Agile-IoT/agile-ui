@@ -60,6 +60,15 @@ export function cloudProviders(state = [], action) {
   }
 }
 
+export function credentials(state = {}, action) {
+  switch (action.type) {
+    case 'CREDENTIALS':
+      return action.data
+    default:
+      return state;
+  }
+}
+
 export function currentUser(state = {}, action) {
   switch (action.type) {
     case 'CURRENT_USER':

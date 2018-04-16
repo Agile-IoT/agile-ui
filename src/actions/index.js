@@ -317,6 +317,14 @@ export const devicesCreate = (device, type) => {
   };
 }
 
+export const fetchCurrentUserCredentials = () => {
+  return async (dispatch) => {
+    const userInfo = await agile.idm.user.getCurrentUserInfo()
+    const { credentials } = await agile.idm.entity.get(userInfo.id, 'user')
+    dispatch(action('CREDENTIALS', credentials))
+  }
+}
+
 export const fetchCurrentUser = () => {
   return (dispatch) => {
     dispatch(loading(true))
@@ -377,6 +385,7 @@ export const setEntityData = (params) => {
     agile.idm.entity.setAttribute(params)
       .then(entity => {
         dispatch(action('ENTITY_ATTRIBUTE_SET', entity));
+        dispatch(message('Record Set!'))
         dispatch(loading(false));
       })
       .catch(err => {

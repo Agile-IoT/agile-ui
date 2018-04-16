@@ -23,6 +23,8 @@ import { List } from 'material-ui/List'
 import { FlatButton } from 'material-ui'
 import Subheader from 'material-ui/Subheader';
 import InfoIcon from 'material-ui/svg-icons/action/info-outline.js'
+import FindReplaceIcon from 'material-ui/svg-icons/action/find-replace.js'
+import SaveIcon from 'material-ui/svg-icons/content/save.js'
 import IconButton from 'material-ui/IconButton'
 
 import { GenericListItem } from '../components'
@@ -41,7 +43,7 @@ const CloudUploadSettingsSummary = (props) => {
     },
     listItems: {
       bar: {
-        backgroundColor: '#f1f1f1' 
+        backgroundColor: '#f1f1f1'
       },
       rightEl: {
         margin: '0px',
@@ -108,7 +110,7 @@ const CloudUploadSettingsSummary = (props) => {
         </List>
       </CardText>
     </Card>
-  ) 
+  )
 }
 
 const renderProviderSelection = (props, styles) => {
@@ -143,7 +145,7 @@ const renderCommonFields = (props, styles) => {
         onChange={props.handleComponentChange}
         style={{textAlign: 'right'}}
       >
-      {props.streams.map(s => 
+      {props.streams.map(s =>
         <MenuItem value={s.id} primaryText={s.id} />)
       }
       </SelectField>
@@ -189,7 +191,7 @@ const renderRequestedArguments = (props, styles) => {
     .find(pr => pr.cloudName === props.selectedProvider)
   const {requiredFields} = selected
 
-  const renderedFields = requiredFields.map(f => 
+  const renderedFields = requiredFields.map(f =>
     <GenericListItem
       style={styles.listItems}
       leftEl={f.displayName}
@@ -203,12 +205,33 @@ const renderRequestedArguments = (props, styles) => {
             props.handleDynamicFieldsChange(f.name, value)
           }}
         />
-          <IconButton 
+          <IconButton
             tooltip={f.description}
             tooltipPosition="bottom-left"
             tooltipStyles={{fontSize: '16px'}}
           >
-            <InfoIcon /> 
+            <InfoIcon />
+          </IconButton>
+
+          <IconButton
+            tooltip='Attempt to fetch the credential from Agile Security.'
+            tooltipPosition='bottom-left'
+            onClick={() =>
+              props.populateFromIDM(props.selectedProvider, f.name)
+            }
+          >
+            <FindReplaceIcon />
+          </IconButton>
+
+          <IconButton
+            tooltip='Save the credential using Agile Security.'
+            disabled={!props.dynamicFieldValues[f.name]}
+            tooltipPosition='bottom-left'
+            onClick={() =>
+              props.saveCredential(props.selectedProvider, f.name)
+            }
+          >
+            <SaveIcon />
           </IconButton>
         </div>
       }
