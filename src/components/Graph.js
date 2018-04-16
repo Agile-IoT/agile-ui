@@ -12,6 +12,7 @@
  ******************************************************************************/
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import Resizable from 're-resizable'
 import {
   recordsFetch,
   deviceSubscribe,
@@ -21,10 +22,13 @@ import {
 class Graph extends Component {
   constructor(props){
     super(props)
+
+    this.graphRegistered = false
+    this.localDataRendered = false
+
     this.state = {
       g: undefined,
       data: [],
-      recordsAdded: false
     }
   }
 
@@ -40,85 +44,101 @@ class Graph extends Component {
   }
 
   componentDidUpdate() {
-    this.renderGraph()
+    const elementId = `graphdiv${this.props.componentId}`
+    const element = document.getElementById(elementId)
+    if (element) {
+      this.renderGraph(element)
+    }
   }
 
   componentWillReceiveProps(nextProps){
-    let toAdd = this.state.data.concat()
-
     const { deviceId, componentId } = this.props
-    const agileDataRecords = nextProps.records[deviceId] && nextProps.records[deviceId][componentId]
+    const dataToRender = this.state.data.concat()
 
-    if (
-      !this.state.recordsAdded &&
-      agileDataRecords &&
-      agileDataRecords.length
-    ) {
-      this.setState({recordsAdded: true})
-      toAdd = agileDataRecords
+    const localData = nextProps.records[deviceId] && nextProps.records[deviceId][componentId]
+    const localDataFound = localData && localData.length
+
+    if (!this.localDataRendered && localDataFound) {
+      this.localDataRendered = true
+      dataToRender.push(...localData)
     }
 
-    if (nextProps.streams[deviceId]) {
-      const realTimeRecord = nextProps.streams[deviceId]
-        .find(str => str.componentID === componentId)
+    const newStreams = nextProps.streams[deviceId]
+    if (newStreams) {
+      const realTimeRecord = newStreams.find(s=> s.componentID === componentId)
 
       if (realTimeRecord) {
         const {lastUpdate, value} = realTimeRecord
-        toAdd.push([new Date(lastUpdate), parseInt(value, 10)])
+        dataToRender.push([new Date(lastUpdate), parseInt(value, 10)])
       }
     }
 
-    this.setState({data: toAdd})
+    this.setState({data: dataToRender})
+  }
+
+  getStyles() {
+    return {
+      graphDiv: {height: '100%', width: '100%'},
+      resizeableEl: {
+        defaultSize: {
+          width: '45%',
+          height: window.innerWidth * 0.8 * 0.45
+        },
+        minWidth:  200,
+        minHeight:  200
+      }
+    }
   }
 
   render(){
-    if (this.state.data.length === 0)
+    if (this.state.data.length === 0)  {
       return null
+    }
 
-    if (document.getElementById(`graphdiv${this.props.componentId}`))
-      this.renderGraph()
+    const elementId = `graphdiv${this.props.componentId}`
+    const {resizeableEl, graphDiv} = this.getStyles()
 
     return (
-      <div className='graph'>
-        <div
-          id={`graphdiv${this.props.componentId}`}
-          style={{
-            "width": "100%",
-            "height": "100%"
-          }}
-        >
-        </div>
-      </div>
+      <Resizable 
+        defaultSize={resizeableEl.defaultSize}
+        minWidth={resizeableEl.minWidth}
+        minHeight={resizeableEl.minHeight}
+        onResize={() => {this.state.g.resize()}}
+        className='graph'
+      >
+        <div id={elementId} style={graphDiv} />
+      </Resizable>
     )
   }
 
-  renderGraph(){
-    if (!document.getElementById(`graphdiv${this.props.componentId}`))
+  renderGraph(element){
+    const graphAlreadyRendered = this.state.g || false
+    if (graphAlreadyRendered) {
+      this.state.g.updateOptions({'file': this.state.data})
       return
-
-    if (this.state.g) {
-      this.state.g.updateOptions( {'file': this.state.data} );
-    } else {
-      const {unit} = this.props.streams[this.props.deviceId][0]
-      const g = new window.Dygraph(
-        document.getElementById(`graphdiv${this.props.componentId}`),
-        this.state.data,
-        {
-          title: ' ',
-          legend: 'always',
-          fillGraph: true,
-          strokeWidth: 1.5,
-          color: '#00BCD4',
-          labels: ['Time', this.props.componentId],
-          axes: { y: { valueFormatter: (v) => `${v} ${unit}` } },
-          animatedZooms: true,
-          stackedGraphNaNFill: 'inside'
-        }
-      );
-
-      this.props.graphsArray.push(g)
-      this.setState({ g: g })
     }
+
+    const {unit} = this.props.streams[this.props.deviceId][0]
+    const extraOptions = {
+      title: ' ',
+      legend: 'always',
+      fillGraph: true,
+      animatedZooms: true,
+      strokeWidth: 1.5,
+      color: '#00BCD4',
+      labels: ['Time', this.props.componentId],
+      axes: {y: {valueFormatter: v => `${v} ${unit}`}},
+      stackedGraphNaNFill: 'inside'
+    }
+
+    const g = new window.Dygraph(element, this.state.data, extraOptions)
+
+    if (!this.graphRegistered) {
+      this.props.registerGraph(g)
+      this.graphRegistered = true
+    }
+
+    this.setState({g})
   }
 }
 

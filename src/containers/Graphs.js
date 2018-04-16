@@ -23,9 +23,11 @@ import {
   deviceFetch
 } from '../actions'
 
+window.graphs = []
 class Graphs extends Component {
   constructor(props){
       super(props)
+      this.graphs = []
       this.state = {
         graphs: [],
         synchronize: undefined
@@ -45,9 +47,10 @@ class Graphs extends Component {
     return streams.map(st => {
      return <Graph
        key={st.id}
+       areInSync={this.state.synchronize || false}
        deviceId={this.props.params.deviceId}
        componentId={st.id}
-       graphsArray={this.state.graphs}
+       registerGraph={this.registerGraph.bind(this)}
      />
    })
   }
@@ -58,7 +61,7 @@ class Graphs extends Component {
         <IconButton iconStyle={{transform: 'scale(1.6)'}}onClick={() => {browserHistory.goBack()}}>
           <ArrowBack color={'black'}/>
         </IconButton>
-        <ToolbarSeparator / >
+        <ToolbarSeparator />
       </ToolbarGroup>
       <ToolbarGroup >
         <ToolbarTitle text='No incoming or local data available' />
@@ -69,6 +72,11 @@ class Graphs extends Component {
      </Toolbar>
   }
 
+  registerGraph(graph) {
+    this.graphs.push(graph)
+    this.setState({graphs: this.graphs})
+  }
+
   renderSettings() {
     const {graphs} = this.state
     return <Toolbar>
@@ -76,7 +84,7 @@ class Graphs extends Component {
         <IconButton iconStyle={{transform: 'scale(1.6)'}}onClick={() => {browserHistory.goBack()}}>
           <ArrowBack color={'black'}/>
         </IconButton>
-        <ToolbarSeparator / >
+        <ToolbarSeparator />
       </ToolbarGroup>
       <ToolbarGroup>
         <ToolbarGroup>
@@ -94,18 +102,15 @@ class Graphs extends Component {
 
   toggleSynchronize() {
     const {graphs, synchronize} = this.state
-
     if ((graphs && graphs.length < 2) || !graphs) {
       return
     }
-
+    console.log(this.state.graphs.length)
     if (synchronize) {
       synchronize.detach()
       this.setState({synchronize: undefined})
     } else {
-      const synchronize = window.Dygraph.synchronize(graphs, {
-        range: false
-      })
+      const synchronize = window.Dygraph.synchronize(graphs)
       this.setState({synchronize})
     }
   }
@@ -113,7 +118,6 @@ class Graphs extends Component {
   render() {
     const {graphs} = this.state
     const streams = this.props.devices[this.props.params.deviceId].streams
-
     return (
       <div>
         {
@@ -136,10 +140,7 @@ class Graphs extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return {
-    streams: state.streams,
-    devices: state.devices
-  }
+  return { devices: state.devices }
 }
 
 const mapDispatchToProps = (dispatch) => {

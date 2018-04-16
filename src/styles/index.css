@@ -83,17 +83,24 @@ body {
 }
 
 .graph {
-  flex-grow: 1;
+  user-select: none;
+  flex-grow: 0;
   padding: 15px;
   margin: 10px;
   background-color: white;
   align-self : auto;
-  width : 30vw;
-  height : 30vw;
-  min-width: 300px;
-  min-height: 180px;
-  max-width : 450px;
-  max-height : 450px;
+}
+
+.dygraph-label {
+  user-select: none;
+}
+
+.dygraph-axis-label {
+  user-select: none;
+}
+
+.dygraph-legend  {
+  user-select: none;
 }
 
 .container--app {

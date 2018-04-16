@@ -18,6 +18,7 @@ const agile = agileSDK({
   data: '/agile-data'
 });
 
+
 //This sets the token for the calls to the sdk and reloads the SDK object
 export const setToken = (newToken) => {
 	agile.tokenSet(newToken);
@@ -886,6 +887,18 @@ export const recordsDelete = (deviceId, componentId) => {
       dispatch(loading(false))
     }).catch(err => {
       errorHandle(err, dispatch)
+    })
+  }
+}
+
+export const cloudUploadData = (deviceId, componentId, startTime, endTime, provider) => {
+  return(dispatch) => {
+    const startStamp = + (new Date(startTime))
+    const endStamp = + (new Date(endTime))
+
+    const query = `deviceID=${deviceId}&componentID=${componentId}&between=${startStamp}|${endStamp}`
+    agile.data.record.get(query).then(res => {
+      dispatch(message(`${res.length} records are ready for upload.`));
     })
   }
 }
