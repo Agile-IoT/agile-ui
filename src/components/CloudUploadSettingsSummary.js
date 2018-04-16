@@ -72,43 +72,49 @@ const CloudUploadSettingsSummary = (props) => {
 
   const {storageProviders} = props
 
-  if (!storageProviders.length) {
-    return null
-  }
-
   const {title, card, subheader, button, buttonLabel} = styles
-  const selectedProvider = props.storageProviders
-    .find(pr => pr.cloudName === props.selectedProvider)
 
-  const missingData = selectedProvider.requiredFields.some(f => !props.dynamicFieldValues[f.name])
+  let selectedProvider
+  let missingData
+
+  if (storageProviders.length) {
+    selectedProvider = storageProviders
+      .find(pr => pr.cloudName === props.selectedProvider)
+
+    missingData = selectedProvider.requiredFields.some(f => !props.dynamicFieldValues[f.name])
+  }
 
   return(
     <Card>
       <CardHeader
         title={ <span style={title}> EXPORT LOCAL DATA </span> }
-        actAsExpander
+        subtitle={storageProviders.length ? '' : 'Fetching available cloud providers...'}
+        actAsExpander={storageProviders.length}
         showExpandableButton
       />
 
-      <CardText style={card} expandable>
-        <Subheader style={subheader}> Export to cloud provider </Subheader>
-        <List>
+      {storageProviders.length 
+        ? <CardText style={card} expandable>
+          <Subheader style={subheader}> Export to cloud provider </Subheader>
+          <List>
 
-          {renderProviderSelection(props, styles)}
-          {renderCommonFields(props, styles)}
-          {renderRequestedArguments(props, styles)}
+            {renderProviderSelection(props, styles)}
+            {renderCommonFields(props, styles)}
+            {renderRequestedArguments(props, styles)}
 
-          <FlatButton
-            style={button}
-            labelStyle={buttonLabel}
-            backgroundColor={'rgba(34, 187, 60, 0.5)'}
-            label='Upload'
-            disabled={missingData}
-            onClick={props.handleButtonClick}
-          />
+            <FlatButton
+              style={button}
+              labelStyle={buttonLabel}
+              backgroundColor={'rgba(34, 187, 60, 0.5)'}
+              label='Upload'
+              disabled={missingData}
+              onClick={props.handleButtonClick}
+            />
 
-        </List>
-      </CardText>
+          </List>
+        </CardText>
+      :null
+      }
     </Card>
   )
 }
