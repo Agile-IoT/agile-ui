@@ -13,7 +13,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { CloudUploadSettingsSummary } from '../components'
-import { cloudUploadData, fetchCloudProviders } from '../actions';
+import { cloudUploadData, fetchCloudProviders, fetchCurrentUserCredentials, setEntityData, message } from '../actions';
 
 class CloudUploadSettings extends Component {
   constructor(props) {
@@ -31,6 +31,35 @@ class CloudUploadSettings extends Component {
 
   componentDidMount() {
     this.props.fetchCloudProviders()
+    this.props.fetchCurrentUserCredentials()
+  }
+
+  populateFromIDM = (providerName, fieldName) => {
+    const { credentials } = this.props
+    if (credentials[providerName] && credentials[providerName][fieldName]) {
+      const newDynamicFields = Object.assign({}, this.state.dynamicFields, {
+        [fieldName]: credentials[providerName][fieldName]
+      })
+
+      this.props.showMessage('Found!')
+      this.setState({dynamicFields: newDynamicFields})
+      return
+    }
+    this.props.showMessage('Not Found!')
+  }
+
+  saveCredential = (providerName, fieldName) => {
+    const fieldValue = this.state.dynamicFields[fieldName]
+
+    if (fieldValue) {
+      this.props.setEntityData({
+        entityId: this.props.currentUser.id,
+        entityType: 'user',
+        attributeType: `credentials.${providerName}.${fieldName}`,
+        attributeValue: this.state.dynamicFields[fieldName]
+      })
+      this.props.fetchCurrentUserCredentials()
+    }
   }
 
   handleDynamicFieldsChange = (fieldName, value) => {
@@ -50,7 +79,6 @@ class CloudUploadSettings extends Component {
   handleStartDateChange = (date) => this.setState({startDate: new Date(date)})
   handleEndDateChange = (date) => this.setState({endDate: new Date(date)})
   handleButtonClick = () => {
-
     const {
       deviceId,
       selectedComponent,
@@ -75,6 +103,8 @@ class CloudUploadSettings extends Component {
         startDate={this.state.startDate}
         endDate={this.state.endDate}
 
+        saveCredential={this.saveCredential}
+        populateFromIDM={this.populateFromIDM}
         selectedComponent={this.state.selectedComponent}
         selectedProvider={this.state.selectedProvider}
         storageProviders={this.props.cloudProviders}
@@ -92,6 +122,9 @@ class CloudUploadSettings extends Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    showMessage: (msg) => dispatch(message(msg)),
+    fetchCurrentUserCredentials: () => dispatch(fetchCurrentUserCredentials()),
+    setEntityData: (params) => dispatch(setEntityData(params)),
     fetchCloudProviders: () => dispatch(fetchCloudProviders()),
     cloudUploadData: (options) =>
       dispatch(cloudUploadData(options))
@@ -100,6 +133,8 @@ const mapDispatchToProps = (dispatch) => {
 
 const mapStateToProps = (state) => {
   return {
+    currentUser: state.currentUser,
+    credentials: state.credentials,
     cloudProviders: state.cloudProviders
   };
 };
