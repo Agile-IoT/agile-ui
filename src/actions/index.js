@@ -890,15 +890,3 @@ export const recordsDelete = (deviceId, componentId) => {
     })
   }
 }
-
-export const cloudUploadData = (deviceId, componentId, startTime, endTime, provider) => {
-  return(dispatch) => {
-    const startStamp = + (new Date(startTime))
-    const endStamp = + (new Date(endTime))
-
-    const query = `deviceID=${deviceId}&componentID=${componentId}&between=${startStamp}|${endStamp}`
-    agile.data.record.get(query).then(res => {
-      dispatch(message(`${res.length} records are ready for upload.`));
-    })
-  }
-}
