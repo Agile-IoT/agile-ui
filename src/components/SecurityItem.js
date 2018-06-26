@@ -64,11 +64,11 @@ const SecurityItem = (props) => {
         }
       }
       return (
-        <ListItem key={`${id}${name}`}
+        <ListItem id={`${parent}_value`} key={`${parent}_value`}
           style={{backgroundColor: '#eaeaea'}}
           primaryTogglesNestedList={true}
           nestedItems={[
-            <div>
+            <div key={`${parent}_${name}`}>
               {nestedElement}
               {editLock}
             </div>
@@ -113,7 +113,7 @@ const SecurityItem = (props) => {
       });
 
       return (
-        <div key={`${id}${name}`}>
+        <div key={`${name}`}>
           <span style={{float: 'left'}}>{name}</span>: {nestedElement}
         </div>
       );
@@ -139,7 +139,7 @@ const SecurityItem = (props) => {
         return <ListItem
           disabled
           id={`${attribute.name}`}
-          key={`${id}${attribute.name}`}>
+          key={`${attribute.name}`}>
             {handlerFunction({id, entityType, attribute, addAttributeField, parent})}
           </ListItem>
       })
@@ -175,6 +175,7 @@ const SecurityItem = (props) => {
   // TODO EDIT LOCK
   const getInlineEditField = ({ id, entityType, name, parent, value, editLock }) => {
     const field = <TextField
+      id={`${parent}_value`}
       defaultValue={value}
       style={{
         float: 'right',
@@ -198,6 +199,7 @@ const SecurityItem = (props) => {
     }
 
     const removeIcon = <RemoveIcon
+      id={`delete_${parent}`}
       style={removeButtonStyle}
       onClick={() => {
         handleDelete({
@@ -209,7 +211,7 @@ const SecurityItem = (props) => {
     />
 
     return (
-      <ListItem key={`${id}${name}`}>
+      <ListItem key={`attribute_${parent}`}>
         {removeIcon}
         {name}:{field}
         {editLock}

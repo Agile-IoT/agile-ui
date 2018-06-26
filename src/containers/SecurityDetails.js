@@ -204,6 +204,7 @@ class SecurityDetails extends Component {
         primaryText = {
           <div>
             <TextField
+              id={parent ? `new-attribute-${parent}`: `new-attribute`}
               defaultValue={this.props.input.input_name}
               hintText='New Attribute'
               style={{marginRight: '10%'}}
@@ -212,6 +213,7 @@ class SecurityDetails extends Component {
               }}
             />
             <TextField
+              id={parent ? `new-attribute-${parent}-value` : `new-attribute-value`}
               style={{margin: 'auto'}}
               placeholder='Value'
               onBlur={event =>
@@ -221,6 +223,7 @@ class SecurityDetails extends Component {
           </div>
         }
         rightIcon={<span
+          id={parent ? `new-attribute-${parent}-submit` : `new-attribute-submit`}
           style={{
             float: 'right',
             position: 'initial',
