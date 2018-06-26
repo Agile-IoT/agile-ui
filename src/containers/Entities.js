@@ -22,8 +22,8 @@ class Entities extends Component {
   renderNewEntityButton() {
     return (
       <div>
-        <Link to={`/add/${this.props.params.type.replace('/','')}`}>
-          <FlatButton label={`Add new ${this.props.params.type.replace('/','')}`}/>
+        <Link to={`/add/${this.props.params.type.replace('/', '')}`}>
+          <FlatButton label={`Add new ${this.props.params.type.replace('/', '')}`}/>
         </Link>
       </div>
     )
@@ -45,9 +45,11 @@ class Entities extends Component {
       default:
         return (
           <div>
-            <FlatButton label='Delete' onClick={() => {
-              this.props.entityDelete(entity, this.props.params.type);
-            }}/>
+            <Link>
+              <FlatButton label='Delete' onClick={() => {
+                this.props.entityDelete(entity, this.props.params.type);
+              }}/>
+            </Link>
             <Link to={`/entity/${entity.id}/${this.props.params.type}`}>
               <FlatButton label='View'/>
             </Link>
@@ -84,21 +86,21 @@ class Entities extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if(this.props.location.pathname !== prevProps.location.pathname) {
+    if (this.props.location.pathname !== prevProps.location.pathname) {
       this.props.entityFetch(this.props.params.type)
     }
   }
 
   render() {
     const addnewExists = this.props.ui &&
-      this.props.ui['/' + this.props.params.type] && 
+      this.props.ui['/' + this.props.params.type] &&
       Object.keys(this.props.ui['/' + this.props.params.type]).includes('addNew');
 
     return (
       <div>
         {this.renderItems()}
-        {(addnewExists && this.props.ui['/' + this.props.params.type].addNew) || !addnewExists 
-          ? this.renderNewEntityButton() 
+        {(addnewExists && this.props.ui['/' + this.props.params.type].addNew) || !addnewExists
+          ? this.renderNewEntityButton()
           : undefined
         }
       </div>
