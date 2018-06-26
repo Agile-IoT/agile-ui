@@ -219,6 +219,7 @@ class Locks extends Component {
         title={policy}
         policy={policies[policy]}
         key={`${policy}_locks`}
+        id={this.props.params.id}
       />))
     }
     return policyItems

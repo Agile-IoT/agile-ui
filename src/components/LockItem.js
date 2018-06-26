@@ -94,7 +94,7 @@ const getListItems = (locks, policyName) => {
 
 const LockItem = (props) => {
   return (
-    <Card
+    <Card id={props.id.replace('!@!', '-')}
       style={{marginBottom: '20px'}}>
       <CardHeader
         actAsExpander={props.actAsExpander}

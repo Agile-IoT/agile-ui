@@ -218,7 +218,7 @@ const SecurityItem = (props) => {
   }
 
   return (
-    <Card style={{ }}>
+    <Card id={id.replace('!@!', '-')} style={{ }}>
       <CardHeader
         actAsExpander
         showExpandableButton={props.showExpandableButton}

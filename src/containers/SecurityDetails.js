@@ -103,6 +103,7 @@ class SecurityDetails extends Component {
         <TextField
           hintText={'New Password'}
           ref='new_password'
+          id={'new_password'}
           style={{
             width: '30%',
             marginRight:'15px',
@@ -113,7 +114,8 @@ class SecurityDetails extends Component {
           }}
         />
         <TextField
-          hintText={'Old Password'} 
+          hintText={'Old Password'}
+          id={'old_password'}
           ref='old_password'
           style={{
             width: '30%',
@@ -132,8 +134,9 @@ class SecurityDetails extends Component {
     return (
       <div style={styles.passwordFieldStyle}>
         <TextField
-          hintText={'Old Password'} 
+          hintText={'New Password'}
           ref='new_password'
+          id={'new_password'}
           style={{
             width: '30%',
             marginRight:'15px',
