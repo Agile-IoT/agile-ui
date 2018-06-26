@@ -37,7 +37,7 @@ class AddLock extends Component {
   }
 
   renderOptions(options) {
-    const optionFields = [(<option value='empty' key='emptyOption'/>)]
+    const optionFields = [(<option value='' key=''/>)]
     for (let key in options) {
       if (options.hasOwnProperty(key)) {
         optionFields.push((
@@ -97,9 +97,9 @@ class AddLock extends Component {
     const options = this.renderOptions(this.props.lockFormats)
     if (options.length) {
       return (<select 
-        value={'empty'} 
+        value={''}
         onChange={e => {
-          if (e.target.value !== 'empty') {
+          if (e.target.value !== '') {
             this.props.formSelected(this.props.form.concat(e.target.value))
           }
       }}>
@@ -111,8 +111,8 @@ class AddLock extends Component {
   render() {
     return (
       <div>
-        {this.renderForm(this.props.form)}
         {this.renderSelectField()}
+        {this.renderForm(this.props.form)}
       </div>
     )
   }

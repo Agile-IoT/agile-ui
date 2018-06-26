@@ -182,3 +182,8 @@ i.glyphicon { display: none; }
 .array-item-move-up::after { content: 'Move Up'; }
 .array-item-move-down::after { content: 'Move Down'; }
 .array-item-remove::after { content: 'Remove'; }
+
+
+.__react_component_tooltip {
+  max-width: 300px;
+}

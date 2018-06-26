@@ -77,10 +77,11 @@ class Locks extends Component {
           <div>
             <TextField
               ref={`addPolicy_${id}_${type}_${field}`}
-              hintText='Name of new policy'/>
+              hintText='Name of new policy'
+            />
             <span
               id={`add_${id}_${field}`}
-              key={`${id}_${field}`}
+              key={`add_${id}_${field}`}
               style={{
                 float: 'right',
                 position: 'initial',
@@ -125,7 +126,7 @@ class Locks extends Component {
       <FloatingActionButton
         mini={true}
         id={`delete_${id}_${field}_${i}`}
-        key={`${id}_${field}_${i}`}
+        key={`delete_${id}_${field}_${i}`}
         label='Delete'
         style={deleteButtonStyle}
         onClick={() => {
@@ -157,8 +158,8 @@ class Locks extends Component {
     return (
       <FloatingActionButton
         mini={true}
-        id={`delete_${id}_${field}_${i}_{j}`}
-        key={`${id}_${field}_${i}_${j}`}
+        id={`delete_${id}_${field}_${i}_${j}`}
+        key={`delete_${id}_${field}_${i}_${j}`}
         label='Delete'
         style={deleteButtonStyle}
         onClick={() => {
@@ -193,7 +194,7 @@ class Locks extends Component {
     })
   }
 
-  renderButtons() {
+  renderPolicyItemComponents() {
     const result= {}
     const {policies} = this.props
     for (let policy in policies) {
@@ -210,7 +211,7 @@ class Locks extends Component {
   }
 
   getPolicyItems() {
-    let policies = this.renderButtons()
+    let policies = this.renderPolicyItemComponents()
     let policyItems = []
     for (var policy in policies) {
       policyItems.push((<LockItem
@@ -218,8 +219,8 @@ class Locks extends Component {
         showExpandableButton
         title={policy}
         policy={policies[policy]}
-        key={`${policy}_locks`}
-        id={this.props.params.id}
+        key={`${this.props.params.id}_${policy}`}
+        id={`${this.props.params.id}_${policy}`}
       />))
     }
     return policyItems
