@@ -96,7 +96,9 @@ class AddLock extends Component {
   renderSelectField() {
     const options = this.renderOptions(this.props.lockFormats)
     if (options.length) {
-      return (<select 
+      return (<div>Add locks to build a policy. You can chose multiple locks through the dropdown. The policy only resolves to TRUE if all of the locks resolve to TRUE.
+        <div>
+        Add a lock:<select
         value={''}
         onChange={e => {
           if (e.target.value !== '') {
@@ -104,7 +106,7 @@ class AddLock extends Component {
           }
       }}>
         {options}
-      </select>)
+        </select></div></div>)
     }
   }
 
