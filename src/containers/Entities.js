@@ -30,7 +30,7 @@ class Entities extends Component {
   }
 
   renderActions(entity) {
-    var id = entity.id.replace('!@!', '-')
+    let id = entity.id || entity.group_name
     switch (this.props.params.type) {
       case 'group':
         return (
@@ -70,9 +70,10 @@ class Entities extends Component {
   renderItems() {
     if (this.props.entityList) {
       return this.props.entityList.map((entity, i) => {
+        let id = entity.id || entity.group_name
         return (
           <EntityItem
-            id={entity.id.replace('!@!', '-') || entity.group_name.replace('!@!', '-')}
+            id={id.replace('!@!', '-')}
             title={entity.id || entity.group_name}
             key={entity.id || entity.group_name}
             status={entity.status}
