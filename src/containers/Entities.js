@@ -34,9 +34,11 @@ class Entities extends Component {
       case 'group':
         return (
           <div>
-            <FlatButton label='Delete' onClick={() => {
-              this.props.entityDelete(entity, this.props.params.type);
-            }}/>
+            <Link>
+              <FlatButton label='Delete' onClick={() => {
+                this.props.entityDelete(entity, this.props.params.type);
+              }}/>
+            </Link>
             <Link to={`/group/${entity.group_name}`}>
               <FlatButton label='View members'/>
             </Link>
@@ -69,8 +71,9 @@ class Entities extends Component {
       return this.props.entityList.map((entity, i) => {
         return (
           <EntityItem
+            id={entity.id || entity.group_name}
             title={entity.id || entity.group_name}
-            key={i}
+            key={entity.id || entity.group_name}
             status={entity.status}
             actions={this.renderActions(entity)}
             meta={entity}
