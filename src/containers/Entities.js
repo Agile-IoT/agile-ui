@@ -22,7 +22,7 @@ class Entities extends Component {
   renderNewEntityButton() {
     return (
       <div>
-        <Link to={`/add/${this.props.params.type.replace('/', '')}`}>
+        <Link id={`new_entity_button`} to={`/add/${this.props.params.type.replace('/', '')}`}>
           <FlatButton label={`Add new ${this.props.params.type.replace('/', '')}`}/>
         </Link>
       </div>
@@ -30,16 +30,17 @@ class Entities extends Component {
   }
 
   renderActions(entity) {
+    var id = entity.id.replace('!@!', '-')
     switch (this.props.params.type) {
       case 'group':
         return (
           <div>
-            <Link>
+            <Link id={`delete_${id}`}>
               <FlatButton label='Delete' onClick={() => {
                 this.props.entityDelete(entity, this.props.params.type);
               }}/>
             </Link>
-            <Link to={`/group/${entity.group_name}`}>
+            <Link id={`view_${id}`} to={`/group/${entity.group_name}`}>
               <FlatButton label='View members'/>
             </Link>
           </div>
@@ -47,18 +48,18 @@ class Entities extends Component {
       default:
         return (
           <div>
-            <Link>
+            <Link id={`delete_${id}`}>
               <FlatButton label='Delete' onClick={() => {
                 this.props.entityDelete(entity, this.props.params.type);
               }}/>
             </Link>
-            <Link to={`/entity/${entity.id}/${this.props.params.type}`}>
+            <Link id={`view_${id}`} to={`/entity/${entity.id}/${this.props.params.type}`}>
               <FlatButton label='View'/>
             </Link>
-            <Link to={`/group/${entity.id}/${this.props.params.type}`}>
+            <Link id={`group_${id}`} to={`/group/${entity.id}/${this.props.params.type}`}>
               <FlatButton label='Group'/>
             </Link>
-            <Link to={`/locks/${entity.id}/${this.props.params.type}`}>
+            <Link id={`policies_${id}`} to={`/locks/${entity.id}/${this.props.params.type}`}>
               <FlatButton label='Policies'/>
             </Link>
           </div>
@@ -71,7 +72,7 @@ class Entities extends Component {
       return this.props.entityList.map((entity, i) => {
         return (
           <EntityItem
-            id={entity.id || entity.group_name}
+            id={entity.id.replace('!@!', '-') || entity.group_name.replace('!@!', '-')}
             title={entity.id || entity.group_name}
             key={entity.id || entity.group_name}
             status={entity.status}
