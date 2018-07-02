@@ -31,6 +31,7 @@ class Entities extends Component {
 
   renderActions(entity) {
     let id = entity.id || entity.group_name
+    id = id.replace('!@!', '-')
     switch (this.props.params.type) {
       case 'group':
         return (

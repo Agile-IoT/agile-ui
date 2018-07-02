@@ -38,14 +38,21 @@ let changeGroupSchema = {
       items: {
         type: 'string',
         enum: []
-      }
+      },
+      uniqueItems: true
     }
   }
 }
 
 const uiSchema = {
   id: {'ui:readonly': true},
-  type: {'ui:readonly': true}
+  type: {'ui:readonly': true},
+  groups: {
+    'ui:widget': 'checkboxes',
+    'ui:options': {
+      inline: true
+    }
+  }
 }
 
 class Group extends Component {
