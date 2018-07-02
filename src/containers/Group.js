@@ -149,10 +149,9 @@ class Group extends Component {
       entity.id === this.props.params.id && 
       entity.type.replace('/', '') === this.props.params.type)
 
-    if (entity && this.props.groups) {
+    if (entity && this.props.groups && this.props.groups.length > 0) {
       changeGroupSchema.properties.groups.items.enum = this.props.groups
         .map(group => group.group_name)
-
       const formData = this.getGroupFormData(entity)
 
       return (
