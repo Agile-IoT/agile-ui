@@ -10,44 +10,44 @@
  *Contributors:
  *    Resin.io, FBK, Jolocom - initial API and implementation
  ******************************************************************************/
-import sortBy from 'lodash/sortBy';
-import omit from 'lodash/omit';
+import sortBy from 'lodash/sortBy'
+import omit from 'lodash/omit'
 
 export function devices(state = {}, action) {
   switch (action.type) {
     case 'DEVICE':
       return {
         ...state,
-        [action.data.deviceId] : action.data
+        [action.data.deviceId]: action.data
       }
     case 'DEVICES':
-      return action.data;
+      return action.data
     case 'DEVICES_DELETE':
       return omit(state, action.data)
     case 'DEVICES_CREATE':
       return {
         ...state,
-        [action.data.deviceId] : action.data
+        [action.data.deviceId]: action.data
       }
     default:
-      return state;
+      return state
   }
 }
 
 export function cloudUpload(state = {}, action) {
   switch (action.type) {
     case 'DEVICE_ID':
-      return Object.assign({}, state, {deviceId: action.data})
+      return Object.assign({}, state, { deviceId: action.data })
     case 'COMPOENT_ID':
-      return Object.assign({}, state, {componentId: action.data})
+      return Object.assign({}, state, { componentId: action.data })
     case 'START_DATE':
-      return Object.assign({}, state, {startDate: action.data})
+      return Object.assign({}, state, { startDate: action.data })
     case 'END_DATE':
-      return Object.assign({}, state, {endDate: action.data})
+      return Object.assign({}, state, { endDate: action.data })
     case 'PROVIDER':
-      return Object.assign({}, state, {provider: action.data})
+      return Object.assign({}, state, { provider: action.data })
     default:
-      return state;
+      return state
   }
 }
 
@@ -56,7 +56,7 @@ export function cloudProviders(state = [], action) {
     case 'CLOUD_PROVIDERS':
       return action.data
     default:
-      return state;
+      return state
   }
 }
 
@@ -65,25 +65,25 @@ export function credentials(state = {}, action) {
     case 'CREDENTIALS':
       return action.data
     default:
-      return state;
+      return state
   }
 }
 
 export function currentUser(state = {}, action) {
   switch (action.type) {
     case 'CURRENT_USER':
-      return action.data;
+      return action.data
     default:
-      return state;
+      return state
   }
 }
 
 export function entityPolicies(state = {}, action) {
   switch (action.type) {
     case 'ENTITY_POLICIES':
-      return action.data;
+      return action.data
     default:
-      return state;
+      return state
   }
 }
 
@@ -99,120 +99,145 @@ export function localStorage(state = {}, action) {
   }
 }
 
+const defaultConfirmationSCreenState = {
+  render: false,
+  message: '',
+  onConfirm: () => {}
+}
+
+export function confirmationScreen(
+  state = defaultConfirmationSCreenState,
+  action
+) {
+  switch (action.type) {
+    case 'CONFIRMATION_SHOW':
+      return {
+        render: action.data.render,
+        message: action.data.message,
+        onConfirm: action.data.onConfirm
+      }
+    case 'CONFIRMATION_HIDE':
+      return defaultConfirmationSCreenState
+    default:
+      return state
+  }
+}
+
 export function entityList(state = [], action) {
   switch (action.type) {
     case 'ENTITIES':
-      return action.data;
+      return action.data
     case 'ENTITY_DELETE':
-      return state.filter(element => element.user_name ? element.user_name !== action.data : element.name !== action.data);
+      return state.filter(
+        element =>
+          element.user_name
+            ? element.user_name !== action.data
+            : element.name !== action.data
+      )
     case 'GROUP_DELETE':
-      return state.filter(element => element.group_name !== action.data);
+      return state.filter(element => element.group_name !== action.data)
     case 'ENTITY_ADDED_GROUP':
     case 'ENTITY_REMOVED_GROUP':
     case 'ENTITY_ATTRIBUTE_SET':
       return state.map(entity => {
         if (entity.id === action.data.id && entity.type === action.data.type) {
-          entity = action.data;
+          entity = action.data
         }
-        return entity;
-      });
+        return entity
+      })
     default:
-      return state;
+      return state
   }
 }
 
 export function policies(state = {}, action) {
-  switch(action.type) {
+  switch (action.type) {
     case 'ENTITY_FIELD_LOCKS':
-      return action.data;
+      return action.data
     case 'POLICY_DELETE':
-      return action.data;
+      return action.data
     case 'POLICY_SET':
-      return action.data;
+      return action.data
     default:
-      return state;
+      return state
   }
 }
 
 export function lockFormats(state = {}, action) {
-  switch(action.type) {
+  switch (action.type) {
     case 'LOCK_FORMATS':
-      return action.data;
+      return action.data
     default:
-      return state;
+      return state
   }
 }
 
 export function form(state = [], action) {
-  switch(action.type) {
+  switch (action.type) {
     case 'FORM_SELECTED':
-      return action.data;
+      return action.data
     default:
-      return state;
+      return state
   }
 }
 
 export function groups(state = [], action) {
   switch (action.type) {
     case 'GROUPS':
-      return action.data;
+      return action.data
     default:
-      return state;
+      return state
   }
 }
 
 export function input(state = {}, action) {
   switch (action.type) {
     case 'INPUT_NAME':
-      state.input_name = action.data;
-      return state;
+      state.input_name = action.data
+      return state
     case 'INPUT_VALUE':
-      state.input_value = action.data;
-      return state;
+      state.input_value = action.data
+      return state
     case 'INPUT_OLD_PASSWORD':
-      state.old_password = action.data;
-      return state;
+      state.old_password = action.data
+      return state
     case 'INPUT_NEW_PASSWORD':
-      state.new_password = action.data;
-      return state;
+      state.new_password = action.data
+      return state
     default:
-      return state;
+      return state
   }
 }
 
 export function schemas(state = {}, action) {
   switch (action.type) {
     case 'SCHEMA':
-      return action.data;
+      return action.data
     default:
-      return state;
+      return state
   }
 }
 
 export function devicesDiscover(state = [], action) {
   switch (action.type) {
     case 'DEVICES_DISCOVER':
-      return action.data;
+      return action.data
     case 'DEVICES_CREATE':
-      return state.filter(element => element.name !== action.data.name);
+      return state.filter(element => element.name !== action.data.name)
     default:
-      return state;
+      return state
   }
 }
-
 
 export function messages(state = [], action) {
   switch (action.type) {
     case 'MESSAGE':
-      return [
-        action.data,
-        ...state
-      ]
+      return [action.data, ...state]
     case 'MESSAGE_REMOVE':
-      let newState = state.filter((i) => i !== action.data)
+      let newState = state.filter(i => i !== action.data)
       return newState
     default:
-      return state;
+      return state
   }
 }
 
@@ -246,34 +271,34 @@ export function loading(state = defLoadingState, action) {
         generic: action.data
       }
     default:
-      return state;
+      return state
   }
 }
 
 export function discovery(state = false, action) {
   switch (action.type) {
     case 'DISCOVERY':
-      return action.data;
+      return action.data
     default:
-      return state;
+      return state
   }
 }
 
 export function drawer(state = false, action) {
   switch (action.type) {
     case 'DRAWER':
-      return !state;
+      return !state
     default:
-      return state;
+      return state
   }
 }
 
 export function protocols(state = [], action) {
   switch (action.type) {
     case 'PROTOCOLS':
-      return action.data;
+      return action.data
     default:
-      return state;
+      return state
   }
 }
 
@@ -284,11 +309,11 @@ export function deviceTypes(state = {}, action) {
         return {
           ...state,
           [action.data.id]: action.data.types
-        };
+        }
       }
       return state
     default:
-      return state;
+      return state
   }
 }
 
@@ -323,17 +348,20 @@ export function streams(state = {}, action) {
       }
 
     case 'STREAMS_UPDATE':
-      const {record} = action.data
-      const {deviceID, componentID} = record
+      const { record } = action.data
+      const { deviceID, componentID } = record
 
-      const result = !state[deviceID].length
-        ? [record]
-        : state[deviceID].map(e => e.componentID === componentID ? record : e)
-
-      return {
-        ...state,
-        [deviceID]: result
+      if (!state[deviceID].length) {
+        return {
+          [deviceID]: [record]
+        }
       }
+
+      const newState = Object.assign({}, state)
+      newState[deviceID] = state[deviceID].filter(stream => stream.componentID !== componentID)
+      newState[deviceID] = newState[deviceID].concat(record)
+
+      return newState
 
     default:
       return state
@@ -345,6 +373,6 @@ export function recommendations(state = [], action) {
     case 'RECOMMENDATIONS':
       return action.data
     default:
-      return state;
+      return state
   }
 }

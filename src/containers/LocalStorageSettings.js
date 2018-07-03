@@ -20,6 +20,7 @@ import {
   locStorPoliciesFetch,
   recordsFetch,
   recordsDelete,
+  hideConfirmationScreen
 } from '../actions';
 
 class LocalStorageSettings extends Component {
@@ -31,7 +32,9 @@ class LocalStorageSettings extends Component {
       streams: props.device.streams,
       interval: 3000,
       retention: 7,
-      selectedComponent: props.device.streams[0].id
+      selectedComponent: props.device.streams[0].id,
+      shouldEncrypt: false,
+      publicKey: ''
     }
   }
 
@@ -43,16 +46,27 @@ class LocalStorageSettings extends Component {
     this.props.locStorPoliciesFetch(this.props.device.deviceId)
   }
 
+  toggleEncryption = () => this.setState({
+    shouldEncrypt: !this.state.shouldEncrypt,
+    publicKey: ''
+  })
+  handlePublicKeyChange = (event, value) => this.setState({publicKey: value})
   handleIntervalChange = (event, value) => this.setState({interval: value})
   handleRetentionChange = (event, value) => this.setState({retention: value})
   handleComponentChange = (event, key, value) => this.setState({selectedComponent: value})
   handleButtonClick = () => {
-    this.props.locStorPolicyAdd(
-      this.state.deviceId,
-      this.state.selectedComponent,
-      this.state.interval,
-      this.state.retention
-    )
+    this.props.locStorPolicyAdd({
+      deviceID: this.state.deviceId,
+      componentID: this.state.selectedComponent,
+      interval: this.state.interval,
+      retention: this.state.retention,
+      publicKey: this.state.publicKey
+    })
+
+    this.setState({
+      shouldEncrypt: false,
+      publicKey: ''
+    })
   }
 
   componentWillUpdate() {
@@ -85,9 +99,13 @@ class LocalStorageSettings extends Component {
         streams={this.state.streams}
         interval={this.state.interval}
         retention={this.state.retention}
+        shouldEncrypt={this.state.shouldEncrypt}
         policyExists={existing}
         records={this.props.records}
+        publicKey={this.state.publicKey}
         selectedComponent={this.state.selectedComponent}
+        renderConfirmScreen={this.props.confirmationScreen}
+        closeConfirmScreen={this.props.hideConfirmationScreen}
         handleIntervalChange={this.handleIntervalChange}
         handleComponentChange={this.handleComponentChange}
         handleRetentionChange={this.handleRetentionChange}
@@ -95,6 +113,8 @@ class LocalStorageSettings extends Component {
         localStorage={localStorage[this.state.deviceId]}
         locStorPolicyDelete={locStorPolicyDelete}
         recordsDelete={this.props.recordsDelete}
+        handlePublicKeyChange={this.handlePublicKeyChange}
+        toggleEncryption={this.toggleEncryption}
       />
     );
   }
@@ -104,7 +124,8 @@ const mapStateToProps = (state) => {
   return {
     localStorage: state.localStorage,
     records: state.records,
-    streams: state.streams
+    streams: state.streams,
+    confirmationScreen: state.confirmationScreen
   };
 };
 
@@ -115,7 +136,8 @@ const mapDispatchToProps = (dispatch) => {
     locStorPolicyDelete: (deviceId, componentId) => dispatch(locStorPolicyDelete(deviceId, componentId)),
     locStorPoliciesFetch: (deviceId, componentId) => dispatch(locStorPoliciesFetch(deviceId, componentId)),
     recordsDelete: (deviceId, componentId) => dispatch(recordsDelete(deviceId, componentId)),
-    recordsFetch: (deviceId, componentId) => dispatch(recordsFetch(deviceId, componentId))
+    recordsFetch: (deviceId, componentId) => dispatch(recordsFetch(deviceId, componentId)),
+    hideConfirmationScreen: () => dispatch(hideConfirmationScreen())
   };
 };
 
