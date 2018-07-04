@@ -430,7 +430,7 @@ export const setEntityData = params => {
       .setAttribute(params)
       .then(entity => {
         dispatch(action('ENTITY_ATTRIBUTE_SET', entity))
-        dispatch(message('Record Set!'))
+        dispatch(message('Record Set'))
         dispatch(loading(false))
       })
       .catch(err => {

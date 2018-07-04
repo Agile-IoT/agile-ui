@@ -105,10 +105,7 @@ const defaultConfirmationSCreenState = {
   onConfirm: () => {}
 }
 
-export function confirmationScreen(
-  state = defaultConfirmationSCreenState,
-  action
-) {
+export function confirmationScreen(state = defaultConfirmationSCreenState, action) {
   switch (action.type) {
     case 'CONFIRMATION_SHOW':
       return {
@@ -129,10 +126,7 @@ export function entityList(state = [], action) {
       return action.data
     case 'ENTITY_DELETE':
       return state.filter(
-        element =>
-          element.user_name
-            ? element.user_name !== action.data
-            : element.name !== action.data
+        element => (element.user_name ? element.user_name !== action.data : element.name !== action.data)
       )
     case 'GROUP_DELETE':
       return state.filter(element => element.group_name !== action.data)
@@ -323,10 +317,7 @@ export function records(state = {}, action) {
       const { deviceId, componentId } = action.data
       const records = {
         ...state[deviceId],
-        [componentId]: action.data.records.map(rec => [
-          new Date(rec.lastUpdate),
-          parseInt(rec.value, 10)
-        ])
+        [componentId]: action.data.records.map(rec => [new Date(rec.lastUpdate), parseInt(rec.value, 10)])
       }
 
       return {
@@ -360,7 +351,11 @@ export function streams(state = {}, action) {
       const newState = Object.assign({}, state)
       newState[deviceID] = state[deviceID].filter(stream => stream.componentID !== componentID)
       newState[deviceID] = newState[deviceID].concat(record)
-
+      newState[deviceID] = newState[deviceID].sort((first, second) => {
+        if (first.componentID < second.componentID) return -1
+        if (first.componentID > second.componentID) return 1
+        return 0
+      })
       return newState
 
     default:

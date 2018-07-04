@@ -90,6 +90,7 @@ const CloudUploadSettingsSummary = (props) => {
         title={ <span style={title}> EXPORT LOCAL DATA </span> }
         subtitle={storageProviders.length ? '' : 'Fetching available cloud providers...'}
         actAsExpander={storageProviders.length}
+        expandable
         showExpandableButton
       />
 
@@ -221,6 +222,7 @@ const renderRequestedArguments = (props, styles) => {
 
           <IconButton
             tooltip='Attempt to fetch the credential from Agile Security.'
+            tooltipStyles={{fontSize: '16px'}}
             tooltipPosition='bottom-left'
             onClick={() =>
               props.populateFromIDM(props.selectedProvider, f.name)
@@ -232,6 +234,7 @@ const renderRequestedArguments = (props, styles) => {
           <IconButton
             tooltip='Save the credential using Agile Security.'
             disabled={!props.dynamicFieldValues[f.name]}
+            tooltipStyles={{fontSize: '16px'}}
             tooltipPosition='bottom-left'
             onClick={() =>
               props.saveCredential(props.selectedProvider, f.name)

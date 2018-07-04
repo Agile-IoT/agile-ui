@@ -70,7 +70,7 @@ const LocalStoragePolicies = props => {
           return (
             <Toolbar style={styles.bar}>
               <ToolbarGroup>
-                {pol.encrypt.key ? 'Encrypted data' : 'Data'} from component{' '}
+                {pol.encrypt.key ? 'Encrypted data ' : 'Data '} from component{' '}
                 <span style={styles.span}>{pol.componentID}</span> is stored every{' '}
                 <span style={styles.span}>{pol.interval}</span> ms.
               </ToolbarGroup>
