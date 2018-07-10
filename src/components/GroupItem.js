@@ -94,31 +94,31 @@ const renderAttribute = (key, value, parent) => {
   if (getType(value) === 'Array') {
     return (
       <List
-        id={`${parent + '.' + key}`}
-        key={`${parent + '.' + key}`}>
+        id={`${parent + '-' + key}`}
+        key={`${parent + '-' + key}`}>
         <span style={{float: 'left'}}>{key}</span>:
-        {renderAttributes(value, parent + '.' + key)}
+        {renderAttributes(value, parent + '-' + key)}
       </List>
     )
   } else if (getType(value) === 'Object') {
     if (getType(key) === 'Number') {
       return (<List
-        id={`${parent + '.' + key}`}
-        key={`${parent + '.' + key}`}>
-        {renderAttributes(value, parent + '.' + key)}
+        id={`${parent + '-' + key}`}
+        key={`${parent + '-' + key}`}>
+        {renderAttributes(value, parent + '-' + key)}
       </List>)
     } else {
       return (<List
-        id={`${parent + '.' + key}`}
-        key={`${parent + '.' + key}`}>
+        id={`${parent + '-' + key}`}
+        key={`${parent + '-' + key}`}>
         <span style={{float: 'left'}}>{key}</span>:
-        {renderAttributes(value, parent + '.' + key)}
+        {renderAttributes(value, parent + '-' + key)}
       </List>)
     }
   } else {
     return (
-      <div id={`${parent + '.' + key}`}
-           key={`${parent + '.' + key}`}>
+      <div id={`${parent + '-' + key}`}
+           key={`${parent + '-' + key}`}>
         <span style={{float: 'left'}}>{key}</span>: {value}
       </div>
     )
@@ -136,8 +136,8 @@ const renderAttributes = (group, parent) => {
       const key = attribute[0]
       const value = attribute[1]
       return (<ListItem
-        id={`${parent + '.' + key}`}
-        key={`${parent + '.' + key}`}>
+        id={`${parent + '-' + key}`}
+        key={`${parent + '-' + key}`}>
         {renderAttribute(key, value, parent)}
       </ListItem>)
     })}
