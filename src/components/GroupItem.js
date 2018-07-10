@@ -91,7 +91,6 @@ JSON.sort = function(object) {
 }
 
 const renderAttribute = (key, value, parent) => {
-  console.log(parent)
   if (getType(value) === 'Array') {
     return (
       <List

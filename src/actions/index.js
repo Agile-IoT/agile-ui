@@ -589,8 +589,8 @@ export const groupDelete = (owner, name) => {
     dispatch(loading(true))
     agile.idm.group.delete(owner, name)
       .then(() => {
-        dispatch(action('GROUP_DELETE', name));
-        dispatch(message(`Group ${name} deleted.`));
+        dispatch(action('GROUP_DELETE', {group_name: name, owner: owner}));
+        dispatch(message(`Group ${name} | ${owner} deleted.`));
         dispatch(loading(false));
       })
       .catch(err => {
