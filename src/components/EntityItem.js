@@ -40,6 +40,7 @@ const EntityItem = (props) => {
       style={{marginBottom: '20px'}}>
       <CardHeader
         title={props.title}
+        subtitle={props.owner}
         avatar={
           <Avatar
             backgroundColor={computeColor(props.status)}

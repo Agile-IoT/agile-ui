@@ -31,9 +31,10 @@ class Entities extends Component {
 
   renderActions(entity) {
     let id = entity.id || entity.group_name
-    id = id.replace('!@!', '-')
+    id = id.replace(/!@!/g, '-')
     switch (this.props.params.type) {
       case 'group':
+        id = id + '-' + entity.owner.replace(/!@!/g, '-')
         return (
           <div>
             <Link id={`delete_${id}`}>
@@ -41,7 +42,7 @@ class Entities extends Component {
                 this.props.entityDelete(entity, this.props.params.type);
               }}/>
             </Link>
-            <Link id={`view_${id}`} to={`/group/${entity.group_name}`}>
+            <Link id={`view_${id}`} to={`/groupmembers/${entity.owner}/${entity.group_name}`}>
               <FlatButton label='View members'/>
             </Link>
           </div>
@@ -72,11 +73,17 @@ class Entities extends Component {
     if (this.props.entityList) {
       return this.props.entityList.map((entity, i) => {
         let id = entity.id || entity.group_name
+        let title = entity.id || entity.group_name
+        if(this.props.params.type === 'group') {
+          id = id + '-' + entity.owner
+        }
+        id = id.replace(/!@!/, '-')
         return (
           <EntityItem
-            id={id.replace('!@!', '-')}
-            title={entity.id || entity.group_name}
-            key={entity.id || entity.group_name}
+            id={id}
+            title={title}
+            owner={entity.owner}
+            key={id}
             status={entity.status}
             actions={this.renderActions(entity)}
             meta={entity}

@@ -13,17 +13,23 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {groupsFetch} from '../actions'
-import EntityItem from '../components/EntityItem'
+import GroupItem from "../components/GroupItem";
 
 class GroupMembers extends Component {
   render() {
-    const group = this.props.groups.find(group => 
+    const group = this.props.groups.find(group =>
+      group.owner === this.props.params.owner &&
       group.group_name === this.props.params.group_name)
 
     if (group && group.entities) {
+      let id = group.group_name + '-' + group.owner
+      id = id.replace(/!@!/g, '-')
       return (
-        <EntityItem
+        <GroupItem
+          id={id}
           title={group.group_name}
+          owner={group.owner}
+          group={group}
           text={group.entities.map(entity => JSON.stringify(entity))}
         />
       )
