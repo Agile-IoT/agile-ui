@@ -11,7 +11,7 @@
  *    Resin.io, FBK, Jolocom - initial API and implementation
  ******************************************************************************/
 import React, { Component } from 'react';
-import { DeviceItem } from '../components';
+import { DeviceItem, RegisterDeviceManual } from '../components';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import { connect } from 'react-redux';
@@ -118,15 +118,21 @@ class Discover extends Component {
     const {discovery, devices} = this.props
     if (devices.length === 0 && discovery) {
       return (
-        <div className='loadingScreen'>
-          <CircularProgress size={250} thickness={10}/>
+        <div className="root">
+          <RegisterDeviceManual />
+          <div className='loadingScreen'>
+            <CircularProgress size={250} thickness={10}/>
+          </div>
         </div>
       )
     }
 
     return (
-      <div className='discover'>
-        {this.renderItems(this.props.devices)}
+      <div className="root">
+        <RegisterDeviceManual />
+        <div className='discover'>
+          {this.renderItems(this.props.devices)}
+        </div>
       </div>
     );
   }

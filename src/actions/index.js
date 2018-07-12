@@ -886,3 +886,13 @@ export const recordsDelete = (deviceId, componentId) => {
     })
   }
 }
+
+export const deviceTypesGet = (deviceOverview) => {
+  return agile.deviceManager.typeof(deviceOverview)
+    .then(deviceTypes => {
+      return deviceTypes
+    })
+    .catch(err => {
+      return err
+    });
+}
