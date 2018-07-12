@@ -89,6 +89,7 @@ const renderForm = (props, inputs) => {
   return (
     <div>
       <form
+        className={props.class}
         id={id}
         onSubmit={event => {
         event.preventDefault();
@@ -107,7 +108,7 @@ const renderForm = (props, inputs) => {
           width: '10%',
           color: '#008714',
           padding: '8px',
-          margin: '5px 25px 0 0'
+          margin: '0px 25px 0 0'
         }}
         onClick={event => {
           event.preventDefault()

@@ -187,3 +187,7 @@ i.glyphicon { display: none; }
 .__react_component_tooltip {
   max-width: 300px;
 }
+
+.policy_lock_form {
+  display: inline-block;
+}

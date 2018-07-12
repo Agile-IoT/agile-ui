@@ -133,6 +133,7 @@ class Locks extends Component {
     if(form[policy] && form[policy][op]) {
       return (
         <Form
+          class={'policy_lock_form'}
           id={this.props.params.id + '_' + this.props.params.type + '_' + policy + '_' + op}
           selectedForms={form[policy][op]}
           deleteFormName={forms => {
@@ -197,7 +198,7 @@ class Locks extends Component {
       return (
         <GenericListItem
           key={`addLockList_${policy}_${type},`}
-          style={{bar: {height: 'auto', margin: '0 0 10px 0'}, middleEl: {width: '150px', padding: '20px'}, rightEl: {padding: '20px'}, leftEl: {padding: '20px'}}}
+          style={{bar: {height: 'auto', margin: '0 0 10px 0'}, middleEl: {display: 'inline-block', width: '150px', padding: '0px'}, rightEl: {padding: '20px'}, leftEl: {display: 'inline-block', padding: '40px 20px 20px 20px'}}}
           leftEl={`New ${type} lock`}
           rightEl={this.renderForm(policy, type)}
           middleEl={
