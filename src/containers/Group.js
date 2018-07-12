@@ -132,7 +132,6 @@ class Group extends Component {
     const formData = JSON.parse(JSON.stringify(entity))
     if (entity.groups) {
       formData.groups = entity.groups.map(entityGroup => {
-        console.log(this.props.groups)
         const group = this.props.groups.find(group =>
           group.owner === entityGroup.owner &&
           group.group_name === entityGroup.group_name
