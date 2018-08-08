@@ -36,9 +36,11 @@ const computeColor = (status) => {
 const EntityItem = (props) => {
   return (
     <Card
+      id={props.id}
       style={{marginBottom: '20px'}}>
       <CardHeader
         title={props.title}
+        subtitle={props.owner}
         avatar={
           <Avatar
             backgroundColor={computeColor(props.status)}

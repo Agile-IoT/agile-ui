@@ -129,7 +129,7 @@ export function entityList(state = [], action) {
         element => (element.user_name ? element.user_name !== action.data : element.name !== action.data)
       )
     case 'GROUP_DELETE':
-      return state.filter(element => element.group_name !== action.data)
+      return state.filter(element => element.owner !== action.data.owner || element.group_name !== action.data.group_name);
     case 'ENTITY_ADDED_GROUP':
     case 'ENTITY_REMOVED_GROUP':
     case 'ENTITY_ATTRIBUTE_SET':
@@ -157,6 +157,32 @@ export function policies(state = {}, action) {
   }
 }
 
+export function lockFields(state = {}, action) {
+  switch(action.type) {
+    case 'ADD_WRITE_LOCK_FIELD':
+    case 'ADD_READ_LOCK_FIELD':
+      let newState = Object.assign({}, state)
+      if(!newState[action.data.type]) {
+        newState[action.data.type] = []
+      }
+      newState[action.data.type].push(action.data.policy)
+      return  newState
+    case 'REMOVE_WRITE_LOCK_FIELD':
+    case 'REMOVE_READ_LOCK_FIELD':
+      if(state[action.data.type]) {
+        let newState = Object.assign({}, state)
+        newState[action.data.type] = newState[action.data.type].map(policy => {
+          return policy !== action.data.policy
+        })
+        return newState
+      } else {
+        return state
+      }
+    default:
+      return state;
+  }
+}
+
 export function lockFormats(state = {}, action) {
   switch (action.type) {
     case 'LOCK_FORMATS':
@@ -166,10 +192,15 @@ export function lockFormats(state = {}, action) {
   }
 }
 
-export function form(state = [], action) {
-  switch (action.type) {
+export function form(state = {}, action) {
+  switch(action.type) {
     case 'FORM_SELECTED':
-      return action.data
+      let newState = Object.assign({}, state)
+      if(!newState[action.data.policy]) {
+        newState[action.data.policy] = {}
+      }
+      newState[action.data.policy][action.data.type] = action.data.formNames
+      return newState;
     default:
       return state
   }

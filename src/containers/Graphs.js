@@ -45,6 +45,7 @@ class Graphs extends Component {
     return streams.map(st => {
       return (
         <Graph
+          id={st.id}
           key={st.id}
           areInSync={this.state.synchronize || false}
           deviceId={this.props.params.deviceId}

@@ -11,24 +11,24 @@
  *    Resin.io, FBK, Jolocom - initial API and implementation
  ******************************************************************************/
 import React from 'react';
-import { FloatingActionButton } from 'material-ui';
 import ReactTooltip from 'react-tooltip'
-import ContentRemove from 'material-ui/svg-icons/content/remove';
+import RemoveIcon from 'material-ui/svg-icons/action/delete-forever'
 
 const renderDeleteInputField = (position, formName, formNames, deleteFormName) => {
   const id = `delete_${formName}_${position}`;
+  const removeButtonStyle = {
+    cursor: "pointer",
+    float: "right"
+  }
+
   return (
-    <FloatingActionButton
-      mini={true}
-      id
-      key={id}
-      label='Delete'
+    <RemoveIcon
+      id={id}
+      style={removeButtonStyle}
       onClick={() => {
         deleteFormName(formNames.filter((form, i) => position !== i));
       }}
-    >
-      <ContentRemove/>
-    </FloatingActionButton>
+    />
   )
 }
 
@@ -38,9 +38,10 @@ const renderInputFields = (formNames, forms, deleteFormName, onChange) => {
       if (forms[formName].args) {
         const title = forms[formName].name ? forms[formName].name : formName
         const value = forms[formName].args.map(arg => (
-          <label key={'label_' + arg}>
+          <label style={{width: '250px', display: 'block'}} key={'label_' + arg}>
             {arg}
             <input
+              style={{width: '150px', margin: '10px'}}
               name={i + '_' + formName + '_' + arg}
               key={'input_' + i + '_' + formName + '_' + arg}
               type="text" onChange={onChange}
@@ -49,20 +50,23 @@ const renderInputFields = (formNames, forms, deleteFormName, onChange) => {
         ))
 
         return (
-          <div key={`${formName}_${i}`} data-tip={forms[formName].descr} >
+          <div style={{border: "1px solid grey", margin: "1px 0 0 1px", padding: "15px"}} key={`${formName}_${i}`}
+               data-tip={forms[formName].descr}>
             <ReactTooltip globalEventOff='click'/>
-            {title}: {value}
             {renderDeleteInputField(i, formName, formNames, deleteFormName)}
+            {title}: {value}
           </div>
         )
       } else {
         return (
           <div
+            style={{border: "1px solid grey", margin: "1px 0 0 1px", padding: "15px"}}
             key={formName + '_' + i}
             data-tip={forms[formName].descr}
             data-multiline={true}
           >
-            <ReactTooltip />
+            <ReactTooltip/>
+            {renderDeleteInputField(i, formName, formNames, deleteFormName)}
             <label key={'label_' + formName}>
               <input
                 name={i + '_' + formName}
@@ -72,7 +76,6 @@ const renderInputFields = (formNames, forms, deleteFormName, onChange) => {
                 disabled
               />
             </label>
-            {renderDeleteInputField(i, formName, formNames, deleteFormName)}
           </div>
         )
       }
@@ -82,22 +85,44 @@ const renderInputFields = (formNames, forms, deleteFormName, onChange) => {
 }
 
 const renderForm = (props, inputs) => {
+  const id = `newLockForm_${props.id.replace(/!@!/, '-').replace(/\./, '-')}`
   return (
     <div>
-      <form onSubmit={event => {
+      <form
+        className={props.class}
+        id={id}
+        onSubmit={event => {
         event.preventDefault();
         props.onSubmit(event)
       }}>
         {props.options}
         {inputs}
-        <input type='submit' value={props.submitText}/>
+        <input style={{display: 'none'}} id={id + '_button'} type={'submit'} value={props.submitText}/>
       </form>
+      <span
+
+        style={{
+          float: 'right',
+          position: 'initial',
+          fontWeight: 'bold',
+          width: '10%',
+          color: '#008714',
+          padding: '8px',
+          margin: '0px 25px 0 0'
+        }}
+        onClick={event => {
+          event.preventDefault()
+          document.getElementById(id + '_button').click()
+        }}
+      >
+            SAVE POLICY
+            </span>
     </div>
   );
 }
 
 const Form = (props) => {
-  const inputs = renderInputFields(props.formNames, props.forms, props.deleteFormName, props.onChange);
+  const inputs = renderInputFields(props.selectedForms, props.forms, props.deleteFormName, props.onChange);
   return renderForm(props, inputs);
 }
 

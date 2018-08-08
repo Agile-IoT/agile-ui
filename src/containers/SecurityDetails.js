@@ -103,6 +103,7 @@ class SecurityDetails extends Component {
         <TextField
           hintText={'New Password'}
           ref='new_password'
+          id={'new_password'}
           style={{
             width: '30%',
             marginRight:'15px',
@@ -113,7 +114,8 @@ class SecurityDetails extends Component {
           }}
         />
         <TextField
-          hintText={'Old Password'} 
+          hintText={'Old Password'}
+          id={'old_password'}
           ref='old_password'
           style={{
             width: '30%',
@@ -132,8 +134,9 @@ class SecurityDetails extends Component {
     return (
       <div style={styles.passwordFieldStyle}>
         <TextField
-          hintText={'Old Password'} 
+          hintText={'New Password'}
           ref='new_password'
+          id={'new_password'}
           style={{
             width: '30%',
             marginRight:'15px',
@@ -201,6 +204,7 @@ class SecurityDetails extends Component {
         primaryText = {
           <div>
             <TextField
+              id={parent ? `new-attribute-${parent}`: `new-attribute`}
               defaultValue={this.props.input.input_name}
               hintText='New Attribute'
               style={{marginRight: '10%'}}
@@ -209,6 +213,7 @@ class SecurityDetails extends Component {
               }}
             />
             <TextField
+              id={parent ? `new-attribute-${parent}-value` : `new-attribute-value`}
               style={{margin: 'auto'}}
               placeholder='Value'
               onBlur={event =>
@@ -218,6 +223,7 @@ class SecurityDetails extends Component {
           </div>
         }
         rightIcon={<span
+          id={parent ? `new-attribute-${parent}-submit` : `new-attribute-submit`}
           style={{
             float: 'right',
             position: 'initial',

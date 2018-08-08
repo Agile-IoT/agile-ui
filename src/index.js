@@ -51,7 +51,7 @@ render(
           <Route path="graphs/:deviceId" component={Graphs} />
           <Route path="add/:type" component={AddEntity} />
           <Route path="group/:id/:type" component={Group} />
-          <Route path="group/:group_name" component={GroupMembers} />
+          <Route path="groupmembers/:owner/:group_name" component={GroupMembers} />
           <Route path="locks/:id/:type" component={Locks} />
           <Route path="lock/add/:id/:type/:field/:op" component={AddLock} />
           <Route path="recommender" component={Recommender} />

@@ -64,11 +64,11 @@ const SecurityItem = (props) => {
         }
       }
       return (
-        <ListItem key={`${id}${name}`}
+        <ListItem id={`${parent.replace(/\./g, '_')}_value`} key={`${parent}_value`}
           style={{backgroundColor: '#eaeaea'}}
           primaryTogglesNestedList={true}
           nestedItems={[
-            <div>
+            <div id={`${parent.replace(/\./g, '_')}_${name}`} key={`${parent}_${name}`}>
               {nestedElement}
               {editLock}
             </div>
@@ -113,7 +113,7 @@ const SecurityItem = (props) => {
       });
 
       return (
-        <div key={`${id}${name}`}>
+        <div id={`${name.replace(/./g, /_/)}`} key={`${name}`}>
           <span style={{float: 'left'}}>{name}</span>: {nestedElement}
         </div>
       );
@@ -139,7 +139,7 @@ const SecurityItem = (props) => {
         return <ListItem
           disabled
           id={`${attribute.name}`}
-          key={`${id}${attribute.name}`}>
+          key={`${attribute.name}`}>
             {handlerFunction({id, entityType, attribute, addAttributeField, parent})}
           </ListItem>
       })
@@ -175,6 +175,7 @@ const SecurityItem = (props) => {
   // TODO EDIT LOCK
   const getInlineEditField = ({ id, entityType, name, parent, value, editLock }) => {
     const field = <TextField
+      id={`${parent.replace(/\./g, '_')}_value`}
       defaultValue={value}
       style={{
         float: 'right',
@@ -198,6 +199,7 @@ const SecurityItem = (props) => {
     }
 
     const removeIcon = <RemoveIcon
+      id={`delete_${parent.replace(/\./g, '_')}`}
       style={removeButtonStyle}
       onClick={() => {
         handleDelete({
@@ -209,7 +211,7 @@ const SecurityItem = (props) => {
     />
 
     return (
-      <ListItem key={`${id}${name}`}>
+      <ListItem id={`attribute_${parent.replace(/\./g, '_')}`} key={`attribute_${parent}`}>
         {removeIcon}
         {name}:{field}
         {editLock}
@@ -218,7 +220,7 @@ const SecurityItem = (props) => {
   }
 
   return (
-    <Card style={{ }}>
+    <Card id={id.replace('!@!', '-')} style={{ }}>
       <CardHeader
         actAsExpander
         showExpandableButton={props.showExpandableButton}

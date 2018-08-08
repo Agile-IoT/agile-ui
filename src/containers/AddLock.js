@@ -37,7 +37,7 @@ class AddLock extends Component {
   }
 
   renderOptions(options) {
-    const optionFields = [(<option value='empty' key='emptyOption'/>)]
+    const optionFields = [(<option value='' key=''/>)]
     for (let key in options) {
       if (options.hasOwnProperty(key)) {
         optionFields.push((
@@ -96,23 +96,25 @@ class AddLock extends Component {
   renderSelectField() {
     const options = this.renderOptions(this.props.lockFormats)
     if (options.length) {
-      return (<select 
-        value={'empty'} 
+      return (<div>Add locks to build a policy. You can chose multiple locks through the dropdown. The policy only resolves to TRUE if all of the locks resolve to TRUE.
+        <div>
+        Add a lock:<select
+        value={''}
         onChange={e => {
-          if (e.target.value !== 'empty') {
+          if (e.target.value !== '') {
             this.props.formSelected(this.props.form.concat(e.target.value))
           }
       }}>
         {options}
-      </select>)
+        </select></div></div>)
     }
   }
 
   render() {
     return (
       <div>
-        {this.renderForm(this.props.form)}
         {this.renderSelectField()}
+        {this.renderForm(this.props.form)}
       </div>
     )
   }

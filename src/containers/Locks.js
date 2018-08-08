@@ -13,11 +13,14 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {Link} from 'react-router'
-import {FloatingActionButton, FlatButton} from 'material-ui'
+import {FloatingActionButton, FlatButton, SelectField, MenuItem} from 'material-ui'
 import TextField from 'material-ui/TextField'
 import ContentRemove from 'material-ui/svg-icons/content/remove'
-import {fetchEntityLocks, deleteLock, setLock} from '../actions'
-import {LockItem, GenericListItem} from '../components'
+import {fetchEntityLocks, fetchLocks, deleteLock, setLock, addLockField, removeLockField, formSelected} from '../actions'
+import {LockItem, GenericListItem, Form} from '../components'
+import ReactTooltip from 'react-tooltip'
+
+const formSelectToolTip = 'You can select multiple lock types to add them as one block to this policy. They will be evaluated with a logical AND.'
 
 const deleteButtonStyle = {
   margin: 0,
@@ -28,27 +31,35 @@ const deleteButtonStyle = {
 
 class Locks extends Component {
   renderAddWriteLockButton(field) {
-    const {id, type} =this.props.params
 
     return (
       <Link
+        id={`addwrite_${field.replace(/\./, '_')}`}
         key={`addwrite_${field}`}
-        to={`/lock/add/${id}/${type}/${field}/write`}
       >
-        <FlatButton label={`Add write lock`}/>
+        <FlatButton
+          label={`Add write lock`}
+          onClick={() => {
+            this.addLockField('write', field)
+          }}
+          />
       </Link>
     )
   }
 
   renderAddReadLockButton(field) {
-    const {id, type} = this.props.params
 
     return (
       <Link
+        id={`addread_${field.replace(/\./, '_')}`}
         key={`addread_${field}`}
-        to={`/lock/add/${id}/${type}/${field}/read`}
       >
-        <FlatButton label={`Add read lock`}/>
+        <FlatButton
+          label={`Add read lock`}
+          onClick={() => {
+            this.addLockField('read', field)
+          }}
+        />
       </Link>
     )
   }
@@ -71,16 +82,20 @@ class Locks extends Component {
 
     return (
       <GenericListItem
+        key={`addPolicyList_${id}_${type}_${field},`}
         style={{rightEl: {padding: '20px'}, leftEl: {padding: '20px'}}}
         leftEl='New sub policy'
         rightEl={
           <div>
             <TextField
               ref={`addPolicy_${id}_${type}_${field}`}
-              hintText='Name of new policy'/>
+              key={`addPolicy_${id}_${type}_${field}`}
+              id={`addPolicy_${id.replace(/!@!/g, '_')}_${type}_${field.replace(/\./g, '_')}`}
+              hintText='Name of new policy'
+            />
             <span
-              id={`add_${id}_${field}`}
-              key={`${id}_${field}`}
+              id={`add_${id.replace(/!@!/g, '_')}_${field.replace(/\./g, '_')}`}
+              key={`add_${id}_${field}`}
               style={{
                 float: 'right',
                 position: 'initial',
@@ -101,11 +116,129 @@ class Locks extends Component {
     )
   }
 
+  addLock(locks, field, op) {
+    const {id, type} = this.props.params
+    let newLocks = this.props.policies[field].flows.map(block => block)
+    newLocks.push({op, locks})
+    this.props.setLock({
+      entityId: id,
+      entityType: type,
+      field: field,
+      policy: newLocks
+    })
+  }
+
+  renderForm(policy, op) {
+    const {form, lockFormats} = this.props
+    if(form[policy] && form[policy][op]) {
+      return (
+        <Form
+          class={'policy_lock_form'}
+          id={this.props.params.id + '_' + this.props.params.type + '_' + policy + '_' + op}
+          selectedForms={form[policy][op]}
+          deleteFormName={forms => {
+            this.props.formSelected(op, policy, forms)
+          }}
+          forms={lockFormats}
+          submitText={'Save policy'}
+          onSubmit={(e) => {
+            //Iterate over all new locks added in the UI and prepare it for the format in IDM
+            let i = 0
+            const locks = []
+            while (e.target[i]) {
+              const lockInfo = e.target[i].name.split('_')
+              const lockNumber = lockInfo[0]
+              const lockType = lockInfo[1]
+              const lockProperty = lockInfo[2]
+              if (lockNumber && lockNumber !== '') {
+                locks[lockNumber] = locks[lockNumber]
+                  ? locks[lockNumber]
+                  : {lock: lockType}
+
+                if (e.target[i].value && lockProperty) {
+                  if (locks[lockNumber].args) {
+                    locks[lockNumber].args.push(e.target[i].value)
+                  } else {
+                    locks[lockNumber].args = [e.target[i].value]
+                  }
+                }
+              }
+              ++i
+            }
+            if (locks.length > 0) {
+              this.addLock(locks, policy, op)
+              this.removeLockField(op, policy)
+            }
+            this.props.formSelected(op, policy, [])
+          }}
+        />)
+    }
+    return (<div></div>)
+  }
+
+  renderOptions(options) {
+    const optionFields = []
+    for (let key in options) {
+      if (options.hasOwnProperty(key)) {
+        optionFields.push((
+          <MenuItem
+            key={key}
+            value={key}
+            primaryText={key}
+          />
+        ))
+      }
+    }
+    return optionFields
+  }
+
+  renderLockField(type, policy) {
+    if(this.props.lockFields[type] && this.props.lockFields[type].includes(policy)) {
+
+      return (
+        <GenericListItem
+          key={`addLockList_${policy}_${type},`}
+          style={{bar: {height: 'auto', margin: '0 0 10px 0'}, middleEl: {display: 'inline-block', width: '150px', padding: '0px'}, rightEl: {padding: '20px'}, leftEl: {display: 'inline-block', padding: '40px 20px 20px 20px'}}}
+          leftEl={`New ${type} lock`}
+          rightEl={this.renderForm(policy, type)}
+          middleEl={
+            <div data-tip={formSelectToolTip}>
+              <ReactTooltip/>
+              <SelectField
+                style={{width: '100%'}}
+                floatingLabelText="Add a lock"
+                value={null}
+                onChange={(event, index, value) => {
+                  if (value !== '') {
+                    let forms = Object.assign({}, this.props.form)
+                    if(!forms[policy]) {
+                      forms[policy] = {}
+                    }
+                    if(!forms[policy][type]) {
+                      forms[policy][type] = []
+                    }
+                    forms[policy][type].push(value)
+                    this.props.formSelected(type, policy, forms[policy][type])
+                  }
+                }}
+              >
+                <MenuItem value={null} label="Add a lock" primaryText="Select lock type" />
+                {
+                  this.renderOptions(this.props.lockFormats)
+                }
+              </SelectField>
+            </div>
+          }
+        />
+      )
+    }
+  }
+
   renderDeleteButton(field) {
     const {id, type} = this.props.params
     return (
       <FlatButton
-        id={`delete_${id}_${field}`}
+        id={`delete_${id.replace(/!@!/g, '_')}_${field.replace(/\./, '_')}`}
         key={`delete_${id}_${field}`}
         label='Delete'
         onClick={() => {
@@ -124,8 +257,8 @@ class Locks extends Component {
     return (
       <FloatingActionButton
         mini={true}
-        id={`delete_${id}_${field}_${i}`}
-        key={`${id}_${field}_${i}`}
+        id={`delete_${id.replace(/!@!/g, '_')}_${field.replace(/\./, '_')}_${i}`}
+        key={`delete_${id}_${field}_${i}`}
         label='Delete'
         style={deleteButtonStyle}
         onClick={() => {
@@ -157,8 +290,8 @@ class Locks extends Component {
     return (
       <FloatingActionButton
         mini={true}
-        id={`delete_${id}_${field}_${i}_{j}`}
-        key={`${id}_${field}_${i}_${j}`}
+        id={`delete_${id.replace(/!@!/g, '_')}_${field.replace(/\./, '_')}_${i}_${j}`}
+        key={`delete_${id}_${field}_${i}_${j}`}
         label='Delete'
         style={deleteButtonStyle}
         onClick={() => {
@@ -188,29 +321,50 @@ class Locks extends Component {
 
   deleteButtons(policy, block, i) {
     block.deleteButton = this.renderBlockDeleteButton(policy, i)
-    block.locks.forEach((lock, j) => {
-      lock.deleteButton = this.renderLockDeleteButton(policy, i, j)
-    })
+    if(block.locks) {
+      block.locks.forEach((lock, j) => {
+        lock.deleteButton = this.renderLockDeleteButton(policy, i, j)
+      })
+    }
   }
 
-  renderButtons() {
+  addLockField(type, field) {
+    if(!this.props.lockFields[type] || !this.props.lockFields[type].includes(field)) {
+      this.props.addLockField({type: type, policy: field})
+    }
+  }
+
+  removeLockField(type, field) {
+   if(this.props.lockFields[type] && this.props.lockFields[type].includes(field)) {
+      this.props.removeLockField({type: type, policy: field})
+    }
+  }
+
+
+  renderPolicyItemComponents() {
     const result= {}
-    const {policies} = this.props
+    const {policies, lockFields} = this.props
     for (let policy in policies) {
       result[policy] = policies[policy]
       result[policy].buttons = [
         this.renderDeleteButton(policy),
         this.renderAddWriteLockButton(policy),
-        this.renderAddReadLockButton(policy),
-        this.renderAddPolicyButton(policy)
+        this.renderAddReadLockButton(policy)
       ]
+      if(lockFields.write && lockFields.write.includes(policy)) {
+        result[policy].buttons.push(this.renderLockField('write', policy))
+      }
+      if(lockFields.read && lockFields.read.includes(policy)) {
+        result[policy].buttons.push(this.renderLockField('read', policy))
+      }
+      result[policy].buttons.push(this.renderAddPolicyButton(policy))
       result[policy].flows.forEach(this.deleteButtons.bind(this, policy))
     }
     return result
   }
 
   getPolicyItems() {
-    let policies = this.renderButtons()
+    let policies = this.renderPolicyItemComponents()
     let policyItems = []
     for (var policy in policies) {
       policyItems.push((<LockItem
@@ -218,7 +372,8 @@ class Locks extends Component {
         showExpandableButton
         title={policy}
         policy={policies[policy]}
-        key={`${policy}_locks`}
+        key={`${this.props.params.id}_${policy}`}
+        id={`${this.props.params.id}_${policy.replace(/\./g, '_')}`}
       />))
     }
     return policyItems
@@ -226,6 +381,7 @@ class Locks extends Component {
 
   componentWillMount() {
     this.props.fetchEntityLocks(this.props.params.id, this.props.params.type)
+    this.props.fetchLocks()
   }
 
   render() {
@@ -242,7 +398,10 @@ class Locks extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    policies: state.policies
+    policies: state.policies,
+    lockFormats: state.lockFormats,
+    lockFields: state.lockFields,
+    form: state.form
   }
 }
 
@@ -250,8 +409,12 @@ const
   mapDispatchToProps = (dispatch) => {
     return {
       fetchEntityLocks: (entity_id, entity_type) => dispatch(fetchEntityLocks(entity_id, entity_type)),
+      fetchLocks: () => dispatch(fetchLocks()),
+      formSelected: (type, policy, formNames) => dispatch(formSelected(type, policy, formNames)),
       deleteLock: (params) => dispatch(deleteLock(params)),
-      setLock: (params) => dispatch(setLock(params))
+      setLock: (params) => dispatch(setLock(params)),
+      addLockField: (params) => dispatch(addLockField(params)),
+      removeLockField: (params) => dispatch(removeLockField(params))
     }
   }
 

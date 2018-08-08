@@ -15,6 +15,8 @@ import {connect} from 'react-redux'
 import Form from 'react-jsonschema-form'
 import {entityFetch, groupsFetch, addToGroup, removeFromGroup} from '../actions'
 
+const groupDelimiter = ' | '
+
 let changeGroupSchema = {
   title: 'Change group of entity',
   type: 'object',
@@ -38,14 +40,21 @@ let changeGroupSchema = {
       items: {
         type: 'string',
         enum: []
-      }
+      },
+      uniqueItems: true
     }
   }
 }
 
 const uiSchema = {
   id: {'ui:readonly': true},
-  type: {'ui:readonly': true}
+  type: {'ui:readonly': true},
+  groups: {
+    'ui:widget': 'checkboxes',
+    'ui:options': {
+      inline: true
+    }
+  }
 }
 
 class Group extends Component {
@@ -55,15 +64,13 @@ class Group extends Component {
   }
 
   addToGroups(groups, entity) {
-    if(groups.length) {
-      groups.forEach(group_name => {
-        const group = this.props.groups.find(group => 
-          group_name === group.group_name)
+    if (groups.length) {
+      groups.forEach(group => {
 
-        if(group) {
+        if (group) {
           this.props.addToGroup(
             group.owner,
-            group_name,
+            group.name,
             entity.type.replace('/', ''),
             entity.id
           )
@@ -73,15 +80,13 @@ class Group extends Component {
   }
 
   removeFromGroups(groups, entity) {
-    if(groups.length) {
-      groups.forEach(group_name => {
-        const group = this.props.groups.find(group => 
-          group_name === group.group_name)
+    if (groups.length) {
+      groups.forEach(group => {
 
-        if(group) {
+        if (group) {
           this.props.removeFromGroup(
             group.owner,
-            group_name,
+            group.group_name,
             entity.type.replace('/', ''),
             entity.id
           )
@@ -94,29 +99,30 @@ class Group extends Component {
     let addToGroups = []
     let removeFromGroups = []
 
-    if(entity.groups) {
-      entityGroups.forEach(group_name => {
+    entityGroups.forEach(group => {
+      const group_name = group.split(groupDelimiter)[0]
+      const owner = group.split(groupDelimiter)[1]
 
-        const notMember = !entity.groups.some(group =>
+      let member = false
+      if(entity.groups) {
+        member = entity.groups.some(group =>
+          group.owner === owner &&
           group.group_name === group_name)
+      }
 
-        const doesNotExist = !addToGroups.some(groupname =>
-          group_name === groupname)
+      const duplicate = addToGroups.some(group =>
+        owner === group.owner &&
+        group_name === group.group_name)
 
-        if(notMember && doesNotExist) {
-          addToGroups.push(group_name)
-        }
-      })
-
-      removeFromGroups = entity.groups.filter(group =>
-        entityGroups.indexOf(group.group_name) === -1
-      ).map(group =>
-        group.group_name
+      if (!member && !duplicate) {
+        addToGroups.push({name: group_name, owner: owner})
+      }
+    })
+    if(entity.groups) {
+      removeFromGroups = entity.groups.filter(existingGroup =>
+        entityGroups.indexOf(existingGroup.group_name + groupDelimiter + existingGroup.owner) === -1
       )
-    } else if(entityGroups.length) {
-      addToGroups = entityGroups
     }
-
     this.addToGroups(addToGroups, entity)
     this.removeFromGroups(removeFromGroups, entity)
   }
@@ -124,13 +130,14 @@ class Group extends Component {
 
   getGroupFormData(entity) {
     const formData = JSON.parse(JSON.stringify(entity))
-    if(entity.groups) {
+    if (entity.groups) {
       formData.groups = entity.groups.map(entityGroup => {
         const group = this.props.groups.find(group =>
+          group.owner === entityGroup.owner &&
           group.group_name === entityGroup.group_name
         )
 
-        return group ? group.group_name : undefined
+        return group ? group.group_name + groupDelimiter + group.owner : undefined
       })
     }
 
@@ -139,18 +146,17 @@ class Group extends Component {
 
   render() {
     const entity = this.props.entityList.find(entity =>
-      entity.id === this.props.params.id && 
+      entity.id === this.props.params.id &&
       entity.type.replace('/', '') === this.props.params.type)
 
-    if (entity && this.props.groups) {
+    if (entity && this.props.groups && this.props.groups.length > 0) {
       changeGroupSchema.properties.groups.items.enum = this.props.groups
-        .map(group => group.group_name)
-
+        .map(group => group.group_name + groupDelimiter + group.owner)
       const formData = this.getGroupFormData(entity)
 
       return (
         <div>
-          <Form 
+          <Form
             schema={changeGroupSchema}
             uiSchema={uiSchema}
             onSubmit={e => {

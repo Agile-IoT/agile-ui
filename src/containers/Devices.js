@@ -24,20 +24,19 @@ class Devices extends Component {
       label: { fontSize: '1rem' },
       container: { marginTop: '5px', marginBottom: '5px' }
     }
+    const id = device.deviceId
     return (
-      <div className="devices" style={styles.container}>
-        <FlatButton
-          labelStyle={styles.label}
-          label="Disconnect"
-          onClick={() => {
-            this.props.devicesDelete(device.deviceId)
-          }}
-        />
-        <Link to={`/graphs/${device.deviceId}`}>
-          <FlatButton labelStyle={styles.label} label="View Data" />
+      <div className='devices' style={styles.container}>
+        <Link id={`disconnect_${id}`}>
+          <FlatButton labelStyle={styles.label} label='Disconnect' onClick={() => {
+            this.props.devicesDelete(device.deviceId)}
+          } />
+          </Link>
+        <Link id={`view_${id}`} to={`/graphs/${device.deviceId}`}>
+          <FlatButton labelStyle={styles.label} label='View Data' />
         </Link>
-        <Link to={`/devices/${device.deviceId}`}>
-          <FlatButton labelStyle={styles.label} label="Manage Device Data" />
+        <Link id={`manage_${id}`} to={`/devices/${device.deviceId}`}>
+          <FlatButton labelStyle={styles.label} label='Manage Device Data' />
         </Link>
       </div>
     )
@@ -68,6 +67,7 @@ class Devices extends Component {
           <DeviceItem
             expandable
             showExpandableButton
+            id={deviceId}
             key={i}
             title={device.name}
             subtitle={device.deviceId}
