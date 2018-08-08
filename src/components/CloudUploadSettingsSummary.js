@@ -89,8 +89,7 @@ const CloudUploadSettingsSummary = (props) => {
       <CardHeader
         title={ <span style={title}> EXPORT LOCAL DATA </span> }
         subtitle={storageProviders.length ? '' : 'Fetching available cloud providers...'}
-        actAsExpander={storageProviders.length}
-        expandable
+        actAsExpander={!!storageProviders.length}
         showExpandableButton
       />
 
