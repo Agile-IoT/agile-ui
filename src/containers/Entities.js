@@ -22,22 +22,27 @@ class Entities extends Component {
   renderNewEntityButton() {
     return (
       <div>
-        <Link to={`/add/${this.props.params.type.replace('/','')}`}>
-          <FlatButton label={`Add new ${this.props.params.type.replace('/','')}`}/>
+        <Link id={`new_entity_button`} to={`/add/${this.props.params.type.replace('/', '')}`}>
+          <FlatButton label={`Add new ${this.props.params.type.replace('/', '')}`}/>
         </Link>
       </div>
     )
   }
 
   renderActions(entity) {
+    let id = entity.id || entity.group_name
+    id = id.replace(/!@!/g, '-')
     switch (this.props.params.type) {
       case 'group':
+        id = id + '-' + entity.owner.replace(/!@!/g, '-')
         return (
           <div>
-            <FlatButton label='Delete' onClick={() => {
-              this.props.entityDelete(entity, this.props.params.type);
-            }}/>
-            <Link to={`/group/${entity.group_name}`}>
+            <Link id={`delete_${id}`}>
+              <FlatButton label='Delete' onClick={() => {
+                this.props.entityDelete(entity, this.props.params.type);
+              }}/>
+            </Link>
+            <Link id={`view_${id}`} to={`/groupmembers/${entity.owner}/${entity.group_name}`}>
               <FlatButton label='View members'/>
             </Link>
           </div>
@@ -45,16 +50,18 @@ class Entities extends Component {
       default:
         return (
           <div>
-            <FlatButton label='Delete' onClick={() => {
-              this.props.entityDelete(entity, this.props.params.type);
-            }}/>
-            <Link to={`/entity/${entity.id}/${this.props.params.type}`}>
+            <Link id={`delete_${id}`}>
+              <FlatButton label='Delete' onClick={() => {
+                this.props.entityDelete(entity, this.props.params.type);
+              }}/>
+            </Link>
+            <Link id={`view_${id}`} to={`/entity/${entity.id}/${this.props.params.type}`}>
               <FlatButton label='View'/>
             </Link>
-            <Link to={`/group/${entity.id}/${this.props.params.type}`}>
+            <Link id={`group_${id}`} to={`/group/${entity.id}/${this.props.params.type}`}>
               <FlatButton label='Group'/>
             </Link>
-            <Link to={`/locks/${entity.id}/${this.props.params.type}`}>
+            <Link id={`policies_${id}`} to={`/locks/${entity.id}/${this.props.params.type}`}>
               <FlatButton label='Policies'/>
             </Link>
           </div>
@@ -65,10 +72,18 @@ class Entities extends Component {
   renderItems() {
     if (this.props.entityList) {
       return this.props.entityList.map((entity, i) => {
+        let id = entity.id || entity.group_name
+        let title = entity.id || entity.group_name
+        if(this.props.params.type === 'group') {
+          id = id + '-' + entity.owner
+        }
+        id = id.replace(/!@!/, '-')
         return (
           <EntityItem
-            title={entity.id || entity.group_name}
-            key={i}
+            id={id}
+            title={title}
+            owner={entity.owner}
+            key={id}
             status={entity.status}
             actions={this.renderActions(entity)}
             meta={entity}
@@ -84,21 +99,21 @@ class Entities extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if(this.props.location.pathname !== prevProps.location.pathname) {
+    if (this.props.location.pathname !== prevProps.location.pathname) {
       this.props.entityFetch(this.props.params.type)
     }
   }
 
   render() {
     const addnewExists = this.props.ui &&
-      this.props.ui['/' + this.props.params.type] && 
+      this.props.ui['/' + this.props.params.type] &&
       Object.keys(this.props.ui['/' + this.props.params.type]).includes('addNew');
 
     return (
       <div>
         {this.renderItems()}
-        {(addnewExists && this.props.ui['/' + this.props.params.type].addNew) || !addnewExists 
-          ? this.renderNewEntityButton() 
+        {(addnewExists && this.props.ui['/' + this.props.params.type].addNew) || !addnewExists
+          ? this.renderNewEntityButton()
           : undefined
         }
       </div>

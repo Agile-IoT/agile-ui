@@ -24,9 +24,9 @@ import {List, ListItem} from 'material-ui/List';
  * e.g. attrEq, where args = ['role', 'admin'] or similar
  * @param args the array of arguments of a lock
  */
-const getArrayArgsListItems = (args) => {
+const getArrayArgsListItems = (args, op) => {
   return args.map((arg, i) => {
-    return (<ListItem key={`arg_${i}`}>
+    return (<ListItem key={`arg_${i}_${op}`}>
         {i}:  {'' + arg}
       </ListItem>
     );
@@ -38,14 +38,14 @@ const getArrayArgsListItems = (args) => {
  * @param args the lock with all its properties
  * @param lock path of the lock (e.g. actions.write.hasType)
  */
-const getArgsListItems = (args) => {
+const getArgsListItems = (args, op) => {
   let itemList = [];
   for (var arg in args) {
     if(arg !== 'deleteButton' && arg !== 'not') {
-      itemList.push(<ListItem key={`${arg}`}>
+      itemList.push(<ListItem key={`${arg}_${op}`}>
           {arg}: {
           Array.isArray(args[arg]) ?
-            (<List>{getArrayArgsListItems(args[arg])}</List>) :
+            (<List key={`list_${arg}_${op}`}>{getArrayArgsListItems(args[arg], op)}</List>) :
             '' + args[arg]
         }
         </ListItem>
@@ -63,7 +63,7 @@ const getArgsListItems = (args) => {
 const getLocksListItems = (locks, op) => {
   return locks.map((lock, i) => {
     return (
-      <ListItem key={`${i}`}>
+      <ListItem key={`${op}_${i}`}>
         {getArgsListItems(lock, op + '.' + lock.lock)}
         {lock.deleteButton}
       </ListItem>
@@ -76,13 +76,13 @@ const getLocksListItems = (locks, op) => {
  * @param locks the locks for a policy
  * @param policyName the name of the policy
  */
-const getListItems = (locks, policyName) => {
+const getListItems = (id, locks, policyName) => {
   if(locks) {
     return locks.map((lock, i) => {
       return (
-        <ListItem key={`${i}_${lock.op}`}>
+        <ListItem key={`${id}_${i}_${lock.op}_${policyName}`}>
           {`${lock.op}`}
-          {(<List>
+          {(<List key={`list_${id}_${i}_${lock.op}_${policyName}`}>
             {getLocksListItems(lock.locks, policyName + '.' + lock.op)}
             {lock.deleteButton}
           </List>)}
@@ -94,8 +94,9 @@ const getListItems = (locks, policyName) => {
 
 const LockItem = (props) => {
   return (
-    <Card
-      style={{marginBottom: '20px'}}>
+    <Card id={`${props.id.replace('!@!', '-')}`}
+          key={`${props.id.replace('!@!', '-')}`}
+          style={{marginBottom: '20px'}}>
       <CardHeader
         actAsExpander={props.actAsExpander}
         showExpandableButton={props.showExpandableButton}
@@ -103,7 +104,7 @@ const LockItem = (props) => {
         subtitle={props.subtitle}
       />
       <CardText expandable>
-        <List>{getListItems(props.policy.flows, props.title)}</List>
+        <List key={`${props.id.replace('!@!', '-')}_${props.title}`}>{getListItems(props.id.replace('!@!', '-'), props.policy.flows, props.title)}</List>
       </CardText>
       <CardActions>
         {props.policy.buttons}

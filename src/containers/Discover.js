@@ -49,6 +49,7 @@ class Discover extends Component {
     return (
       <div style={{padding: '0px', margin:'0px', paddingLeft: '8px'}}>
         <SelectField
+          id={`register_${device.id.replace(/:/g, '-')}`}
           floatingLabelText="Register"
           value={null}
           onChange={this.handleChange}

@@ -54,7 +54,7 @@ class Nav extends Component {
     }
 
     return(
-      <Tabs value={tabMap[this.props.location.pathname]}>
+      <Tabs id={`navigation`} value={tabMap[this.props.location.pathname]}>
         <Tab label="Discover"
              value="/"
              onActive={this.handleActive.bind(this)}

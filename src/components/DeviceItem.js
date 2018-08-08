@@ -56,7 +56,10 @@ const DeviceItem = (props) => {
   const subtitle = (<span style={styles.subtitle}> {props.subtitle} </span>)
 
   return (
-    <Card style={styles.card}>
+    <Card
+      id={props.id.replace(/:/g, '-')}
+      style={styles.card}
+    >
       <CardHeader
         title={title}
         subtitle={subtitle}

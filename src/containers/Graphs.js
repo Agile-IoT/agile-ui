@@ -44,6 +44,7 @@ class Graphs extends Component {
   renderGraphs(streams) {
     return streams.map(st => {
      return <Graph
+       id={st.id}
        key={st.id}
        deviceId={this.props.params.deviceId}
        componentId={st.id}
@@ -58,7 +59,7 @@ class Graphs extends Component {
         <IconButton iconStyle={{transform: 'scale(1.6)'}}onClick={() => {browserHistory.goBack()}}>
           <ArrowBack color={'black'}/>
         </IconButton>
-        <ToolbarSeparator / >
+        <ToolbarSeparator />
       </ToolbarGroup>
       <ToolbarGroup >
         <ToolbarTitle text='No incoming or local data available' />
@@ -76,7 +77,7 @@ class Graphs extends Component {
         <IconButton iconStyle={{transform: 'scale(1.6)'}}onClick={() => {browserHistory.goBack()}}>
           <ArrowBack color={'black'}/>
         </IconButton>
-        <ToolbarSeparator / >
+        <ToolbarSeparator />
       </ToolbarGroup>
       <ToolbarGroup>
         <ToolbarGroup>

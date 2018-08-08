@@ -589,8 +589,8 @@ export const groupDelete = (owner, name) => {
     dispatch(loading(true))
     agile.idm.group.delete(owner, name)
       .then(() => {
-        dispatch(action('GROUP_DELETE', name));
-        dispatch(message(`Group ${name} deleted.`));
+        dispatch(action('GROUP_DELETE', {group_name: name, owner: owner}));
+        dispatch(message(`Group ${name} | ${owner} deleted.`));
         dispatch(loading(false));
       })
       .catch(err => {
@@ -693,6 +693,41 @@ export const fetchLocks = () => {
   }
 }
 
+export const addLockField = (params) => {
+  return (dispatch) => {
+    dispatch(loading(true));
+    switch(params.type.toUpperCase()) {
+      case 'WRITE':
+        dispatch(action('ADD_WRITE_LOCK_FIELD', params))
+        break;
+      case 'READ':
+        dispatch(action('ADD_READ_LOCK_FIELD', params))
+        break;
+      default:
+        break;
+    }
+    dispatch(loading(false));
+  }
+}
+
+export const removeLockField = (params) => {
+  return (dispatch) => {
+    dispatch(loading(true));
+    switch(params.type.toUpperCase()) {
+      case 'WRITE':
+        dispatch(action('REMOVE_WRITE_LOCK_FIELD', params))
+        break;
+      case 'READ':
+        dispatch(action('REMOVE_READ_LOCK_FIELD', params))
+        break;
+      default:
+        break;
+    }
+    dispatch(loading(false));
+  }
+}
+
+
 export const fetchEntityLocks = (entity_id, entity_type, field) => {
   return (dispatch) => {
     dispatch(loading(true));
@@ -704,9 +739,33 @@ export const fetchEntityLocks = (entity_id, entity_type, field) => {
 }
 
 export const setLock = (params) => {
+  //Make sure no delete buttons are there and avoid errors with references
+  const policies = [].concat(params.policy.map(p => {
+    const pKeys = Object.keys(p)
+    let newPolicy = {}
+    pKeys.forEach(key => {
+      if(key !== 'deleteButton') {
+        newPolicy[key] = p[key]
+      }
+    })
+
+    newPolicy.locks = newPolicy.locks.map(l => {
+      const keys = Object.keys(l)
+      let newLock = {}
+      keys.forEach(key =>{
+        if(key !== 'deleteButton') {
+          newLock[key] = l[key]
+        }
+      })
+      return newLock
+    })
+
+    return newPolicy
+  }))
+  const par = Object.assign({}, params, {policy: policies})
   return (dispatch) => {
     dispatch(loading(true));
-    agile.policies.pap.set(params).then(result => {
+    agile.policies.pap.set(par).then(result => {
       dispatch(action('POLICY_SET', result.result));
       dispatch(message(`Successfully set policy of ${params.entityId} for '${params.field}'.`));
       dispatch(loading(false));
@@ -724,8 +783,8 @@ export const deleteLock = (params) => {
   }
 }
 
-export const formSelected = (formNames) => {
-  return (dispatch) => {dispatch(action('FORM_SELECTED', formNames))}
+export const formSelected = (type, policy, formNames) => {
+  return (dispatch) => {dispatch(action('FORM_SELECTED', {type: type, policy: policy, formNames: formNames}))}
 }
 
 // fetch all available protocols
