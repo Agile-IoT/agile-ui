@@ -15,6 +15,7 @@ import SettingsMenu from './SettingsMenu';
 import DeviceItem from './DeviceItem';
 import EntityItem from './EntityItem';
 import SecurityItem from './SecurityItem';
+import RegisterDeviceManual from './RegisterDeviceManual';
 import LockItem from './LockItem';
 import Form from './Form';
 import Stream from './Stream';
@@ -39,5 +40,6 @@ export {
   SecurityItem,
   LockItem,
   Form,
-  LocalDataOverview
+  LocalDataOverview,
+  RegisterDeviceManual
 }
