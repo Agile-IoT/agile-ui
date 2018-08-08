@@ -10,23 +10,22 @@
  *Contributors:
  *    Resin.io, FBK, Jolocom - initial API and implementation
  ******************************************************************************/
-import React, { Component } from 'react';
-import { DeviceItem } from '../components';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
-import { connect } from 'react-redux';
+import React, { Component } from 'react'
+import { DeviceItem } from '../components'
+import SelectField from 'material-ui/SelectField'
+import MenuItem from 'material-ui/MenuItem'
+import { connect } from 'react-redux'
 import differenceBy from 'lodash/differenceBy'
 import CircularProgress from 'material-ui/CircularProgress'
 
-import { 
+import {
   devicesAndStreamsFetch,
   devicesDiscover,
   devicesCreate,
   deviceTypesFetch
-} from '../actions';
+} from '../actions'
 
 class Discover extends Component {
-
   handleChange = (event, index, value) => {
     this.props.devicesCreate(value.device, value.type)
   }
@@ -37,61 +36,54 @@ class Discover extends Component {
         return (
           <MenuItem
             key={`${device.id}-${key}`}
-            value={{device, type}}
+            value={{ device, type }}
             primaryText={type}
           />
-        );
-      });
+        )
+      })
     }
   }
 
   renderActions(device, deviceTypes) {
     return (
-      <div style={{padding: '0px', margin:'0px', paddingLeft: '8px'}}>
+      <div style={{ padding: '0px', margin: '0px', paddingLeft: '8px' }}>
         <SelectField
           id={`register_${device.id.replace(/:/g, '-')}`}
           floatingLabelText="Register"
           value={null}
           onChange={this.handleChange}
         >
-        <MenuItem value={null} label="Register" primaryText="Select device type" />
-        {
-          this.renderDeviceTypes(device, deviceTypes[device.id])
-        }
+          <MenuItem
+            value={null}
+            label="Register"
+            primaryText="Select device type"
+          />
+          {this.renderDeviceTypes(device, deviceTypes[device.id])}
         </SelectField>
       </div>
     )
   }
 
   renderItems(devices) {
-    const addresses = Object.keys(this.props.registeredDevices).map(key =>
-      this.props.registeredDevices[key].address
-    )
-
-    if (devices) {
-      return devices.map((device, i) => {
-        if (addresses.indexOf(device.id) !== -1) {
-          return null
-        }
-
-        return(
-          <DeviceItem
-            key={i}
-            title={device.name}
-            subtitle={device.id}
-            id={device.id}
-            status={device.status}
-            actions={this.renderActions(device, this.props.deviceTypes)}
-          />)
-      })
-    }
+    return devices.map((device, i) => {
+      return (
+        <DeviceItem
+          key={i}
+          title={device.name}
+          subtitle={device.id}
+          id={device.id}
+          status={device.status}
+          actions={this.renderActions(device, this.props.deviceTypes)}
+        />
+      )
+    })
   }
 
   updateDeviceTypes(devices) {
     // fetch list of all available device's
-    devices.map((device) => {
+    devices.map(device => {
       return this.props.deviceTypesFetch(device)
-    });
+    })
   }
 
   componentDidMount() {
@@ -99,56 +91,76 @@ class Discover extends Component {
     this.props.devicesDiscover()
 
     this.poller = setInterval(() => {
-      this.props.devicesDiscover();
-    }, 7000);
+      this.props.devicesDiscover()
+    }, 7000)
   }
 
   componentWillUnmount() {
-    clearInterval(this.poller);
+    clearInterval(this.poller)
   }
 
   componentWillReceiveProps(nextProps) {
-    const { devices } = nextProps;
+    const { devices } = nextProps
     const newDevices = differenceBy(devices, this.props.devices, 'id')
+    console.log(differenceBy(this.props.devices, devices, 'id'))
     if (newDevices) {
-      this.updateDeviceTypes(newDevices);
+      this.updateDeviceTypes(newDevices)
     }
   }
 
   render() {
-    const {discovery, devices} = this.props
-    if (devices.length === 0 && discovery) {
+    const { discovery, devices, registeredDevices } = this.props
+
+    const registeredAddresses = Object.keys(registeredDevices).map(
+      key => registeredDevices[key].address
+    )
+
+    const toRender = devices.filter(
+      device => registeredAddresses.indexOf(device.id) === -1
+    )
+
+    if (toRender.length === 0 && discovery) {
       return (
-        <div className='loadingScreen'>
-          <CircularProgress size={250} thickness={10}/>
+        <div className="loadingScreen">
+          <div style={{ marginBottom: '10%', width: '100%', textAlign: 'center' }}>
+            <span
+              style={{
+                fontWeight: 'bold',
+                color: '#929292',
+                fontSize: '1.2rem'
+              }}
+            >
+              Searching for devices
+            </span>
+          </div>
+          <CircularProgress size={250} thickness={10} />
         </div>
       )
     }
 
-    return (
-      <div className='discover'>
-        {this.renderItems(this.props.devices)}
-      </div>
-    );
+    return <div className="discover">{this.renderItems(toRender)}</div>
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     discovery: state.discovery,
     devices: state.devicesDiscover,
     registeredDevices: state.devices,
     deviceTypes: state.deviceTypes
-  };
-};
+  }
+}
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
     devicesAndStreamsFetch: () => dispatch(devicesAndStreamsFetch()),
     devicesDiscover: () => dispatch(devicesDiscover()),
     devicesCreate: (device, type) => dispatch(devicesCreate(device, type)),
-    deviceTypesFetch: (device) => dispatch(deviceTypesFetch(device))
-  };
-};
+    deviceTypesFetch: device => dispatch(deviceTypesFetch(device))
+  }
+}
 
-export default connect(mapStateToProps, mapDispatchToProps)(Discover);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Discover)

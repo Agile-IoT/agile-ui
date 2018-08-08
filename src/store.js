@@ -16,7 +16,8 @@ import thunk from 'redux-thunk';
 import rootReducer from './reducers';
 import createLogger from 'redux-logger';
 
-const DEV = process.env.NODE_ENV === `development`;
+// const DEV = process.env.NODE_ENV === `development`;
+const DEV = false
 
 const middlewares = compose(
   applyMiddleware(thunk),

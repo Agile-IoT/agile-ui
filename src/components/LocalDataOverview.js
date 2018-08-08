@@ -10,19 +10,19 @@
  *Contributors:
  *    Resin.io, FBK, Jolocom - initial API and implementation
  ******************************************************************************/
-import React from 'react';
-import Divider from 'material-ui/Divider';
-import Subheader from 'material-ui/Subheader';
-import { List } from 'material-ui/List';
-import { Toolbar, ToolbarGroup } from 'material-ui/Toolbar';
-import IconMenu from 'material-ui/IconMenu';
-import MenuItem from 'material-ui/MenuItem';
-import IconButton from 'material-ui/IconButton';
-import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
-import { Link } from 'react-router';
+import React from 'react'
+import Divider from 'material-ui/Divider'
+import Subheader from 'material-ui/Subheader'
+import { List } from 'material-ui/List'
+import { Toolbar, ToolbarGroup } from 'material-ui/Toolbar'
+import IconMenu from 'material-ui/IconMenu'
+import MenuItem from 'material-ui/MenuItem'
+import IconButton from 'material-ui/IconButton'
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert'
+import { Link } from 'react-router'
 
-const LocalDataOverview = (props) => {
-  const styles= {
+const LocalDataOverview = props => {
+  const styles = {
     span: {
       fontWeight: 'bold'
     },
@@ -39,7 +39,7 @@ const LocalDataOverview = (props) => {
       backgroundColor: '#e2e2e2',
       fontSize: '1rem'
     },
-    subheader : {
+    subheader: {
       marginLeft: '0.5rem',
       padding: '0px',
       fontWeight: 'bold',
@@ -54,11 +54,7 @@ const LocalDataOverview = (props) => {
     }
   }
 
-  const {
-    deviceId,
-    recordsDelete,
-    records
-  } = props
+  const { deviceId, recordsDelete, records } = props
 
   const relevant = records[deviceId]
   const componentIds = Object.keys(relevant)
@@ -67,39 +63,53 @@ const LocalDataOverview = (props) => {
   return (
     <List>
       <Subheader style={styles.subheader}> Locally stored data </Subheader>
-      {
-        nonEmpty
-        ? componentIds.map(id => {
-          return <Toolbar style={styles.bar}>
-            <ToolbarGroup>
-              <span style={styles.span}>{relevant[id].length}</span> records stored locally, from component <span style={styles.span}>{id}</span>. 
-            </ ToolbarGroup>
-            <ToolbarGroup>
-              <IconMenu
-                iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}
-                anchorOrigin={{horizontal: 'left', vertical: 'top'}}
-                targetOrigin={{horizontal: 'left', vertical: 'top'}}
-              >
-                <Link to={`/graphs/${deviceId}`}>
-                  <MenuItem primaryText='View' />
-                </Link>
-                <MenuItem primaryText='Remove' 
-                  onClick={() => {
-                    recordsDelete(deviceId, id)
-                  }}
-                />
-              </IconMenu>
-            </ToolbarGroup>
-          </Toolbar>
+      {nonEmpty ? (
+        componentIds.map(id => {
+          const isEncrypted = relevant[id].length && relevant[id][0] && relevant[id][0][1] !== relevant[id][0][1]
+          return (
+            <Toolbar style={styles.bar}>
+              <ToolbarGroup>
+                <span style={styles.span}>
+                  {relevant[id].length} {isEncrypted ? 'encrypted' : ''}
+                </span>{' '}
+                records stored locally, from component <span style={styles.span}>{id}</span>.
+              </ToolbarGroup>
+              <ToolbarGroup>
+                <IconMenu
+                  iconButtonElement={
+                    <IconButton>
+                      <MoreVertIcon />
+                    </IconButton>
+                  }
+                  anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
+                  targetOrigin={{ horizontal: 'left', vertical: 'top' }}
+                >
+                  {isEncrypted ? (
+                    <MenuItem primaryText="View" disabled />
+                  ) : (
+                    <Link to={`/graphs/${deviceId}`}>
+                      <MenuItem primaryText="View" />
+                    </Link>
+                  )}
+                  <MenuItem
+                    primaryText="Remove"
+                    onClick={() => {
+                      recordsDelete(deviceId, id)
+                    }}
+                  />
+                </IconMenu>
+              </ToolbarGroup>
+            </Toolbar>
+          )
         })
-        : <Toolbar style={styles.bar}>
-            <ToolbarGroup>
-              <span style={styles.noPoltext}>No local data found, try to add a new policy first.</span>
-            </ToolbarGroup>
+      ) : (
+        <Toolbar style={styles.bar}>
+          <ToolbarGroup>
+            <span style={styles.noPoltext}>No local data found, try to add a new policy first.</span>
+          </ToolbarGroup>
         </Toolbar>
-
-      }
-      <Divider style={styles.divider}/>
+      )}
+      <Divider style={styles.divider} />
     </List>
   )
 }

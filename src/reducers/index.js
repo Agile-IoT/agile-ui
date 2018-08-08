@@ -36,7 +36,8 @@ import {
   records,
   recommendations,
   cloudProviders,
-  credentials
+  credentials,
+  confirmationScreen
 } from './entities';
 
 export default combineReducers({
@@ -64,5 +65,6 @@ export default combineReducers({
     records,
     recommendations,
     cloudProviders,
-    credentials
+    credentials,
+    confirmationScreen
 });

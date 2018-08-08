@@ -10,131 +10,157 @@
  *Contributors:
  *    Resin.io, FBK, Jolocom - initial API and implementation
  ******************************************************************************/
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import {
-  recordsFetch,
-  deviceSubscribe,
-  deviceUnsubscribe
-} from '../actions';
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import Resizable from 're-resizable'
+import { recordsFetch, deviceSubscribe, deviceUnsubscribe } from '../actions'
 
 class Graph extends Component {
-  constructor(props){
+  constructor(props) {
     super(props)
+
+    this.graphRegistered = false
+    this.localDataRendered = false
+
     this.state = {
       g: undefined,
-      data: [],
-      recordsAdded: false
+      data: []
     }
   }
 
-  componentDidMount(){
-    const {deviceId, componentId} = this.props
+  componentDidMount() {
+    const { deviceId, componentId } = this.props
     this.props.recordsFetch(deviceId, componentId)
     this.props.deviceSubscribe(deviceId, componentId)
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { deviceId, componentId } = this.props
+    const dataToRender = this.state.data.concat()
+
+    const localData = nextProps.records[deviceId] && nextProps.records[deviceId][componentId]
+    const localDataFound = localData && localData.length
+
+    if (!this.localDataRendered && localDataFound) {
+      this.localDataRendered = true
+      dataToRender.push(...localData)
+    }
+
+    const newStreams = nextProps.streams[deviceId]
+    if (newStreams) {
+      const realTimeRecord = newStreams.find(s => s.componentID === componentId)
+
+      if (realTimeRecord) {
+        const { lastUpdate, value } = realTimeRecord
+        dataToRender.push([new Date(lastUpdate), parseInt(value, 10)])
+      }
+    }
+    this.setState({ data: dataToRender })
+  }
+
+  componentDidUpdate() {
+    const elementId = `graphdiv${this.props.componentId}`
+    const element = document.getElementById(elementId)
+    if (element) {
+      this.renderGraph(element)
+    }
+  }
+
+  getStyles() {
+    return {
+      graphDiv: { height: '100%', width: '100%' },
+      resizeableEl: {
+        defaultSize: {
+          width: '45%',
+          height: window.innerWidth * 0.8 * 0.45
+        },
+        minWidth: 200,
+        minHeight: 200
+      }
+    }
+  }
+
+  render() {
+    if (this.state.data.length === 0) {
+      return null
+    }
+
+    const elementId = `graphdiv${this.props.componentId}`
+    const { resizeableEl, graphDiv } = this.getStyles()
+
+    return (
+      <Resizable
+        defaultSize={resizeableEl.defaultSize}
+        minWidth={resizeableEl.minWidth}
+        minHeight={resizeableEl.minHeight}
+        onResize={() => {
+          this.state.g.resize()
+        }}
+        className="graph"
+      >
+        <div id={elementId} style={graphDiv} />
+      </Resizable>
+    )
+  }
+
+  renderGraph(element) {
+    const graphAlreadyRendered = this.state.g || false
+    if (graphAlreadyRendered) {
+      this.state.g.updateOptions({ file: this.state.data })
+      return
+    }
+
+    const component = this.props.streams[this.props.deviceId].find(
+      stream => stream.componentID === this.props.componentId
+    )
+
+    const unit = component ? component.unit : 'Units not available'
+    const extraOptions = {
+      title: ' ',
+      legend: 'always',
+      fillGraph: true,
+      animatedZooms: true,
+      strokeWidth: 1.5,
+      drawPoints: true,
+      pointSize: 2,
+      color: '#00BCD4',
+      labels: ['Time', this.props.componentId],
+      axes: { y: { valueFormatter: v => `${v} ${unit}` } },
+      stackedGraphNaNFill: 'inside'
+    }
+
+    const g = new window.Dygraph(element, this.state.data, extraOptions)
+
+    if (!this.graphRegistered) {
+      this.props.registerGraph(g)
+      this.graphRegistered = true
+    }
+
+    this.setState({ g })
   }
 
   componentWillUnmount() {
     const { deviceId, componentId } = this.props
     this.props.deviceUnsubscribe(deviceId, componentId)
   }
-
-  componentDidUpdate() {
-    this.renderGraph()
-  }
-
-  componentWillReceiveProps(nextProps){
-    let toAdd = this.state.data.concat()
-
-    const { deviceId, componentId } = this.props
-    const agileDataRecords = nextProps.records[deviceId] && nextProps.records[deviceId][componentId]
-
-    if (
-      !this.state.recordsAdded &&
-      agileDataRecords &&
-      agileDataRecords.length
-    ) {
-      this.setState({recordsAdded: true})
-      toAdd = agileDataRecords
-    }
-
-    if (nextProps.streams[deviceId]) {
-      const realTimeRecord = nextProps.streams[deviceId]
-        .find(str => str.componentID === componentId)
-
-      if (realTimeRecord) {
-        const {lastUpdate, value} = realTimeRecord
-        toAdd.push([new Date(lastUpdate), parseInt(value, 10)])
-      }
-    }
-
-    this.setState({data: toAdd})
-  }
-
-  render(){
-    if (this.state.data.length === 0)
-      return null
-
-    if (document.getElementById(`graphdiv${this.props.componentId}`))
-      this.renderGraph()
-
-    return (
-      <div className='graph'>
-        <div
-          id={`graphdiv${this.props.componentId}`}
-          style={{
-            "width": "100%",
-            "height": "100%"
-          }}
-        >
-        </div>
-      </div>
-    )
-  }
-
-  renderGraph(){
-    if (!document.getElementById(`graphdiv${this.props.componentId}`))
-      return
-
-    if (this.state.g) {
-      this.state.g.updateOptions( {'file': this.state.data} );
-    } else {
-      const {unit} = this.props.streams[this.props.deviceId][0]
-      const g = new window.Dygraph(
-        document.getElementById(`graphdiv${this.props.componentId}`),
-        this.state.data,
-        {
-          title: ' ',
-          legend: 'always',
-          fillGraph: true,
-          strokeWidth: 1.5,
-          color: '#00BCD4',
-          labels: ['Time', this.props.componentId],
-          axes: { y: { valueFormatter: (v) => `${v} ${unit}` } },
-          animatedZooms: true,
-          stackedGraphNaNFill: 'inside'
-        }
-      );
-
-      this.props.graphsArray.push(g)
-      this.setState({ g: g })
-    }
-  }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     streams: state.streams,
     records: state.records
-  };
-};
+  }
+}
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
     deviceSubscribe: (deviceId, componentId) => dispatch(deviceSubscribe(deviceId, componentId)),
     deviceUnsubscribe: (deviceId, componentId) => dispatch(deviceUnsubscribe(deviceId, componentId)),
     recordsFetch: (deviceId, componentId) => dispatch(recordsFetch(deviceId, componentId))
-  };
-};
+  }
+}
 
-export default connect(mapStateToProps, mapDispatchToProps)(Graph);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Graph)

@@ -10,19 +10,19 @@
  *Contributors:
  *    Resin.io, FBK, Jolocom - initial API and implementation
  ******************************************************************************/
-import React, { Component } from 'react';
-import { DeviceItem } from '../components';
-import { FlatButton } from 'material-ui';
-import { connect } from 'react-redux';
-import { Link } from 'react-router';
-import { devicesAndStreamsFetch, devicesDelete } from '../actions';
+import React, { Component } from 'react'
+import { DeviceItem } from '../components'
+import { FlatButton } from 'material-ui'
+import { connect } from 'react-redux'
+import { Link } from 'react-router'
+import { devicesAndStreamsFetch, devicesDelete } from '../actions'
 import CircularProgress from 'material-ui/CircularProgress'
 
 class Devices extends Component {
   renderActions(device) {
     const styles = {
-      label: {fontSize: '1rem'},
-      container: {marginTop: '5px', marginBottom:'5px'}
+      label: { fontSize: '1rem' },
+      container: { marginTop: '5px', marginBottom: '5px' }
     }
     const id = device.deviceId
     return (
@@ -44,10 +44,26 @@ class Devices extends Component {
 
   renderItems(devices) {
     if (devices) {
+      if (!Object.keys(devices).length) {
+        return (
+          <div style={{ width: '100%', textAlign: 'center' }}>
+            <span
+              style={{
+                fontWeight: 'bold',
+                color: '#929292',
+                fontSize: '1.2rem'
+              }}
+            >
+              No devices paired
+            </span>
+          </div>
+        )
+      }
+
       return Object.keys(devices).map((deviceId, i) => {
         const device = devices[deviceId]
 
-        return(
+        return (
           <DeviceItem
             expandable
             showExpandableButton
@@ -58,7 +74,8 @@ class Devices extends Component {
             status={device.status}
             actions={this.renderActions(device)}
             meta={device}
-          />)
+          />
+        )
       })
     }
   }
@@ -70,32 +87,31 @@ class Devices extends Component {
   render() {
     if (this.props.loading.devices) {
       return (
-        <div className='loadingScreen'>
-          <CircularProgress size={250} thickness={10}/>
+        <div className="loadingScreen">
+          <CircularProgress size={250} thickness={10} />
         </div>
       )
     }
 
-    return (
-      <div className="devices">
-        {this.renderItems(this.props.devices)}
-      </div>
-    );
+    return <div className="devices">{this.renderItems(this.props.devices)}</div>
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     loading: state.loading,
     devices: state.devices
-  };
-};
+  }
+}
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
     devicesAndStreamsFetch: () => dispatch(devicesAndStreamsFetch()),
-    devicesDelete: (deviceId) => dispatch(devicesDelete(deviceId)),
-  };
-};
+    devicesDelete: deviceId => dispatch(devicesDelete(deviceId))
+  }
+}
 
-export default connect(mapStateToProps, mapDispatchToProps)(Devices);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Devices)

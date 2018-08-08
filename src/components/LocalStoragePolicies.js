@@ -10,17 +10,17 @@
  *Contributors:
  *    Resin.io, FBK, Jolocom - initial API and implementation
  ******************************************************************************/
-import React from 'react';
-import Divider from 'material-ui/Divider';
-import Subheader from 'material-ui/Subheader';
-import { List } from 'material-ui/List';
-import NavigationClose from 'material-ui/svg-icons/navigation/close';
-import { Toolbar, ToolbarGroup } from 'material-ui/Toolbar';
+import React from 'react'
+import Divider from 'material-ui/Divider'
+import Subheader from 'material-ui/Subheader'
+import { List } from 'material-ui/List'
+import NavigationClose from 'material-ui/svg-icons/navigation/close'
+import { Toolbar, ToolbarGroup } from 'material-ui/Toolbar'
 
-const LocalStoragePolicies = (props) => {
+const LocalStoragePolicies = props => {
   const { policies, handleRemoval } = props
 
-  const styles= {
+  const styles = {
     span: {
       fontWeight: 'bold'
     },
@@ -37,7 +37,7 @@ const LocalStoragePolicies = (props) => {
       backgroundColor: '#e2e2e2',
       fontSize: '1rem'
     },
-    subheader : {
+    subheader: {
       marginLeft: '0.5rem',
       padding: '0px',
       fontWeight: 'bold',
@@ -59,27 +59,32 @@ const LocalStoragePolicies = (props) => {
   return (
     <List>
       <Subheader style={styles.subheader}> Local storage policies </Subheader>
-      {
-        policies.length === 0 
-        ? <Toolbar style={styles.bar}> 
-            <ToolbarGroup>
-              <span style={styles.noPoltext}>No policies found, try to add a new policy first.</span>
+      {policies.length === 0 ? (
+        <Toolbar style={styles.bar}>
+          <ToolbarGroup>
+            <span style={styles.noPoltext}>No policies found, try to add a new policy first.</span>
           </ToolbarGroup>
         </Toolbar>
-        : policies.map(pol => {
-          return <Toolbar style={styles.bar}>
-            <ToolbarGroup>
-              Data from component <span style={styles.span}>{pol.componentID}</span> is fetched and stored every <span style={styles.span}>{pol.interval}</span> ms.
-            </ ToolbarGroup>
-            <ToolbarGroup>
-              <NavigationClose style={styles.removeButton} onClick={
-                () => handleRemoval(pol.deviceID, pol.componentID)
-              }/>
-            </ToolbarGroup>
-          </Toolbar>
+      ) : (
+        policies.map(pol => {
+          return (
+            <Toolbar style={styles.bar}>
+              <ToolbarGroup>
+                {pol.encrypt.key ? 'Encrypted data ' : 'Data '} from component{' '}
+                <span style={styles.span}>{pol.componentID}</span> is stored every{' '}
+                <span style={styles.span}>{pol.interval}</span> ms.
+              </ToolbarGroup>
+              <ToolbarGroup>
+                <NavigationClose
+                  style={styles.removeButton}
+                  onClick={() => handleRemoval(pol.deviceID, pol.componentID)}
+                />
+              </ToolbarGroup>
+            </Toolbar>
+          )
         })
-      }
-      <Divider style={styles.divider}/>
+      )}
+      <Divider style={styles.divider} />
     </List>
   )
 }

@@ -13,140 +13,149 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Checkbox from 'material-ui/Checkbox'
-import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar'
+import { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle } from 'material-ui/Toolbar'
 import CircularProgress from 'material-ui/CircularProgress'
 import { Graph } from '../components/'
 import { browserHistory } from 'react-router'
 import IconButton from 'material-ui/IconButton'
 import ArrowBack from 'material-ui/svg-icons/navigation/arrow-back.js'
-import {
-  deviceFetch
-} from '../actions'
+import { deviceFetch } from '../actions'
 
+window.graphs = []
 class Graphs extends Component {
-  constructor(props){
-      super(props)
-      this.state = {
-        graphs: [],
-        synchronize: undefined
-      }
+  constructor(props) {
+    super(props)
+    this.graphs = []
+    this.state = {
+      graphs: [],
+      synchronize: undefined
+    }
   }
 
   componentDidMount() {
-    const {deviceId} = this.props.params
+    const { deviceId } = this.props.params
     const device = this.props.devices[deviceId]
 
-    if(!device) {
+    if (!device) {
       this.props.deviceFetch(deviceId)
     }
   }
 
   renderGraphs(streams) {
     return streams.map(st => {
-     return <Graph
-       id={st.id}
-       key={st.id}
-       deviceId={this.props.params.deviceId}
-       componentId={st.id}
-       graphsArray={this.state.graphs}
-     />
-   })
+      return (
+        <Graph
+          id={st.id}
+          key={st.id}
+          areInSync={this.state.synchronize || false}
+          deviceId={this.props.params.deviceId}
+          componentId={st.id}
+          registerGraph={this.registerGraph.bind(this)}
+        />
+      )
+    })
   }
 
   renderNoDataMessage() {
-    return <Toolbar>
-      <ToolbarGroup >
-        <IconButton iconStyle={{transform: 'scale(1.6)'}}onClick={() => {browserHistory.goBack()}}>
-          <ArrowBack color={'black'}/>
-        </IconButton>
-        <ToolbarSeparator />
-      </ToolbarGroup>
-      <ToolbarGroup >
-        <ToolbarTitle text='No incoming or local data available' />
-      </ToolbarGroup>
-      <ToolbarGroup >
-        <CircularProgress size={30}/>
-      </ToolbarGroup>
-     </Toolbar>
+    return (
+      <Toolbar>
+        <ToolbarGroup>
+          <IconButton
+            iconStyle={{ transform: 'scale(1.6)' }}
+            onClick={() => {
+              browserHistory.goBack()
+            }}
+          >
+            <ArrowBack color={'black'} />
+          </IconButton>
+          <ToolbarSeparator />
+        </ToolbarGroup>
+        <ToolbarGroup>
+          <ToolbarTitle text="No incoming or local data available" />
+        </ToolbarGroup>
+        <ToolbarGroup>
+          <CircularProgress size={30} />
+        </ToolbarGroup>
+      </Toolbar>
+    )
+  }
+
+  registerGraph(graph) {
+    this.graphs.push(graph)
+    this.setState({ graphs: this.graphs })
   }
 
   renderSettings() {
-    const {graphs} = this.state
-    return <Toolbar>
-      <ToolbarGroup >
-        <IconButton iconStyle={{transform: 'scale(1.6)'}}onClick={() => {browserHistory.goBack()}}>
-          <ArrowBack color={'black'}/>
-        </IconButton>
-        <ToolbarSeparator />
-      </ToolbarGroup>
-      <ToolbarGroup>
+    const { graphs } = this.state
+    return (
+      <Toolbar>
         <ToolbarGroup>
-         <ToolbarTitle text='Synchronize' />
+          <IconButton
+            iconStyle={{ transform: 'scale(1.6)' }}
+            onClick={() => {
+              browserHistory.goBack()
+            }}
+          >
+            <ArrowBack color={'black'} />
+          </IconButton>
+          <ToolbarSeparator />
         </ToolbarGroup>
         <ToolbarGroup>
-         <Checkbox
-          onCheck = {() => this.toggleSynchronize()}
-          disabled = {graphs && graphs.length < 2}
-        />
+          <ToolbarGroup>
+            <ToolbarTitle text="Synchronize" />
+          </ToolbarGroup>
+          <ToolbarGroup>
+            <Checkbox onCheck={() => this.toggleSynchronize()} disabled={graphs && graphs.length < 2} />
+          </ToolbarGroup>
         </ToolbarGroup>
-      </ToolbarGroup>
-     </Toolbar>
+      </Toolbar>
+    )
   }
 
   toggleSynchronize() {
-    const {graphs, synchronize} = this.state
-
-    if ((graphs && graphs.length < 2) || !graphs) {
+    const { graphs, synchronize } = this.state
+    if (graphs && graphs.length < 2) {
       return
     }
 
     if (synchronize) {
       synchronize.detach()
-      this.setState({synchronize: undefined})
+      this.setState({ synchronize: undefined })
     } else {
-      const synchronize = window.Dygraph.synchronize(graphs, {
-        range: false
-      })
-      this.setState({synchronize})
+      const synchronize = window.Dygraph.synchronize(graphs)
+      this.setState({ synchronize })
     }
   }
 
   render() {
-    const {graphs} = this.state
+    const { graphs } = this.state
     const streams = this.props.devices[this.props.params.deviceId].streams
-
     return (
       <div>
-        {
-          graphs.length === 0
-            ? this.renderNoDataMessage()
-            : this.renderSettings()
-        }
-        {
-          streams
-          ? <div className='graphs'>
-              {this.renderGraphs(streams)}
-            </div>
-          : <div className='loadingScreen'>
-              <CircularProgress size={250} thickness={10}/>
-            </div>
-        }
-        </div>
+        {graphs.length === 0 ? this.renderNoDataMessage() : this.renderSettings()}
+        {streams ? (
+          <div className="graphs">{this.renderGraphs(streams)}</div>
+        ) : (
+          <div className="loadingScreen">
+            <CircularProgress size={250} thickness={10} />
+          </div>
+        )}
+      </div>
     )
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
+  return { devices: state.devices }
+}
+
+const mapDispatchToProps = dispatch => {
   return {
-    streams: state.streams,
-    devices: state.devices
+    deviceFetch: deviceId => dispatch(deviceFetch(deviceId))
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    deviceFetch: deviceId => dispatch(deviceFetch(deviceId)),
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Graphs)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Graphs)
