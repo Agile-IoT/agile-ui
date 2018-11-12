@@ -10,13 +10,14 @@
  *Contributors:
  *    Resin.io, FBK, Jolocom - initial API and implementation
  ******************************************************************************/
+import * as configuration from '../mockData.json'
 import agileSDK from 'agile-sdk-test-version'
 
 const agile = agileSDK({
   api: '/agile-core',
   idm: '/agile-security',
   data: '/agile-data'
-});
+})
 
 //This sets the token for the calls to the sdk and reloads the SDK object
 export const setToken = newToken => {
@@ -148,9 +149,7 @@ export const fetchCloudProviders = () => {
         supportedClouds.map(c =>
           agile.cloud
             .getCloudInfo(c.endpoint)
-            .then(description =>
-              Object.assign({}, description, { displayName: c.displayName })
-            )
+            .then(description => Object.assign({}, description, { displayName: c.displayName }))
         )
       )
 
@@ -655,9 +654,9 @@ export const groupDelete = (owner, name) => {
     agile.idm.group
       .delete(owner, name)
       .then(() => {
-        dispatch(action('GROUP_DELETE', {group_name: name, owner: owner}));
-        dispatch(message(`Group ${name} | ${owner} deleted.`));
-        dispatch(loading(false));
+        dispatch(action('GROUP_DELETE', { group_name: name, owner: owner }))
+        dispatch(message(`Group ${name} | ${owner} deleted.`))
+        dispatch(loading(false))
       })
       .catch(err => {
         errorHandle(err, dispatch)
@@ -766,84 +765,83 @@ export const fetchLocks = () => {
   }
 }
 
-export const addLockField = (params) => {
-  return (dispatch) => {
-    dispatch(loading(true));
-    switch(params.type.toUpperCase()) {
+export const addLockField = params => {
+  return dispatch => {
+    dispatch(loading(true))
+    switch (params.type.toUpperCase()) {
       case 'WRITE':
         dispatch(action('ADD_WRITE_LOCK_FIELD', params))
-        break;
+        break
       case 'READ':
         dispatch(action('ADD_READ_LOCK_FIELD', params))
-        break;
+        break
       default:
-        break;
+        break
     }
-    dispatch(loading(false));
+    dispatch(loading(false))
   }
 }
 
-export const removeLockField = (params) => {
-  return (dispatch) => {
-    dispatch(loading(true));
-    switch(params.type.toUpperCase()) {
+export const removeLockField = params => {
+  return dispatch => {
+    dispatch(loading(true))
+    switch (params.type.toUpperCase()) {
       case 'WRITE':
         dispatch(action('REMOVE_WRITE_LOCK_FIELD', params))
-        break;
+        break
       case 'READ':
         dispatch(action('REMOVE_READ_LOCK_FIELD', params))
-        break;
+        break
       default:
-        break;
+        break
     }
-    dispatch(loading(false));
+    dispatch(loading(false))
   }
 }
-
 
 export const fetchEntityLocks = (entity_id, entity_type, field) => {
   return dispatch => {
     dispatch(loading(true))
-    agile.policies.pap
-      .get({ entityId: entity_id, entityType: entity_type, field: field })
-      .then(locks => {
-        dispatch(action('ENTITY_FIELD_LOCKS', locks.result))
-        dispatch(loading(false))
-      })
+    agile.policies.pap.get({ entityId: entity_id, entityType: entity_type, field: field }).then(locks => {
+      dispatch(action('ENTITY_FIELD_LOCKS', locks.result))
+      dispatch(loading(false))
+    })
   }
 }
 
-export const setLock = (params) => {
+export const setLock = params => {
   //Make sure no delete buttons are there and avoid errors with references
-  const policies = [].concat(params.policy.map(p => {
-    const pKeys = Object.keys(p)
-    let newPolicy = {}
-    pKeys.forEach(key => {
-      if(key !== 'deleteButton') {
-        newPolicy[key] = p[key]
-      }
-    })
-
-    newPolicy.locks = newPolicy.locks.map(l => {
-      const keys = Object.keys(l)
-      let newLock = {}
-      keys.forEach(key =>{
-        if(key !== 'deleteButton') {
-          newLock[key] = l[key]
+  const policies = [].concat(
+    params.policy.map(p => {
+      const pKeys = Object.keys(p)
+      let newPolicy = {}
+      pKeys.forEach(key => {
+        if (key !== 'deleteButton') {
+          newPolicy[key] = p[key]
         }
       })
-      return newLock
-    })
 
-    return newPolicy
-  }))
-  const par = Object.assign({}, params, {policy: policies})
-  return (dispatch) => {
-    dispatch(loading(true));
+      newPolicy.locks = newPolicy.locks.map(l => {
+        const keys = Object.keys(l)
+        let newLock = {}
+        keys.forEach(key => {
+          if (key !== 'deleteButton') {
+            newLock[key] = l[key]
+          }
+        })
+        return newLock
+      })
+
+      return newPolicy
+    })
+  )
+  const par = Object.assign({}, params, { policy: policies })
+  return dispatch => {
+    dispatch(loading(true))
     agile.policies.pap.set(par).then(result => {
-      dispatch(action('POLICY_SET', result.result));
-      dispatch(message(`Successfully set policy of ${params.entityId} for '${params.field}'.`));
-      dispatch(loading(false));
+      dispatch(action('POLICY_SET', result.result))
+      dispatch(message(`Successfully set policy of ${params.entityId} for '${params.field}'.`))
+      dispatch(loading(false))
     })
   }
 }
@@ -859,25 +857,36 @@ export const deleteLock = params => {
 }
 
 export const formSelected = (type, policy, formNames) => {
-  return (dispatch) => {dispatch(action('FORM_SELECTED', {type: type, policy: policy, formNames: formNames}))}
-}
-
-// fetch all available protocols
-export const protocolsFetch = () => {
   return dispatch => {
-    dispatch(loading(true))
-    agile.protocolManager
-      .get()
-      .then(protocols => {
-        dispatch(action('PROTOCOLS', protocols))
-        dispatch(loading(false))
-        dispatch(devicesDiscover())
-      })
-      .catch(err => {
-        errorHandle(err, dispatch)
-      })
+    dispatch(action('FORM_SELECTED', { type: type, policy: policy, formNames: formNames }))
   }
 }
+
+// fetch all available protocols and configuration options
+export const protocolsFetch = () => async dispatch => {
+  try {
+    dispatch(loading(true))
+    // const protocols = await agile.protocolManager.get()
+    const protocols = [
+      {
+        id: '00:11:22:33:44:55',
+        protocol: 'org.eclipse.agail.protocol.Dummy',
+        name: 'Dummy',
+        status: 'AVAILABLE'
+      }
+    ]
+    const withConfiguration = await fetchConfigurations(protocols)
+
+    console.log(withConfiguration)
+    dispatch(action('PROTOCOLS', withConfiguration))
+    dispatch(loading(false))
+    // dispatch(devicesDiscover())
+  } catch (err) {
+    errorHandle(err, dispatch)
+  }
+}
+
+export const fetchConfigurations = protocols => Promise.all(protocols.map(protocol => ({ ...protocol, configuration })))
 
 export const drawerToggle = bool => action('DRAWER', bool)
 
@@ -940,13 +949,7 @@ export const discoveryToggle = () => {
   }
 }
 
-export const locStorPolicyAdd = ({
-  deviceID,
-  componentID,
-  interval,
-  retention,
-  publicKey
-}) => {
+export const locStorPolicyAdd = ({ deviceID, componentID, interval, retention, publicKey }) => {
   return (dispatch, getState) => {
     dispatch(loading(true))
 
@@ -970,9 +973,7 @@ export const locStorPolicyAdd = ({
     const existingRecords = getState().records[deviceID][componentID]
 
     const shouldEncrypt = !!publicKey
-    const existingRecordsEncrypted =
-      !!existingRecords.length &&
-      existingRecords[0][1] !== existingRecords[0][1]
+    const existingRecordsEncrypted = !!existingRecords.length && existingRecords[0][1] !== existingRecords[0][1]
 
     if (existingRecords.length && shouldEncrypt !== existingRecordsEncrypted) {
       const msg =

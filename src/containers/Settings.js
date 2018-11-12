@@ -10,52 +10,41 @@
  *Contributors:
  *    Resin.io, FBK, Jolocom - initial API and implementation
  ******************************************************************************/
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import {
-  startDiscovery,
-  discoveryToggle,
-  drawerToggle,
-  protocolsFetch,
-  discoveryStatus
-} from '../actions';
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { startDiscovery, discoveryToggle, drawerToggle, protocolsFetch, discoveryStatus } from '../actions'
 
-import { SettingsMenu } from '../components';
+import { SettingsMenu } from '../components'
 
 class Settings extends Component {
   componentDidMount() {
-    this.props.startDiscovery()
+    // this.props.startDiscovery()
     this.props.protocolsFetch()
-    this.props.discoveryStatus()
+    // this.props.discoveryStatus()
   }
 
   render() {
-    return (
-      <SettingsMenu
-        {...this.props}
-      />
-    )
+    return <SettingsMenu {...this.props} />
   }
-
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     discovery: state.discovery,
     drawer: state.drawer,
     protocols: state.protocols
-  };
-};
+  }
+}
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
     startDiscovery: () => dispatch(startDiscovery()),
-    drawerToggle: (bool) => dispatch(drawerToggle(bool)),
-    discoveryToggle: (bool) => dispatch(discoveryToggle(bool)),
+    drawerToggle: bool => dispatch(drawerToggle(bool)),
+    discoveryToggle: bool => dispatch(discoveryToggle(bool)),
     protocolsFetch: () => dispatch(protocolsFetch()),
-    discoveryStatus: () => dispatch(discoveryStatus()),
-  };
-};
+    discoveryStatus: () => dispatch(discoveryStatus())
+  }
+}
 
 export default connect(
   mapStateToProps,
