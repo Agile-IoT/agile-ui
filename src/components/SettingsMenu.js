@@ -148,9 +148,13 @@ class ConfigurationDialog extends Component {
     return toRender
   }
 
-  renderIcon = description => {
+  renderIcon = (description, lasteElement) => {
     return (
-      <IconButton tooltip={description} tooltipPosition="bottom-left" tooltipStyles={{ fontSize: '16px' }}>
+      <IconButton
+        tooltip={description}
+        tooltipPosition={lasteElement ? 'top-left' : 'bottom-left'}
+        tooltipStyles={{ fontSize: '16px' }}
+      >
         <InfoIcon />
       </IconButton>
     )
@@ -180,7 +184,7 @@ class ConfigurationDialog extends Component {
         ]}
       >
         <Divider style={{ height: '2px', marginBottom: '15px' }} />
-        {this.state.configuration.map(entry => {
+        {this.state.configuration.map((entry, index, total) => {
           return [
             <div
               key={entry.key}
@@ -192,7 +196,7 @@ class ConfigurationDialog extends Component {
                 justifyContent: 'space-between'
               }}
             >
-              {[...this.renderInputField(entry), this.renderIcon(entry.description)]}
+              {[...this.renderInputField(entry), this.renderIcon(entry.description, index === total.length - 1)]}
             </div>
           ]
         })}
