@@ -102,7 +102,6 @@ class Discover extends Component {
   componentWillReceiveProps(nextProps) {
     const { devices } = nextProps
     const newDevices = differenceBy(devices, this.props.devices, 'id')
-    console.log(differenceBy(this.props.devices, devices, 'id'))
     if (newDevices) {
       this.updateDeviceTypes(newDevices)
     }
@@ -121,7 +120,7 @@ class Discover extends Component {
 
     if (toRender.length === 0 && discovery) {
       return (
-        <div className="loadingScreen">
+        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center',justifyContent: 'center'}}>
           <div style={{ marginBottom: '10%', width: '100%', textAlign: 'center' }}>
             <span
               style={{

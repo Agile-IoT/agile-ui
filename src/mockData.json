@@ -4,7 +4,7 @@
     "value": "Random first",
     "name": "Protocol Name",
     "description": "The name of the protocol",
-    "mandatory": "true",
+    "mandatory": true,
     "default_value": "0",
     "type": "string",
     "valid_values": ""
@@ -14,8 +14,8 @@
     "value": "false",
     "name": "Test for boolean",
     "description": "Test for how booleans looks",
-    "mandatory": "true",
-    "default_value": "true",
+    "mandatory": true,
+    "default_value": true,
     "type": "string",
     "valid_values": ["true", "false"]
   },
@@ -24,7 +24,7 @@
     "value": "Random name",
     "name": "Protocol Name",
     "description": "The name of the protocol",
-    "mandatory": "true",
+    "mandatory": true,
     "default_value": "0",
     "type": "string",
     "valid_values": ""
@@ -34,7 +34,127 @@
     "value": "false",
     "name": "Test for boolean",
     "description": "Test for how booleans looks",
-    "mandatory": "true",
+    "mandatory": true,
+    "default_value": "true",
+    "type": "boolean",
+    "valid_values": ["true", "false"]
+  },
+  {
+    "key": "first",
+    "value": "Random first",
+    "name": "Protocol Name",
+    "description": "The name of the protocol",
+    "mandatory": true,
+    "default_value": "0",
+    "type": "string",
+    "valid_values": ""
+  },
+  {
+    "key": "enable es+17",
+    "value": "false",
+    "name": "Test for boolean",
+    "description": "Test for how booleans looks",
+    "mandatory": true,
+    "default_value": true,
+    "type": "string",
+    "valid_values": ["true", "false"]
+  },
+  {
+    "key": "name",
+    "value": "Random name",
+    "name": "Protocol Name",
+    "description": "The name of the protocol",
+    "mandatory": true,
+    "default_value": "0",
+    "type": "string",
+    "valid_values": ""
+  },
+  {
+    "key": "enable es+16",
+    "value": "false",
+    "name": "Test for boolean",
+    "description": "Test for how booleans looks",
+    "mandatory": true,
+    "default_value": "true",
+    "type": "boolean",
+    "valid_values": ["true", "false"]
+  },
+  {
+    "key": "first",
+    "value": "Random first",
+    "name": "Protocol Name",
+    "description": "The name of the protocol",
+    "mandatory": true,
+    "default_value": "0",
+    "type": "string",
+    "valid_values": ""
+  },
+  {
+    "key": "enable es+17",
+    "value": "false",
+    "name": "Test for boolean",
+    "description": "Test for how booleans looks",
+    "mandatory": true,
+    "default_value": true,
+    "type": "string",
+    "valid_values": ["true", "false"]
+  },
+  {
+    "key": "name",
+    "value": "Random name",
+    "name": "Protocol Name",
+    "description": "The name of the protocol",
+    "mandatory": true,
+    "default_value": "0",
+    "type": "string",
+    "valid_values": ""
+  },
+  {
+    "key": "enable es+16",
+    "value": "false",
+    "name": "Test for boolean",
+    "description": "Test for how booleans looks",
+    "mandatory": true,
+    "default_value": "true",
+    "type": "boolean",
+    "valid_values": ["true", "false"]
+  },
+  {
+    "key": "first",
+    "value": "Random first",
+    "name": "Protocol Name",
+    "description": "The name of the protocol",
+    "mandatory": true,
+    "default_value": "0",
+    "type": "string",
+    "valid_values": ""
+  },
+  {
+    "key": "enable es+17",
+    "value": "false",
+    "name": "Test for boolean",
+    "description": "Test for how booleans looks",
+    "mandatory": true,
+    "default_value": true,
+    "type": "string",
+    "valid_values": ["true", "false"]
+  },
+  {
+    "key": "name",
+    "value": "Random name",
+    "name": "Protocol Name",
+    "description": "The name of the protocol",
+    "mandatory": true,
+    "default_value": "0",
+    "type": "string",
+    "valid_values": ""
+  },
+  {
+    "key": "enable es+16",
+    "value": "false",
+    "name": "Test for boolean",
+    "description": "Test for how booleans looks",
+    "mandatory": true,
     "default_value": "true",
     "type": "boolean",
     "valid_values": ["true", "false"]

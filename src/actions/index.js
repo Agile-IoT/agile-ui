@@ -10,8 +10,8 @@
  *Contributors:
  *    Resin.io, FBK, Jolocom - initial API and implementation
  ******************************************************************************/
+import agileSDK from 'sdk-temp-wip'
 import * as configuration from '../mockData.json'
-import agileSDK from 'agile-sdk-test-version'
 
 const agile = agileSDK({
   api: '/agile-core',
@@ -862,31 +862,39 @@ export const formSelected = (type, policy, formNames) => {
   }
 }
 
-// fetch all available protocols and configuration options
 export const protocolsFetch = () => async dispatch => {
   try {
     dispatch(loading(true))
-    // const protocols = await agile.protocolManager.get()
-    const protocols = [
-      {
-        id: '00:11:22:33:44:55',
-        protocol: 'org.eclipse.agail.protocol.Dummy',
-        name: 'Dummy',
-        status: 'AVAILABLE'
-      }
-    ]
-    const withConfiguration = await fetchConfigurations(protocols)
+    const protocols = await agile.protocolManager.get()
+    const withConfig = await Promise.all(
+      protocols.map(async protocol => {
+        try {
+          const configuration = await agile.protocolManager.configuration.get(protocol.dbusInterface)
+          return { ...protocol, configuration }
+        } catch (err) {
+          return { ...protocol, configuration: [] }
+        }
+      })
+    )
 
-    console.log(withConfiguration)
-    dispatch(action('PROTOCOLS', withConfiguration))
+    dispatch(action('PROTOCOLS', withConfig))
     dispatch(loading(false))
-    // dispatch(devicesDiscover())
+    dispatch(devicesDiscover())
   } catch (err) {
     errorHandle(err, dispatch)
   }
 }
 
-export const fetchConfigurations = protocols => Promise.all(protocols.map(protocol => ({ ...protocol, configuration })))
+export const protcolConfigSet = (protocolId, configuration) => async dispatch => {
+  try {
+    dispatch(loading(true))
+    await agile.protocolManager.configuration.set(protocolId, configuration)
+    dispatch(loading(false))
+    dispatch(protocolsFetch())
+  } catch (err) {
+    errorHandle(err, dispatch)
+  }
+}
 
 export const drawerToggle = bool => action('DRAWER', bool)
 

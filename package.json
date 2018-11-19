@@ -11,9 +11,6 @@
   },
   "license": "EPL-2.0",
   "dependencies": {
-    "@material-ui/core": "^3.4.0",
-    "@material-ui/icons": "^3.0.1",
-    "agile-sdk-test-version": "1.4.0",
     "compression": "1.7.1",
     "deep-diff": "^0.3.8",
     "express": "4.16.2",
@@ -36,6 +33,7 @@
     "redux": "3.6.0",
     "redux-localstorage": "0.4.1",
     "redux-thunk": "2.2.0",
+    "sdk-temp-wip": "^1.4.0",
     "underscore": "^1.8.3"
   },
   "scripts": {
