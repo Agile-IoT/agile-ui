@@ -34,7 +34,8 @@
     "redux-localstorage": "0.4.1",
     "redux-thunk": "2.2.0",
     "sdk-temp-wip": "^1.4.0",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "validator": "^10.9.0"
   },
   "scripts": {
     "start": "PORT=2000 REACT_APP_BROWSER=true react-scripts start",

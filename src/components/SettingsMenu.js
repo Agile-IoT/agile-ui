@@ -10,7 +10,7 @@
  *Contributors:
  *    Resin.io, FBK, Jolocom - initial API and implementation
  ******************************************************************************/
-import { Dialog, TextField, Checkbox, FlatButton } from 'material-ui'
+import { Dialog, MenuItem, TextField, Checkbox, FlatButton, SelectField } from 'material-ui'
 import AppBar from 'material-ui/AppBar'
 import Divider from 'material-ui/Divider'
 import Drawer from 'material-ui/Drawer'
@@ -21,6 +21,7 @@ import ActionSettings from 'material-ui/svg-icons/action/settings'
 import NavigationClose from 'material-ui/svg-icons/navigation/close'
 import Toggle from 'material-ui/Toggle'
 import React, { Component } from 'react'
+import * as validator from 'validator'
 
 class ProtocolList extends Component {
   state = {
@@ -91,15 +92,18 @@ class ConfigurationDialog extends Component {
     this.setState({ configuration: newProps.configuration || [] })
   }
 
-  handleFieldUpdate = (key, value) => {
+  handleFieldUpdate = (key, value, type) => {
     const { configuration } = this.state
-    const toReplaceIdx = configuration.findIndex(entry => entry.key === key)
     const shallowCopy = [...configuration]
+
+    const toReplaceIdx = configuration.findIndex(entry => entry.key === key)
 
     shallowCopy.splice(toReplaceIdx, 1, {
       ...configuration[toReplaceIdx],
-      value: value
+      value
     })
+
+    console.log(shallowCopy)
 
     this.setState({ configuration: shallowCopy })
   }
@@ -111,41 +115,61 @@ class ConfigurationDialog extends Component {
   renderInputField = entry => {
     const style = {
       text: {
-        flex: 0.3
+        flex: 0.2
       },
       inputField: {
         flex: 0.6
       },
       checkboxInputField: {
         justifySelf: 'flex-start',
-        display: 'flex',
-        height: 16,
-        width: 16
+        display: 'flex'
       }
     }
 
-    const toRender = [<span style={style.text}>{entry.name} </span>]
-    if (entry.type === 'boolean') {
-      toRender.push(
+    const suffix = entry.mandatory ? ' *' : ''
+    const toRender = [<span style={style.text}>{entry.name + suffix} </span>]
+    if (entry.type === 'bool') {
+      return [
+        ...toRender,
         <Checkbox
           key={entry.key}
           style={{ ...style.checkboxInputField, ...style.inputField }}
-          onClick={() => this.handleFieldUpdate(entry.key, !JSON.parse(entry.value))}
+          onClick={() => this.handleFieldUpdate(entry.key, !entry.value, entry.type)}
           checked={JSON.parse(entry.value)}
         />
-      )
-    } else {
-      toRender.push(
+      ]
+    }
+
+    const multipleOptions = entry.valid_values && entry.valid_values.split(',').length > 1
+
+    if (!multipleOptions) {
+      return [
+        ...toRender,
         <TextField
           style={style.inputField}
           value={entry.value || entry.default}
           name={entry.key}
-          onChange={e => this.handleFieldUpdate(entry.key, e.target.value)}
+          onChange={e => this.handleFieldUpdate(entry.key, e.target.value, entry.type)}
         />
-      )
+      ]
     }
 
-    return toRender
+    const options = entry.valid_values.split(',').map(option => (entry.type === 'int' ? parseInt(option) : option))
+
+    return [
+      ...toRender,
+      <SelectField
+        value={entry.value || entry.default_value}
+        maxHeight={300}
+        fullWidth
+        style={style.inputField}
+        onChange={(e, i, value) => this.handleFieldUpdate(entry.key, value, entry.type)}
+      >
+        {options.map(option => (
+          <MenuItem value={option} primaryText={option} />
+        ))}
+      </SelectField>
+    ]
   }
 
   renderIcon = (description, lasteElement) => {
@@ -169,6 +193,17 @@ class ConfigurationDialog extends Component {
         backgroundColor: 'rgba(34, 187, 60, 0.5)'
       }
     }
+
+    const withValiditiy = this.state.configuration.map(entry => ({
+      ...entry,
+      valid: validateInput(entry.value, entry.type)
+    }))
+
+    const mandatory = withValiditiy.filter(entry => entry.mandatory)
+    const allPresent = mandatory.every(option => option.value !== '')
+    const canSubmit = allPresent && withValiditiy.every(el => el.valid)
+
+    console.log(withValiditiy)
     return (
       <Dialog
         open={!!this.state.configuration.length}
@@ -179,8 +214,13 @@ class ConfigurationDialog extends Component {
         autoScrollBodyContent={true}
         modal={false}
         actions={[
-          <FlatButton label="Discard" srtyle={style.buttonInactive} onClick={this.props.handleClose} />,
-          <FlatButton label="Apply" style={style.buttonActive} onClick={this.handleConfigUpdate} />
+          <FlatButton label="Discard" style={style.buttonInactive} onClick={this.props.handleClose} />,
+          <FlatButton
+            label="Apply"
+            disabled={!canSubmit}
+            style={style.buttonActive}
+            onClick={this.handleConfigUpdate}
+          />
         ]}
       >
         <Divider style={{ height: '2px', marginBottom: '15px' }} />
@@ -251,3 +291,18 @@ const SettingsMenu = props => {
 }
 
 export default SettingsMenu
+
+const validateInput = (value, type) => {
+  const validationMethodByType = {
+    int: value => validator.isNumeric(value) || validator.isHexadecimal(value.replace('0x', '')),
+    string: validator.isAlphanumeric
+  }
+
+  if (!validationMethodByType[type]) return true
+
+  try {
+    return validationMethodByType[type](value + '')
+  } catch (err) {
+    return false
+  }
+}
