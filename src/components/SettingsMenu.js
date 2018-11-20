@@ -103,8 +103,6 @@ class ConfigurationDialog extends Component {
       value
     })
 
-    console.log(shallowCopy)
-
     this.setState({ configuration: shallowCopy })
   }
 
@@ -147,6 +145,7 @@ class ConfigurationDialog extends Component {
         ...toRender,
         <TextField
           style={style.inputField}
+          errorText={!entry.valid && entry.valid_values}
           value={entry.value || entry.default}
           name={entry.key}
           onChange={e => this.handleFieldUpdate(entry.key, e.target.value, entry.type)}
@@ -190,6 +189,7 @@ class ConfigurationDialog extends Component {
         backgroundColor: '#e2e2e2'
       },
       buttonActive: {
+        marginLeft: '5%',
         backgroundColor: 'rgba(34, 187, 60, 0.5)'
       }
     }
@@ -201,9 +201,8 @@ class ConfigurationDialog extends Component {
 
     const mandatory = withValiditiy.filter(entry => entry.mandatory)
     const allPresent = mandatory.every(option => option.value !== '')
-    const canSubmit = allPresent && withValiditiy.every(el => el.valid)
+    const canSubmit = allPresent && withValiditiy.every(el => el.valid || el.valid !== 'undefined')
 
-    console.log(withValiditiy)
     return (
       <Dialog
         open={!!this.state.configuration.length}
@@ -224,7 +223,7 @@ class ConfigurationDialog extends Component {
         ]}
       >
         <Divider style={{ height: '2px', marginBottom: '15px' }} />
-        {this.state.configuration.map((entry, index, total) => {
+        {withValiditiy.map((entry, index, total) => {
           return [
             <div
               key={entry.key}
@@ -298,7 +297,7 @@ const validateInput = (value, type) => {
     string: validator.isAlphanumeric
   }
 
-  if (!validationMethodByType[type]) return true
+  if (!validationMethodByType[type]) return undefined
 
   try {
     return validationMethodByType[type](value + '')
