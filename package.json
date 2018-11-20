@@ -16,7 +16,7 @@
     "express": "4.16.2",
     "express-bearer-token": "2.1.0",
     "http-proxy-middleware": "0.17.4",
-    "lodash": "4.17.4",
+    "lodash": "4.17.5",
     "material-ui": "^0.20.0",
     "material-ui-datetimepicker": "^1.0.6",
     "re-resizable": "^4.4.4",
