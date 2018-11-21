@@ -24,6 +24,8 @@ RUN npm -d install
 
 COPY . .
 
+RUN npm run build
+
 EXPOSE 1337
 
 CMD node ./server.js
