@@ -19,7 +19,7 @@ import InfoIcon from 'material-ui/svg-icons/action/info-outline.js'
 import ShoppingCart from 'material-ui/svg-icons/action/shopping-cart.js'
 
 import { GenericListItem } from '../components/'
-import { recommendationsFetch } from '../actions'
+import { recommendationsFetch } from '../actions/recommender'
 
 class Recommender extends Component {
   componentDidMount() {
@@ -62,25 +62,25 @@ class Recommender extends Component {
 
   generateSummary(record) {
     const styles = this.getStyles()
-    const msg = 'This device is recommended to you because it is related to ' + 
+    const msg = 'This device is recommended to you because it is related to ' +
       'your gateway profile, or used by similar gateways.'
 
     return (
-      <div style={styles.summaryWrapper}> 
-        <IconButton 
+      <div style={styles.summaryWrapper}>
+        <IconButton
           tooltip={msg}
           tooltipPosition="bottom-right"
           tooltipStyles={styles.tooltip}
         >
-          <InfoIcon style={styles.infoIcon}/> 
+          <InfoIcon style={styles.infoIcon}/>
         </IconButton>
-        {record.title} 
+        {record.title}
       </div>
     )
   }
 
   generateBuyButton(record) {
-    return ( 
+    return (
       <IconButton onClick={() => window.open(record.href)}>
         <ShoppingCart />
       </IconButton>
@@ -90,19 +90,19 @@ class Recommender extends Component {
   renderRecommendations() {
     const styles = this.getStyles()
     if (this.props.recommendations.length === 0) {
-      return (<div style={styles.noDataContainer}> 
+      return (<div style={styles.noDataContainer}>
         <span style={styles.noDataMsg}>No recommendations available </span>
       </div>)
     }
     return this.props.recommendations.map(rec =>
-      <GenericListItem 
+      <GenericListItem
         leftEl={this.generateSummary(rec)}
         rightEl={this.generateBuyButton(rec)}
         style={styles.listItem}
       />
     )
   }
-  
+
   render() {
     if (this.props.loading.recommender) {
       return (<div className='loadingScreen'>

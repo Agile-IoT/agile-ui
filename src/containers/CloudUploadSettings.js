@@ -12,8 +12,9 @@
  ******************************************************************************/
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import {cloudUploadData, fetchCloudProviders} from "../actions/dataExport"
 import { CloudUploadSettingsSummary } from '../components'
-import { cloudUploadData, fetchCloudProviders, fetchCurrentUserCredentials, setEntityData, message } from '../actions';
+import { fetchCurrentUserCredentials, setEntityData, message } from '../actions';
 
 class CloudUploadSettings extends Component {
   constructor(props) {

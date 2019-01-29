@@ -10,17 +10,28 @@
  *Contributors:
  *    Resin.io, FBK, Jolocom - initial API and implementation
  ******************************************************************************/
-import { createStore, applyMiddleware, compose } from 'redux';
+import {createStore, applyMiddleware, compose} from 'redux';
 import persistState from 'redux-localstorage'
 import thunk from 'redux-thunk';
 import rootReducer from './reducers';
 import createLogger from 'redux-logger';
+import agileSDK from 'sdk-temp-wip'
 
-// const DEV = process.env.NODE_ENV === `development`;
-const DEV = false
+const DEV = process.env.NODE_ENV === `development`;
+
+const agile = agileSDK({
+  api: '/agile-core',
+  idm: '/agile-security',
+  data: '/agile-data'
+})
+
+export const setToken = newToken => {
+  agile.tokenSet(newToken)
+}
+
 
 const middlewares = compose(
-  applyMiddleware(thunk),
+  applyMiddleware(thunk.withExtraArgument(agile)),
   persistState('discovery'),
   DEV ? applyMiddleware(createLogger()) : (o => o)
 )

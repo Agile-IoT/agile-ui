@@ -10,26 +10,12 @@
  *Contributors:
  *    Resin.io, FBK, Jolocom - initial API and implementation
  ******************************************************************************/
-import agileSDK from 'sdk-temp-wip'
-import * as configuration from '../mockData.json'
 
-const agile = agileSDK({
-  api: '/agile-core',
-  idm: '/agile-security',
-  data: '/agile-data'
-})
-
-//This sets the token for the calls to the sdk and reloads the SDK object
-export const setToken = newToken => {
-  agile.tokenSet(newToken)
-}
-
-//****** UTILS ******//
-const action = (type, data) => {
+export const action = (type, data) => {
   return { type, data }
 }
 
-const DEVICE_TYPE = 'device'
+export const DEVICE_TYPE = 'device'
 
 export const entityLoading = bool => {
   return {
@@ -55,20 +41,6 @@ export const hideConfirmationScreen = () => {
   }
 }
 
-export const recommenderLoading = bool => {
-  return {
-    type: 'RECOMMENDER_LOADING',
-    data: bool
-  }
-}
-
-export const devicesLoading = bool => {
-  return {
-    type: 'DEVICES_LOADING',
-    data: bool
-  }
-}
-
 export const loading = bool => {
   return {
     type: 'LOADING',
@@ -91,207 +63,13 @@ export const messageRemove = msg => {
 }
 
 export const errorHandle = (err, dispatch) => {
+  console.log(err, dispatch)
   dispatch(message(err.message))
   dispatch(loading(false))
 }
 
-// Local storage related.
-export const setInterval = interval => {
-  return dispatch => {
-    dispatch(action('INTERVAL', interval))
-  }
-}
-
-export const setLocDeviceId = deviceId => {
-  return dispatch => {
-    dispatch(action('LOC_DEVICE_ID', deviceId))
-  }
-}
-
-export const setLocComponentId = componentId => {
-  return dispatch => {
-    dispatch(action('LOC_COMPONENT_ID', componentId))
-  }
-}
-
-// Cloud upload related
-
-export const cloudUploadData = ({ selectedProvider, data, customArgs }) => {
-  return async dispatch => {
-    const { deviceId, componentId, startDate, endDate } = data
-
-    const startStamp = new Date(startDate).getTime()
-    const endStamp = new Date(endDate).getTime()
-
-    const query = {
-      deviceID: deviceId,
-      componentID: componentId,
-      between: `${startStamp}|${endStamp}`
-    }
-
-    return agile.cloud
-      .exportDataToCloud(selectedProvider, query, customArgs)
-      .then(() => dispatch(message('Uploaded')))
-      .catch(err => {
-        errorHandle(err, dispatch)
-        dispatch(message(err.response.data))
-      })
-  }
-}
-
-export const fetchCloudProviders = () => {
-  return async dispatch => {
-    try {
-      const res = await agile.cloud.getCloudsInfo()
-      const supportedClouds = res.clouds.filter(c => c.implemented)
-
-      const providersDetails = await Promise.all(
-        supportedClouds.map(c =>
-          agile.cloud
-            .getCloudInfo(c.endpoint)
-            .then(description => Object.assign({}, description, { displayName: c.displayName }))
-        )
-      )
-
-      dispatch(action('CLOUD_PROVIDERS', providersDetails))
-    } catch (err) {
-      errorHandle(err, dispatch)
-    }
-  }
-}
-
-//
-//****** ASYNC *****//
-// fetch all unregistered devices
-export const devicesDiscover = () => {
-  return dispatch => {
-    agile.protocolManager
-      .devices()
-      .then(devices => {
-        dispatch(action('DEVICES_DISCOVER', devices))
-      })
-      .catch(err => {
-        dispatch(action('DEVICES_DISCOVER', []))
-        errorHandle(err, dispatch)
-      })
-  }
-}
-
-export const deviceTypesFetch = deviceOverview => {
-  return dispatch => {
-    agile.deviceManager
-      .typeof(deviceOverview)
-      .then(deviceTypes => {
-        dispatch(
-          action('DEVICE_TYPES', {
-            id: deviceOverview.id,
-            types: deviceTypes
-          })
-        )
-      })
-      .catch(err => {
-        errorHandle(err, dispatch)
-      })
-  }
-}
-
-export const deviceSubscribe = (deviceId, componentId) => {
-  return dispatch => {
-    dispatch(loading(true))
-    agile.device
-      .subscribe(deviceId, componentId)
-      .then(stream => {
-        stream.onopen = dispatch(loading(false))
-        stream.onerror = errorHandle
-
-        stream.onmessage = e => {
-          if (typeof e.data === 'string') {
-            const record = JSON.parse(e.data)
-            dispatch(action('STREAMS_UPDATE', { record }))
-            dispatch(loading(false))
-          }
-        }
-      })
-      .catch(err => {
-        errorHandle(err, dispatch)
-      })
-  }
-}
-
-export const deviceUnsubscribe = (deviceId, componentId) => {
-  return dispatch => {
-    dispatch(loading(true))
-    agile.device
-      .unsubscribe(deviceId, componentId)
-      .then(devices => {
-        dispatch(loading(false))
-      })
-      .catch(err => {
-        errorHandle(err, dispatch)
-      })
-  }
-}
-
-// fetch all device
-export const deviceFetch = deviceId => {
-  return dispatch => {
-    dispatch(loading(true))
-    agile.deviceManager
-      .get(deviceId)
-      .then(device => {
-        dispatch(action('DEVICE', device))
-        if (device.streams) {
-          device.streams.map(s => {
-            return dispatch(deviceSubscribe(deviceId, s.id))
-          })
-        }
-        dispatch(loading(false))
-      })
-      .catch(err => {
-        errorHandle(err, dispatch)
-      })
-  }
-}
-
-export const streamsFetch = deviceId => {
-  return dispatch => {
-    // dispatch(loading(true))
-    agile.device
-      .lastUpdate(deviceId)
-      .then(streams => {
-        dispatch(action('STREAMS', { deviceId, streams }))
-        // dispatch(loading(false));
-      })
-      .catch(err => {
-        errorHandle(err, dispatch)
-      })
-  }
-}
-
-// fetch all registered devices and their streams
-export const devicesAndStreamsFetch = () => {
-  return dispatch => {
-    dispatch(devicesLoading(true))
-    agile.deviceManager
-      .get()
-      .then(devices => {
-        if (devices) {
-          const deviceMap = {}
-          devices.forEach(d => (deviceMap[d.deviceId] = d))
-          dispatch(action('DEVICES', deviceMap))
-          devices.forEach(d => dispatch(streamsFetch(d.deviceId)))
-        }
-        dispatch(devicesLoading(false))
-      })
-      .catch(err => {
-        dispatch(devicesLoading(false))
-        dispatch(message(err.message))
-      })
-  }
-}
-
 export const fetchEntitySchemas = () => {
-  return dispatch => {
+  return (dispatch, _, agile) => {
     dispatch(loading(true))
     agile.idm.entity
       .getEntitiesSchema()
@@ -304,31 +82,8 @@ export const fetchEntitySchemas = () => {
       })
   }
 }
-
-export const devicesDelete = deviceId => {
-  return dispatch => {
-    dispatch(loading(true))
-    agile.deviceManager
-      .delete(deviceId)
-      .then(() => {
-        dispatch(action('DEVICES_DELETE', deviceId))
-        dispatch(message(`Device ${deviceId} deleted.`))
-        dispatch(loading(false))
-        return agile.idm.entity.delete(deviceId, DEVICE_TYPE)
-      })
-      .then(() => {
-        dispatch(action('DEVICES_DELETE', deviceId))
-        dispatch(message(`Device ${deviceId} deleted.`))
-        dispatch(loading(false))
-      })
-      .catch(err => {
-        errorHandle(err, dispatch)
-      })
-  }
-}
-
 export const devicesCreate = (device, type) => {
-  return dispatch => {
+  return (dispatch, _, agile) => {
     var newDevice
     dispatch(loading(true))
     agile.deviceManager
@@ -355,7 +110,7 @@ export const devicesCreate = (device, type) => {
 }
 
 export const fetchCurrentUserCredentials = () => {
-  return async dispatch => {
+  return async (dispatch, getState, agile) => {
     const userInfo = await agile.idm.user.getCurrentUserInfo()
     const { credentials } = await agile.idm.entity.get(userInfo.id, 'user')
     dispatch(action('CREDENTIALS', credentials))
@@ -363,7 +118,7 @@ export const fetchCurrentUserCredentials = () => {
 }
 
 export const fetchCurrentUser = () => {
-  return dispatch => {
+  return (dispatch, getState, agile) => {
     dispatch(loading(true))
     agile.idm.user
       .getCurrentUserInfo()
@@ -377,23 +132,8 @@ export const fetchCurrentUser = () => {
   }
 }
 
-export const userFetch = id => {
-  return dispatch => {
-    dispatch(loading(true))
-    agile.idm.entity
-      .get(id, 'user')
-      .then(user => {
-        dispatch(action('USER', user))
-        dispatch(loading(false))
-      })
-      .catch(err => {
-        errorHandle(err, dispatch)
-      })
-  }
-}
-
 export const updatePassword = (oldPassword, newPassword) => {
-  return dispatch => {
+  return (dispatch, getState, agile) => {
     dispatch(loading(true))
     agile.idm.user
       .updatePassword(oldPassword, newPassword)
@@ -408,7 +148,7 @@ export const updatePassword = (oldPassword, newPassword) => {
 }
 
 export const resetPassword = (username, authType, newPassword) => {
-  return dispatch => {
+  return (dispatch, getState, agile) => {
     dispatch(loading(true))
     agile.idm.user
       .resetPassword(username, authType, newPassword)
@@ -423,7 +163,7 @@ export const resetPassword = (username, authType, newPassword) => {
 }
 
 export const setEntityData = params => {
-  return dispatch => {
+  return (dispatch, getState, agile) => {
     dispatch(loading(true))
     agile.idm.entity
       .setAttribute(params)
@@ -439,7 +179,7 @@ export const setEntityData = params => {
 }
 
 export const deleteAttribute = params => {
-  return dispatch => {
+  return (dispatch, getState, agile) => {
     dispatch(loading(true))
     agile.idm.entity
       .deleteAttribute(params.id, params.type, params.attribute)
@@ -478,7 +218,7 @@ export const newPasswordInput = value => {
 }
 
 export const canExecuteActions = (id, type, attribute_names, actions) => {
-  return dispatch => {
+  return (dispatch, getState, agile) => {
     dispatch(loading(true))
     var queryObject = []
     var actions_seen = [agile]
@@ -521,39 +261,8 @@ export const canExecuteActions = (id, type, attribute_names, actions) => {
   }
 }
 
-export const recommendationsFetch = () => {
-  return dispatch => {
-    dispatch(recommenderLoading(true))
-
-    const protocol = document.location.protocol || 'http:'
-    const host = document.location.hostname
-    const apiEndpoint = `${protocol}//${host}:8090/recommenderdockerservice`
-
-    window
-      .fetch(`${apiEndpoint}/getDeviceRecommendation`)
-      .then(r => r.json())
-      .then(data => {
-        dispatch(action('RECOMMENDATIONS', data.deviceList))
-        dispatch(recommenderLoading(false))
-      })
-      .catch(err => {
-        dispatch(action('RECOMMENDATIONS', []))
-        dispatch(recommenderLoading(false))
-        errorHandle(err, dispatch)
-      })
-  }
-}
-
-export const currentTab = type => {
-  return dispatch => {
-    dispatch(loading(true))
-    dispatch(action('CURRENT_TAB', type))
-    dispatch(loading(false))
-  }
-}
-
 export const entityFetch = type => {
-  return dispatch => {
+  return (dispatch, getState, agile)  => {
     dispatch(entityLoading(true))
     if (type === 'group') {
       agile.idm.group
@@ -579,9 +288,8 @@ export const entityFetch = type => {
   }
 }
 
-// fetch all groups
 export const groupsFetch = () => {
-  return dispatch => {
+  return (dispatch, getState, agile) => {
     dispatch(loading(true))
     agile.idm.group
       .get()
@@ -596,7 +304,7 @@ export const groupsFetch = () => {
 }
 
 export const addToGroup = (owner, name, type, id) => {
-  return dispatch => {
+  return (dispatch, getStte, agile) => {
     dispatch(loading(true))
     agile.idm.group
       .addEntity({ owner: owner, name: name, entityType: type, entityId: id })
@@ -612,7 +320,7 @@ export const addToGroup = (owner, name, type, id) => {
 }
 
 export const removeFromGroup = (owner, name, type, id) => {
-  return dispatch => {
+  return (dispatch, getState, agile) => {
     dispatch(loading(true))
     agile.idm.group
       .removeEntity({
@@ -633,7 +341,7 @@ export const removeFromGroup = (owner, name, type, id) => {
 }
 
 export const usersDelete = (userName, auth_type) => {
-  return dispatch => {
+  return (dispatch, getState, agile) => {
     dispatch(loading(true))
     agile.idm.user
       .delete(userName, auth_type)
@@ -649,7 +357,7 @@ export const usersDelete = (userName, auth_type) => {
 }
 
 export const groupDelete = (owner, name) => {
-  return dispatch => {
+  return (dispatch, getState, agile) => {
     dispatch(loading(true))
     agile.idm.group
       .delete(owner, name)
@@ -665,7 +373,7 @@ export const groupDelete = (owner, name) => {
 }
 
 export const entityDelete = (entityId, entityType) => {
-  return dispatch => {
+  return (dispatch, getState, agile) => {
     dispatch(loading(true))
     agile.idm.entity
       .delete(entityId, entityType)
@@ -692,7 +400,7 @@ export const entityDeleteByType = (entity, type) => {
 }
 
 export const usersCreate = (user, authType, options) => {
-  return dispatch => {
+  return (dispatch, getState, agile) => {
     dispatch(loading(true))
     agile.idm.user
       .create(user, authType, options)
@@ -708,7 +416,7 @@ export const usersCreate = (user, authType, options) => {
 }
 
 export const groupCreate = group_name => {
-  return dispatch => {
+  return (dispatch, getState, agile) => {
     dispatch(loading(true))
     agile.idm.group
       .create(group_name)
@@ -724,7 +432,7 @@ export const groupCreate = group_name => {
 }
 
 export const entityCreate = (entity, type) => {
-  return dispatch => {
+  return (dispatch, getState, agile) => {
     dispatch(loading(true))
     agile.idm.entity
       .create(entity.id, type, entity)
@@ -751,7 +459,7 @@ export const entityCreateByType = (data, type) => {
 }
 
 export const fetchLocks = () => {
-  return dispatch => {
+  return (dispatch, getState, agile) => {
     dispatch(loading(true))
     agile.idm.entity
       .getEntitiesSchema()
@@ -800,7 +508,7 @@ export const removeLockField = params => {
 }
 
 export const fetchEntityLocks = (entity_id, entity_type, field) => {
-  return dispatch => {
+  return (dispatch, getState, agile) => {
     dispatch(loading(true))
     agile.policies.pap.get({ entityId: entity_id, entityType: entity_type, field: field }).then(locks => {
       dispatch(action('ENTITY_FIELD_LOCKS', locks.result))
@@ -836,7 +544,8 @@ export const setLock = params => {
     })
   )
   const par = Object.assign({}, params, { policy: policies })
-  return dispatch => {
+
+  return (dispatch, getState, agile) => {
     dispatch(loading(true))
     agile.policies.pap.set(par).then(result => {
       dispatch(action('POLICY_SET', result.result))
@@ -847,7 +556,7 @@ export const setLock = params => {
 }
 
 export const deleteLock = params => {
-  return dispatch => {
+  return (dispatch, getState, agile) => {
     dispatch(loading(true))
     agile.policies.pap.delete(params).then(result => {
       dispatch(action('POLICY_DELETE', result.result))
@@ -862,230 +571,5 @@ export const formSelected = (type, policy, formNames) => {
   }
 }
 
-export const protocolsFetch = () => async dispatch => {
-  try {
-    dispatch(loading(true))
-    const protocols = await agile.protocolManager.get()
-    const withConfig = await Promise.all(
-      protocols.map(async protocol => {
-        try {
-          const configuration = await agile.protocolManager.configuration.get(protocol.dbusInterface)
-          return { ...protocol, configuration }
-        } catch (err) {
-          return { ...protocol, configuration: [] }
-        }
-      })
-    )
-
-    dispatch(action('PROTOCOLS', withConfig))
-    dispatch(loading(false))
-    dispatch(devicesDiscover())
-  } catch (err) {
-    errorHandle(err, dispatch)
-  }
-}
-
-export const protcolConfigSet = (protocolId, configuration) => async dispatch => {
-  try {
-    dispatch(loading(true))
-    await agile.protocolManager.configuration.set(protocolId, configuration)
-    dispatch(loading(false))
-    dispatch(protocolsFetch())
-  } catch (err) {
-    errorHandle(err, dispatch)
-  }
-}
-
 export const drawerToggle = bool => action('DRAWER', bool)
 
-export const discoveryStatus = () => {
-  return dispatch => {
-    agile.protocolManager.discovery
-      .status()
-      .then(protocols => {
-        protocols.map(protocols => {
-          return dispatch(message(`${protocols.name} is ${protocols.status}`))
-        })
-        dispatch(loading(false))
-      })
-      .catch(err => {
-        errorHandle(err, dispatch)
-      })
-  }
-}
-
-export const startDiscovery = () => {
-  return dispatch => {
-    dispatch(loading(true))
-    agile.protocolManager.discovery
-      .start()
-      .then(() => {
-        dispatch(action('DISCOVERY', true))
-        dispatch(loading(false))
-      })
-      .catch(err => {
-        errorHandle(err, dispatch)
-      })
-  }
-}
-
-export const discoveryToggle = () => {
-  return (dispatch, currentState) => {
-    if (currentState().discovery) {
-      agile.protocolManager.discovery
-        .stop()
-        .then(() => {
-          dispatch(action('DISCOVERY', false))
-          dispatch(message('Discovery off.'))
-          dispatch(loading(false))
-        })
-        .catch(err => {
-          errorHandle(err, dispatch)
-        })
-    } else {
-      agile.protocolManager.discovery
-        .start()
-        .then(() => {
-          dispatch(action('DISCOVERY', true))
-          dispatch(message('Discovery on.'))
-          dispatch(loading(false))
-        })
-        .catch(err => {
-          errorHandle(err, dispatch)
-        })
-    }
-  }
-}
-
-export const locStorPolicyAdd = ({ deviceID, componentID, interval, retention, publicKey }) => {
-  return (dispatch, getState) => {
-    dispatch(loading(true))
-
-    interval = interval ? interval : 3000
-    retention = retention ? retention : 7
-
-    const creationArgs = {
-      deviceID,
-      componentID,
-      interval,
-      retention: retention + 'd'
-    }
-
-    if (publicKey) {
-      creationArgs.encrypt = {
-        key: publicKey,
-        fields: ['value']
-      }
-    }
-
-    const existingRecords = getState().records[deviceID][componentID]
-
-    const shouldEncrypt = !!publicKey
-    const existingRecordsEncrypted = !!existingRecords.length && existingRecords[0][1] !== existingRecords[0][1]
-
-    if (existingRecords.length && shouldEncrypt !== existingRecordsEncrypted) {
-      const msg =
-        `Local ${existingRecordsEncrypted ? 'encrypted' : 'unencrypted'} ` +
-        'records have been found. The new subscription policy ' +
-        'has a different encryption setting. If you continue, ' +
-        'records created by the previous subscription will be deleted.'
-
-      return dispatch(
-        showConfirmScreen(msg, async () => {
-          const query = `deviceID=${deviceID}&componentID=${componentID}`
-          await agile.data.record.delete(query)
-          await agile.data.subscription.create(creationArgs)
-          dispatch(locStorPoliciesFetch(deviceID))
-          dispatch(loading(false))
-          dispatch(hideConfirmationScreen())
-        })
-      )
-    } else {
-      agile.data.subscription
-        .create(creationArgs)
-        .then(() => {
-          dispatch(locStorPoliciesFetch(deviceID))
-          dispatch(loading(false))
-        })
-        .catch(err => {
-          errorHandle(err, dispatch)
-        })
-    }
-  }
-}
-
-export const locStorPolicyDelete = (deviceID, componentID) => {
-  return (dispatch, currentState) => {
-    dispatch(loading(true))
-    const query = `deviceID=${deviceID}&componentID=${componentID}`
-    agile.data.subscription.get(query).then(subscriptions => {
-      subscriptions.forEach(subscription => {
-        agile.data.subscription
-          .delete(subscription._id)
-          .then(() => {
-            dispatch(loading(false))
-            dispatch(message('Subscription deleted.'))
-            dispatch(locStorPoliciesFetch(deviceID))
-          })
-          .catch(err => {
-            errorHandle(err, dispatch)
-          })
-      })
-    })
-  }
-}
-
-export const locStorPoliciesFetch = deviceID => {
-  return (dispatch, currentState) => {
-    dispatch(loading(true))
-    const query = `deviceID=${deviceID}`
-    agile.data.subscription
-      .get(query)
-      .then(policies => {
-        dispatch(action('POLICIES', { deviceID, policies }))
-        dispatch(loading(false))
-      })
-      .catch(err => {
-        errorHandle(err, dispatch)
-      })
-  }
-}
-
-// TODO Enforce min args
-export const recordsFetch = (deviceId, componentId) => {
-  return dispatch => {
-    let query = `deviceID=${deviceId}`
-
-    if (componentId) {
-      query += `&componentID=${componentId}`
-    }
-
-    dispatch(loading(true))
-    agile.data.record
-      .get(query)
-      .then(records => {
-        dispatch(action('DEVICE_RECORDS', { deviceId, componentId, records }))
-        dispatch(loading(false))
-      })
-      .catch(err => {
-        err.message = `Connecting to Agile Data : ${err.message}`
-        errorHandle(err, dispatch)
-      })
-  }
-}
-
-export const recordsDelete = (deviceId, componentId) => {
-  return dispatch => {
-    dispatch(loading(true))
-    const query = `deviceID=${deviceId}&componentID=${componentId}`
-    return agile.data.record
-      .delete(query)
-      .then(res => {
-        dispatch(recordsFetch(deviceId, componentId))
-        dispatch(loading(false))
-      })
-      .catch(err => {
-        errorHandle(err, dispatch)
-      })
-  }
-}

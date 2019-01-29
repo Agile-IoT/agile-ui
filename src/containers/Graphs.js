@@ -15,11 +15,11 @@ import { connect } from 'react-redux'
 import Checkbox from 'material-ui/Checkbox'
 import { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle } from 'material-ui/Toolbar'
 import CircularProgress from 'material-ui/CircularProgress'
+import {deviceFetch} from "../actions/devices"
 import { Graph } from '../components/'
 import { browserHistory } from 'react-router'
 import IconButton from 'material-ui/IconButton'
 import ArrowBack from 'material-ui/svg-icons/navigation/arrow-back.js'
-import { deviceFetch } from '../actions'
 
 window.graphs = []
 class Graphs extends Component {

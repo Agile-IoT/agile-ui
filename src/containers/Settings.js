@@ -13,13 +13,10 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import {
-  startDiscovery,
-  discoveryToggle,
   drawerToggle,
-  protocolsFetch,
-  discoveryStatus,
-  protcolConfigSet
 } from '../actions'
+import {discoveryStatus, discoveryToggle, startDiscovery} from "../actions/discovery"
+import {protcolConfigSet, protocolsFetch} from "../actions/protocols"
 
 import { SettingsMenu } from '../components'
 

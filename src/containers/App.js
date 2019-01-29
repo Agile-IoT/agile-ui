@@ -11,9 +11,9 @@
  *    Resin.io, FBK, Jolocom - initial API and implementation
  ******************************************************************************/
 import React, { Component } from 'react';
+import {setToken} from "../store"
 import { Nav } from './';
 import { MessageBar, LoadingBar, Settings } from './'
-import { setToken } from '../actions'
 // main template for containers
 
 class App extends Component {

@@ -11,19 +11,14 @@
  *    Resin.io, FBK, Jolocom - initial API and implementation
  ******************************************************************************/
 import React, { Component } from 'react'
+import {devicesCreate} from "../actions"
+import {devicesAndStreamsFetch, devicesDiscover, deviceTypesFetch} from "../actions/devices"
 import { DeviceItem } from '../components'
 import SelectField from 'material-ui/SelectField'
 import MenuItem from 'material-ui/MenuItem'
 import { connect } from 'react-redux'
 import differenceBy from 'lodash/differenceBy'
 import CircularProgress from 'material-ui/CircularProgress'
-
-import {
-  devicesAndStreamsFetch,
-  devicesDiscover,
-  devicesCreate,
-  deviceTypesFetch
-} from '../actions'
 
 class Discover extends Component {
   handleChange = (event, index, value) => {

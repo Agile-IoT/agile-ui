@@ -11,11 +11,11 @@
  *    Resin.io, FBK, Jolocom - initial API and implementation
  ******************************************************************************/
 import React, { Component } from 'react'
+import {devicesAndStreamsFetch, devicesDelete} from "../actions/devices"
 import { DeviceItem } from '../components'
 import { FlatButton } from 'material-ui'
 import { connect } from 'react-redux'
 import { Link } from 'react-router'
-import { devicesAndStreamsFetch, devicesDelete } from '../actions'
 import CircularProgress from 'material-ui/CircularProgress'
 
 class Devices extends Component {

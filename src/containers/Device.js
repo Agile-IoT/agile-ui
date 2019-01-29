@@ -14,16 +14,12 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { isEmpty } from 'underscore'
 import { FlatButton } from 'material-ui'
+import { deviceFetch, devicesDelete, deviceSubscribe, deviceUnsubscribe, streamsFetch } from "../actions/devices"
 import { DeviceSummary, Stream } from '../components'
 import { LocalStorageSettings, CloudUploadSettings } from './'
 import SecurityDetails from './SecurityDetails'
 
 import {
-  deviceFetch,
-  devicesDelete,
-  streamsFetch,
-  deviceSubscribe,
-  deviceUnsubscribe,
   setEntityData,
   deleteAttribute,
   entityFetch
@@ -128,8 +124,8 @@ class Device extends Component {
       const entity = this.getEntity()
       const deviceSchema = this.props.schemas.ui && this.props.schemas.ui['/device']
 
-      const fieldProperties = deviceSchema && deviceSchema.attributes 
-        ? deviceSchema.attributes 
+      const fieldProperties = deviceSchema && deviceSchema.attributes
+        ? deviceSchema.attributes
         : {}
 
       return (

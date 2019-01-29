@@ -12,14 +12,16 @@
  ******************************************************************************/
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import {
+  locStorPoliciesFetch,
+  locStorPolicyAdd,
+  locStorPolicyDelete,
+  recordsDelete,
+  recordsFetch
+} from "../actions/localStorage"
 import { LocStorSettingsSummary } from '../components';
 
 import {
-  locStorPolicyAdd,
-  locStorPolicyDelete,
-  locStorPoliciesFetch,
-  recordsFetch,
-  recordsDelete,
   hideConfirmationScreen
 } from '../actions';
 

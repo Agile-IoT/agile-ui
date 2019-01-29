@@ -13,7 +13,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Resizable from 're-resizable'
-import { recordsFetch, deviceSubscribe, deviceUnsubscribe } from '../actions'
+import { deviceSubscribe, deviceUnsubscribe } from '../actions/devices'
+import {recordsFetch} from "../actions/localStorage"
 
 class Graph extends Component {
   constructor(props) {
